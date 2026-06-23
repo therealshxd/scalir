@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src", "test", "*.config.ts"]
+}
