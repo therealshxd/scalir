@@ -18,8 +18,9 @@ npm run dev      # http://localhost:5173
 Build the static site (deployable to any static host):
 
 ```bash
-npm run build    # outputs to dist/
-npm run preview  # preview the production build
+npm run build      # full landing site → dist/
+npm run build:app  # tool only (no marketing pages) → dist-app/
+npm run preview    # preview the production build
 ```
 
 Run the engine tests:
@@ -43,6 +44,28 @@ npm test
 | Pick a folder / save straight to a folder | ✅ | — | — |
 
 Where the File System Access API isn't available (Firefox/Safari), the app falls back to a ZIP download — no features are lost, just the direct-to-folder convenience.
+
+## Docker
+
+Two Dockerfiles are provided — pick the one matching what you want to serve:
+
+| File | Builds | Serves | Compose service |
+|---|---|---|---|
+| `Dockerfile` | `npm run build:app` → `dist-app/` | **tool only** | `scalir` (:8080) |
+| `Dockerfile.landing` | `npm run build` → `dist/` | full landing site + tool | `scalir-landing` (:8081) |
+
+```bash
+# Tool only (most self-hosters):
+docker compose up -d scalir          # → http://localhost:8080
+
+# Full landing site:
+docker compose up -d scalir-landing  # → http://localhost:8081
+```
+
+**Deployment panels (Dokploy / Coolify / CapRover):** create an **Application** (not a Compose
+service), connect the repo, then set **Build Type → Dockerfile** — this is a *separate card below the
+Git source section*, not inside the GitHub tab. Enter the **Docker File** path (`Dockerfile` for the
+tool, `Dockerfile.landing` for the full site) and set the container port to `80`.
 
 ## Self-host vs hosted
 
