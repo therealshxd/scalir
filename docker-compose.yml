@@ -1,6 +1,17 @@
 services:
+  # Tool-only app (what self-hosters run). Build: npm run build:app -> dist-app/
   scalir:
     build: .
     ports:
       - "8080:80"
+    restart: unless-stopped
+
+  # Full landing page + embedded tool (deployed to scalir.shad.digital).
+  # Build: npm run build -> dist/
+  scalir-landing:
+    build:
+      context: .
+      dockerfile: Dockerfile.landing
+    ports:
+      - "8081:80"
     restart: unless-stopped
