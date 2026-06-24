@@ -3,7 +3,6 @@
 
   const installers = [
     { os: 'Windows', meta: '.msi / .exe · Windows 10/11', url: REPO + '/releases/latest', cta: 'Download' },
-    { os: 'macOS', meta: '.dmg · Apple Silicon & Intel', url: null, cta: 'Coming soon' },
     { os: 'Linux', meta: '.AppImage · .deb · .rpm', url: REPO + '/releases/latest', cta: 'Download' },
   ];
 </script>
@@ -13,8 +12,8 @@
     <h1>Local Installation</h1>
     <p class="lead">
       Run Scalir on your own machine — no internet required after setup, no data leaves your device.
-      Windows and Linux builds are available now; macOS is on the way. Docker also works on any
-      platform.
+      Native builds for Windows and Linux are available now, and Docker works on any platform. On
+      macOS? The <a href="#/">free web version</a> runs the full tool right in your browser.
     </p>
 
     <!-- Native installers -->
@@ -92,4 +91,6 @@ docker rm -f scalir && docker rmi scalir</code></pre>
 <style>
   .badge.new { color: var(--ok); background: rgba(56,193,114,.14); border-color: #1e5c38; }
   .meta-note { color: var(--muted); font-size: 13px; margin-top: 14px; max-width: 70ch; }
+  /* Two installers now (Windows + Linux) — keep tiles balanced instead of a 3-col grid with a gap. */
+  .dl-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 </style>
