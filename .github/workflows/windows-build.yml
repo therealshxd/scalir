@@ -5,6 +5,10 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+# tauri-action creates a GitHub Release on tag builds — needs write access.
+permissions:
+  contents: write
+
 jobs:
   windows:
     runs-on: windows-latest
