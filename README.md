@@ -95,10 +95,18 @@ The engine is deliberately isolated from the UI and codecs (via a `Codecs` inter
 
 ## Roadmap
 
-- Web Worker offload for large batches (keep the UI buttery during big jobs)
-- AVIF output (`@jsquash/avif`)
-- Desktop app (Tauri 2) with native folder in/out
-- Presets and drag-to-reorder
+- [x] Web Worker offload for large batches (keep the UI buttery during big jobs)
+- [x] Presets for common use cases (Tiny/WebP, Web, Email-JPEG, …)
+- [x] Desktop app (Tauri 2) for Windows & Linux
+- [ ] AVIF output (`@jsquash/avif`)
+- [ ] Drag-to-reorder the queue
+
+## Contributing
+
+Contributions are welcome! Please read the [Contributing guide](./CONTRIBUTING.md)
+before opening a PR, and note our [Code of Conduct](./CODE_OF_CONDUCT.md). For bugs and
+ideas, use the [issue templates](https://github.com/therealshxd/scalir/issues/new/choose).
+To report a security issue privately, see [SECURITY.md](./SECURITY.md).
 
 ## License
 

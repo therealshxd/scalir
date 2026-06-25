@@ -1,0 +1,63 @@
+name: Bug report
+description: Something isn't working as expected
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Scalir runs entirely in your browser, so details
+        about your browser and the images involved help a lot.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, and what you expected to happen instead.
+      placeholder: When I optimise a PNG with transparency, the output...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce it?
+      placeholder: |
+        1. Drop in '...'
+        2. Set max size to '...'
+        3. Click Optimise
+        4. See error
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & OS
+      description: e.g. Chrome 130 on Windows 11, Firefox 131 on macOS 14
+    validations:
+      required: true
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: How are you running Scalir?
+      options:
+        - Hosted site (scalir.shad.digital)
+        - Self-hosted (Docker / deployment panel)
+        - Local dev (npm run dev)
+        - Desktop app
+    validations:
+      required: true
+  - type: input
+    id: image-info
+    attributes:
+      label: Image format & rough size
+      description: e.g. 4000×3000 HEIC, ~8 MB. Helps reproduce format/size-specific bugs.
+    validations:
+      required: false
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Any errors in the browser dev-tools console (F12 → Console). This will be rendered as code.
+      render: shell
+    validations:
+      required: false

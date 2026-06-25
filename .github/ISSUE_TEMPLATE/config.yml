@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & general help
+    url: mailto:hello@shad.digital
+    about: For general questions or anything that isn't a bug or feature request.
+  - name: Report a security vulnerability
+    url: https://github.com/therealshxd/scalir/security/advisories/new
+    about: Please report security issues privately — do not open a public issue.
