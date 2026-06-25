@@ -1,6 +1,6 @@
 import type { Codecs, Fmt, InputFmt, ImageDataLike, Options, OptimiseResult } from './types';
 import { DEFAULT_OPTIONS } from './types';
-import { detectFormat, resizeTarget, qualitySteps, hasAlpha, mimeOf, extForFmt, QUALITY_LADDER } from './rules';
+import { detectFormat, resizeTarget, bestQualityUnder, mimeOf, extForFmt, QUALITY_LADDER } from './rules';
 import { makeOutName } from './naming';
 import { readJpegOrientation, applyOrientation } from './exif';
 
@@ -51,36 +51,41 @@ export async function optimise(
   }
   res.newDims = [img.width, img.height];
 
-  // HEIC has no encoder — output as JPEG. Mark converted so the extension is updated.
-  const baseFmt: Fmt = inputFmt === 'heic' ? 'jpeg' : inputFmt;
-  if (inputFmt === 'heic') res.converted = true;
+  // Choose the output format. 'auto' keeps the input format (HEIC has no encoder, so
+  // it becomes JPEG); otherwise the user's forced choice wins. Mark converted whenever
+  // the output format differs from the input so the extension is updated downstream.
+  const forced = opts.outputFormat !== 'auto';
+  const baseFmt: Fmt = opts.outputFormat !== 'auto'
+    ? opts.outputFormat
+    : (inputFmt === 'heic' ? 'jpeg' : inputFmt);
+  const inputAsFmt: Fmt | null = inputFmt === 'heic' ? null : inputFmt;
+  if (baseFmt !== inputAsFmt) res.converted = true;
+  const ceil = QUALITY_LADDER[0];
 
   // Rule 2: encode at top quality, then shrink to fit if needed.
-  let best = await codecs.encode(baseFmt, img, QUALITY_LADDER[0]);
+  let best = await codecs.encode(baseFmt, img, ceil);
   let bestFmt: Fmt = baseFmt;
 
   if (best.length > opts.maxBytes) {
-    // Try WebP as an alternative when allowed (often much smaller).
-    if (opts.allowWebp && baseFmt !== 'webp') {
-      const webp = await codecs.encode('webp', img, QUALITY_LADDER[0]);
+    // Auto mode only: try WebP as an alternative when allowed (often much smaller).
+    if (!forced && opts.allowWebp && baseFmt !== 'webp') {
+      const webp = await codecs.encode('webp', img, ceil);
       if (webp.length < best.length * opts.webpAdvantage) {
         best = webp; bestFmt = 'webp'; res.converted = true;
       }
     }
-    // Step quality down on a lossy format.
+    // Lossy format: find the highest quality that still fits (closest under the cap).
     if (best.length > opts.maxBytes && (bestFmt === 'jpeg' || bestFmt === 'webp')) {
-      for (const q of qualitySteps(opts.qualityFloor)) {
-        best = await codecs.encode(bestFmt, img, q);
-        if (best.length <= opts.maxBytes) break;
-      }
+      best = await bestQualityUnder(
+        (q) => codecs.encode(bestFmt, img, q), opts.qualityFloor, ceil, opts.maxBytes,
+      );
     }
-    // PNG is lossless; if still too big, fall back to WebP at descending quality.
-    if (best.length > opts.maxBytes && bestFmt === 'png' && opts.allowWebp) {
-      for (const q of qualitySteps(opts.qualityFloor)) {
-        const c = await codecs.encode('webp', img, q);
-        if (c.length < best.length) { best = c; bestFmt = 'webp'; res.converted = true; }
-        if (best.length <= opts.maxBytes) break;
-      }
+    // PNG is lossless; in auto mode fall back to WebP if it helps (a forced PNG stays PNG).
+    if (best.length > opts.maxBytes && bestFmt === 'png' && !forced && opts.allowWebp) {
+      const webp = await bestQualityUnder(
+        (q) => codecs.encode('webp', img, q), opts.qualityFloor, ceil, opts.maxBytes,
+      );
+      if (webp.length < best.length) { best = webp; bestFmt = 'webp'; res.converted = true; }
     }
     res.compressed = true;
   }

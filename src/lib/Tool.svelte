@@ -1,7 +1,8 @@
 <script lang="ts">
   import JSZip from 'jszip';
   import { SUPPORTED_EXT, extOf } from '../core/rules';
-  import type { Options, OptimiseResult } from '../core/types';
+  import type { Options, OptimiseResult, OutputFormat } from '../core/types';
+  import { PRESETS, type Preset } from '../core/presets';
   import type { WorkerRequest, WorkerResponse } from './optimise.worker';
 
   type Queued = { name: string; bytes: Uint8Array; size: number };
@@ -10,7 +11,23 @@
   const FREE_LIMIT = 0;
   const hasFS = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
-  let opts = $state({ maxDim: 2000, maxMB: 1, prefix: 'scaled_', allowWebp: true, qualityFloor: 60 });
+  let opts = $state({
+    maxDim: 2000, maxMB: 1, prefix: 'scaled_', allowWebp: true,
+    qualityFloor: 60, outputFormat: 'auto' as OutputFormat,
+  });
+  // Which preset's values are currently loaded; cleared as soon as a field is edited.
+  let activePreset = $state<string | null>(null);
+
+  function applyPreset(p: Preset) {
+    opts.maxDim = p.opts.maxDim;
+    opts.maxMB = p.opts.maxBytes / (1024 * 1024);
+    opts.outputFormat = p.opts.outputFormat;
+    opts.qualityFloor = p.opts.qualityFloor;
+    opts.allowWebp = p.opts.allowWebp;
+    activePreset = p.id;
+  }
+  // Custom edits override a preset — drop the highlight so it reads as "custom".
+  const clearPreset = () => { activePreset = null; };
   let queue = $state<Queued[]>([]);
   let rows = $state<Row[]>([]);
   let processing = $state(false);
@@ -107,6 +124,7 @@
     const o: Partial<Options> = {
       maxDim: opts.maxDim, maxBytes: Math.round(opts.maxMB * 1024 * 1024),
       prefix: opts.prefix, allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor,
+      outputFormat: opts.outputFormat,
     };
     for (const item of queue) {
       const r = await optimiseInWorker(item, o);
@@ -165,14 +183,67 @@
 
   {#if notice}<p class="notice">{notice}</p>{/if}
 
+  <div class="panel presets">
+    <p class="presets-title">Quick presets</p>
+    <div class="chips">
+      {#each PRESETS as p}
+        <button
+          type="button"
+          class="chip {activePreset === p.id ? 'active' : ''}"
+          title={p.blurb}
+          onclick={() => applyPreset(p)}
+        >
+          <span class="chip-name">{p.name}</span>
+          <span class="chip-savings">{p.savings}</span>
+        </button>
+      {/each}
+    </div>
+  </div>
+
   <div class="panel opts">
     <div class="grid">
-      <label>Max dimension (px)<input type="number" bind:value={opts.maxDim} min="1" /></label>
-      <label>Max size (MB)<input type="number" step="0.1" bind:value={opts.maxMB} min="0.1" /></label>
-      <label>Prefix<input type="text" bind:value={opts.prefix} /></label>
-      <label>Quality floor<input type="number" bind:value={opts.qualityFloor} min="1" max="100" /></label>
+      <label>Max dimension (px)
+        <input type="number" bind:value={opts.maxDim} oninput={clearPreset} min="1" />
+        <span class="hint">Maximum length of the longest side. Smaller = smaller file; images already smaller are left as-is.</span>
+      </label>
+      <label>Max size (MB)
+        <input type="number" step="0.1" bind:value={opts.maxMB} oninput={clearPreset} min="0.1" />
+        <span class="hint">Target file size — we compress just enough to fit under this.</span>
+      </label>
+      <label>Output format
+        <select bind:value={opts.outputFormat} onchange={clearPreset}>
+          <option value="auto">Auto (recommended)</option>
+          <option value="jpeg">JPEG</option>
+          <option value="png">PNG</option>
+          <option value="webp">WebP</option>
+        </select>
+        <span class="hint">Auto keeps the original, switching to WebP only when it helps. Or force one format.</span>
+      </label>
+      <label>Quality floor
+        <input type="number" bind:value={opts.qualityFloor} oninput={clearPreset} min="1" max="100" />
+        <span class="hint">Lowest quality we'll allow while hitting your size target. Higher = better looking but larger.</span>
+      </label>
+      <label>Prefix
+        <input type="text" bind:value={opts.prefix} oninput={clearPreset} />
+        <span class="hint">Added to the start of each saved file's name.</span>
+      </label>
     </div>
-    <label class="check"><input type="checkbox" bind:checked={opts.allowWebp} /> Allow WebP conversion</label>
+    <label class="check">
+      <input type="checkbox" bind:checked={opts.allowWebp} onchange={clearPreset} />
+      Allow WebP conversion
+      <span class="hint">In Auto mode, lets us switch to WebP to hit your size target.</span>
+    </label>
+
+    <details class="help">
+      <summary>What do these mean?</summary>
+      <ul>
+        <li><b>Presets</b> fill the settings below for a common goal. Tweaking any field switches you back to custom settings.</li>
+        <li><b>Max dimension</b> caps the longest side (width or height) in pixels — aspect ratio is always kept, nothing is cropped or stretched. An image already under the cap isn't enlarged.</li>
+        <li><b>Max size</b> is your file-size target. We reduce quality just enough to land under it without going lower than the quality floor.</li>
+        <li><b>Output format</b> — <i>Auto</i> keeps your original format (and only converts to WebP when that meaningfully helps). Pick JPEG for maximum compatibility, WebP for the smallest files, or PNG to stay lossless.</li>
+        <li><b>Quality floor</b> is the worst quality we're willing to use to hit the size target. If we can't fit under your size even at the floor, we stop there and flag it rather than ruining the image.</li>
+      </ul>
+    </details>
   </div>
 
   {#if queue.length > 0 && !processing && !rows.length}
@@ -242,13 +313,32 @@
   .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
   .btn:disabled { opacity: .45; cursor: default; }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: start; }
   label { display: block; font-size: 13px; color: var(--muted); font-weight: 600; }
-  input[type=number], input[type=text] { width: 100%; margin-top: 5px; background: #0f1218;
+  input[type=number], input[type=text], select { width: 100%; margin-top: 5px; background: #0f1218;
     border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 9px 10px; font-size: 14px; }
+  .hint { display: block; margin-top: 5px; font-size: 11.5px; font-weight: 400; color: var(--muted); line-height: 1.4; }
   .opts { margin-top: 16px; }
-  .check { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--text); font-weight: 500; }
+  .check { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; color: var(--text); font-weight: 500; }
   .check input { width: auto; }
+  .check .hint { flex-basis: 100%; margin-top: 2px; }
+
+  .presets { margin-top: 16px; }
+  .presets-title { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
+    background: #0f1218; border: 1px solid var(--line); color: var(--text); border-radius: 10px;
+    padding: 8px 12px; cursor: pointer; transition: border-color .15s, background .15s; }
+  .chip:hover { border-color: var(--accent); }
+  .chip.active { border-color: var(--accent); background: #11202a; }
+  .chip-name { font-size: 13px; font-weight: 600; }
+  .chip-savings { font-size: 11px; color: var(--accent); font-weight: 600; }
+
+  .help { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .help summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); }
+  .help ul { margin: 10px 0 0; padding-left: 18px; }
+  .help li { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 6px; }
+  .help b { color: var(--text); }
   .notice { background: #1d1a0e; border: 1px solid #4a4222; color: var(--warn);
     padding: 10px 14px; border-radius: 9px; font-size: 13.5px; margin-top: 14px; }
   .bar { height: 8px; background: #0f1218; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin: 14px 0; }

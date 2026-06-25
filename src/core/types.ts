@@ -17,13 +17,16 @@ export interface Codecs {
   resize(image: ImageDataLike, width: number, height: number): Promise<ImageDataLike>;
 }
 
+export type OutputFormat = 'auto' | Fmt;
+
 export interface Options {
   maxDim: number;        // longest-side cap in px (default 2000)
   maxBytes: number;      // file-size cap in bytes (default 1 MB)
   prefix: string;        // output filename prefix (default 'scaled_')
-  allowWebp: boolean;    // may convert to WebP to hit the size cap
+  allowWebp: boolean;    // may convert to WebP to hit the size cap (auto only)
   qualityFloor: number;  // never encode below this quality
   webpAdvantage: number; // WebP must be < this fraction of the alt to switch
+  outputFormat: OutputFormat; // 'auto' keeps original (opportunistic WebP); else force
 }
 
 export const DEFAULT_OPTIONS: Options = {
@@ -33,6 +36,7 @@ export const DEFAULT_OPTIONS: Options = {
   allowWebp: true,
   qualityFloor: 60,
   webpAdvantage: 0.9,
+  outputFormat: 'auto',
 };
 
 export interface OptimiseResult {

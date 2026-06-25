@@ -15,6 +15,29 @@
     <button class="cta" onclick={() => scrollTo('tool')}>Try Scalir</button>
     <button class="cta ghost" onclick={() => scrollTo('about')}>Read more</button>
   </div>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step-num">1</span>
+      <h3>Add your images</h3>
+      <p>Drop in the files you want to compress, or choose a whole folder.</p>
+    </li>
+    <li class="step">
+      <span class="step-num">2</span>
+      <h3>Pick a preset or tweak</h3>
+      <p>Start from a preset like Tiny or Web optimized, then fine-tune the settings if you need to.</p>
+    </li>
+    <li class="step">
+      <span class="step-num">3</span>
+      <h3>Optimise</h3>
+      <p>Hit Optimise images — everything runs on your device, nothing is uploaded.</p>
+    </li>
+    <li class="step">
+      <span class="step-num">4</span>
+      <h3>Save your files</h3>
+      <p>Download them all as a .zip, or save straight to a folder on your computer.</p>
+    </li>
+  </ol>
 </header>
 
 <div class="wrap">

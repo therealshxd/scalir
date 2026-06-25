@@ -41,6 +41,35 @@ export function qualitySteps(floor: number): number[] {
   return s.length ? s : [floor];
 }
 
+/**
+ * Find the highest quality in [floor, ceil] whose encode is <= maxBytes and return
+ * its bytes — i.e. the best-looking result that still fits under the cap. Uses a
+ * binary search (~7 encodes for the default 55-95 range), which lands much closer to
+ * the target than stepping the coarse QUALITY_LADDER. If nothing fits (or floor>ceil),
+ * returns the floor encode so the qualityFloor is always honoured.
+ */
+export async function bestQualityUnder(
+  encode: (q: number) => Promise<Uint8Array>,
+  floor: number,
+  ceil: number,
+  maxBytes: number,
+): Promise<Uint8Array> {
+  let lo = floor;
+  let hi = ceil;
+  let best: Uint8Array | null = null;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const enc = await encode(mid);
+    if (enc.length <= maxBytes) {
+      best = enc;      // fits — try to do better (higher quality)
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;    // too big — drop quality
+    }
+  }
+  return best ?? (await encode(floor));
+}
+
 /** True if any pixel has alpha < 255. */
 export function hasAlpha(img: ImageDataLike): boolean {
   const d = img.data;

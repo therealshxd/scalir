@@ -150,6 +150,45 @@ describe('optimise', () => {
     expect(r.outType).toBe('image/jpeg');
     expect(r.newBytes).toBeLessThanOrEqual(MB);
   });
+
+  it('forced WebP: converts a JPEG to WebP even when it already fits', async () => {
+    const c = new MockCodecs(mkImage(800, 600));
+    const r = await optimise('photo.jpg', header('jpeg'), c, { outputFormat: 'webp' });
+    expect(r.converted).toBe(true);
+    expect(r.outName).toBe('scaled_photo.webp');
+    expect(r.outType).toBe('image/webp');
+  });
+
+  it('forced JPEG: outputs JPEG from a PNG input', async () => {
+    const c = new MockCodecs(mkImage(800, 600));
+    const r = await optimise('logo.png', header('png'), c, { outputFormat: 'jpeg' });
+    expect(r.converted).toBe(true);
+    expect(r.outName).toBe('scaled_logo.jpg');
+    expect(r.outType).toBe('image/jpeg');
+  });
+
+  it('forced PNG: stays PNG even over the cap (no WebP fallback)', async () => {
+    const c = new MockCodecs(mkImage(2500, 2500, 200));
+    const r = await optimise('photo.jpg', header('jpeg'), c, { outputFormat: 'png' });
+    expect(r.converted).toBe(true);
+    expect(r.outName).toBe('scaled_photo.png');
+    expect(r.outType).toBe('image/png');
+    expect(r.newBytes).toBeGreaterThan(MB);
+    expect(r.message).toMatch(/over size limit/);
+  });
+
+  it('precise fit: picks the highest quality under the cap, not a coarse ladder step', async () => {
+    // mock JPEG size = px * q * 0.005; px = 480000 → size = 2400*q.
+    // Cap 199200 = 2400*83, so q83 fits exactly while q84 would not.
+    const c = new MockCodecs(mkImage(800, 600));
+    const r = await optimise('photo.jpg', header('jpeg'), c, {
+      allowWebp: false, maxBytes: 199200,
+    });
+    expect(r.compressed).toBe(true);
+    expect(r.newBytes).toBeLessThanOrEqual(199200);
+    expect(r.newBytes).toBe(2400 * 83);           // landed on q83…
+    expect(r.newBytes).toBeGreaterThan(2400 * 80); // …closer than the coarse q80 step
+  });
 });
 
 describe('exif orientation', () => {
