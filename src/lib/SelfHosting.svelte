@@ -76,8 +76,37 @@ docker compose up -d --build</code></pre>
       </ol>
 
       <p style="margin-top:4px">
-        <strong>Updating:</strong> enable auto-deploy on push, or trigger a redeploy from the
-        dashboard after pulling new commits.
+        <strong>Updating manually:</strong> after new commits land on <code>main</code>, hit
+        <strong>Redeploy</strong> in the dashboard — Dokploy pulls the latest commit and rebuilds
+        the image. Note that tracking is by <strong>branch</strong>, not git tags.
+      </p>
+
+      <p><strong>Auto-deploy on push (optional)</strong></p>
+      <p>
+        To rebuild automatically on every push to <code>main</code>, set up a webhook one of two ways:
+      </p>
+      <ol>
+        <li>
+          <strong>GitHub App (cleanest):</strong> Dokploy → <strong>Settings → Git → GitHub</strong> →
+          install the GitHub App and grant it access to your repo. Then open the app →
+          <strong>Provider</strong>, confirm branch <code>main</code>, and toggle
+          <strong>Auto Deploy → On</strong>. Dokploy creates and manages the webhook for you —
+          nothing to do on the GitHub side.
+        </li>
+        <li>
+          <strong>Manual webhook:</strong> on the app, toggle <strong>Auto Deploy → On</strong> and copy
+          the <strong>Webhook URL</strong> it shows. In GitHub → repo
+          <strong>Settings → Webhooks → Add webhook</strong>, paste it as the Payload URL, set
+          Content type to <code>application/json</code>, choose <em>Just the push event</em>, and save.
+        </li>
+      </ol>
+      <p>
+        Verify with a test push: the GitHub webhook's <strong>Recent Deliveries</strong> should show a
+        <code>200</code>, and a new build should appear under the app's <strong>Deployments</strong> tab.
+      </p>
+      <p style="margin-top:4px">
+        <strong>After any deploy:</strong> hard-refresh the site (Ctrl/Cmd-Shift-R). Scalir is a PWA,
+        so the service worker can serve cached assets until it updates.
       </p>
 
       <p style="margin-top:4px">
