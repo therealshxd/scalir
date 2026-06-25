@@ -16,12 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   across local (Corepack), Docker images, and CI so all builds use the same npm.
 
 ### Added
-- `dev` / `staging` / `main` branching model with a documented release workflow
+- `dev` / `main` branching model with a documented release workflow
   (see CONTRIBUTING.md).
 - `scripts/sync-version.mjs` + an npm `version` lifecycle hook that keeps
   `package.json`, `src-tauri/tauri.conf.json`, and `src-tauri/Cargo.toml` in lockstep.
 - Continuous Integration workflow (`.github/workflows/ci.yml`) running type-check,
-  tests, and a production build on pull requests and pushes to `dev`/`staging`/`main`.
+  tests, and a production build on pull requests and pushes to `dev`/`main`.
 - This CHANGELOG.
 
 ## [1.0.1] - 2026-06-25

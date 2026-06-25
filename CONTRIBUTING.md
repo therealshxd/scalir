@@ -39,23 +39,22 @@ This project pins **npm 11** via the `packageManager` field. Run `corepack enabl
 
 ## Branching & releases
 
-Scalir uses three long-lived branches:
+Scalir uses two long-lived branches:
 
 ```
-feature/* ──▶ dev ──▶ staging ──▶ main (live)
+feature/* ──▶ dev ──▶ main (live)
 ```
 
 - **`main`** — production. Deployed to scalir.shad.digital. Never commit directly.
-- **`staging`** — pre-production testing before a release reaches `main`.
-- **`dev`** — integration branch where features land first.
+- **`dev`** — integration branch where work lands and is tested before release.
 - **`feature/*`** (or `fix/*`, `chore/*`) — short-lived branches off `dev`; open a PR back into `dev`.
 
-Promote changes forward only: `dev → staging → main`.
+Promote changes forward only: `dev → main`.
 
 ### Versioning (Semantic Versioning)
 
 One version number per release cycle. When a new cycle starts on `dev`, bump the version
-once; that same number flows through `staging` and is what ships on `main`.
+once; that same number is what ships on `main`.
 
 ```bash
 # On dev, at the start of a cycle (PATCH / MINOR / MAJOR or an explicit number):
@@ -76,17 +75,14 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-Do not tag from `dev` or `staging`; only `main` releases get tags.
+Do not tag from `dev`; only `main` releases get tags.
 
 ### Environments (maintainer notes)
 
 - **Production** — the existing Dokploy app tracks `main` (`Dockerfile.landing`, domain
   scalir.shad.digital).
-- **Staging** — to mirror production, create a second Dokploy **Application** tracking the
-  `staging` branch with `Dockerfile.landing`, port `80`, and a domain such as
-  `staging.scalir.shad.digital`, then enable Auto Deploy. (Not yet wired up.)
-- **Branch protection** — recommended: protect `main` and `staging` so changes require a
-  PR with green CI (GitHub → Settings → Branches).
+- **Branch protection** — recommended: protect `main` so changes require a PR with green
+  CI (GitHub → Settings → Branches).
 
 ## Before you open a PR
 
