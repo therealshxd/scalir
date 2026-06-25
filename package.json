@@ -1,10 +1,16 @@
 {
   "name": "bulk-image-optimiser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Free, private, in-browser bulk image optimiser — resize over 2000px and compress under 1MB. No uploads, no AI, no server.",
   "type": "module",
   "license": "MIT",
+  "engines": {
+    "node": ">=22",
+    "npm": ">=11"
+  },
+  "packageManager": "npm@11.17.0",
   "scripts": {
+    "version": "node scripts/sync-version.mjs && git add -A",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
