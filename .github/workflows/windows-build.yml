@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: 22
 
+      # Use the npm version pinned in package.json (packageManager).
+      - run: corepack enable
+
       - uses: dtolnay/rust-toolchain@stable
 
       - uses: swatinem/rust-cache@v2
