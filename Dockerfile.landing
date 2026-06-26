@@ -1,5 +1,7 @@
 FROM node:22-alpine AS build
 WORKDIR /app
+# Use the npm version pinned in package.json (packageManager) via Corepack.
+RUN corepack enable && corepack prepare npm@11.17.0 --activate
 COPY package*.json ./
 RUN npm ci
 COPY . .
