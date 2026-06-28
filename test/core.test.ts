@@ -115,14 +115,37 @@ describe('optimise', () => {
     expect(r.message).toMatch(/over size limit/);
   });
 
-  it('small image already within limits: no resize, no compress', async () => {
+  it('small image already within limits: copied through unchanged, not re-encoded', async () => {
+    const bytes = header('jpeg');
     const c = new MockCodecs(mkImage(800, 600));
-    const r = await optimise('ok.jpg', header('jpeg'), c, {});
+    const r = await optimise('ok.jpg', bytes, c, {});
     expect(r.resized).toBe(false);
     expect(r.compressed).toBe(false);
     expect(r.converted).toBe(false);
+    expect(r.copied).toBe(true);
+    expect(r.outBytes).toBe(bytes);              // original bytes, not a re-encode
+    expect(r.newBytes).toBe(r.origBytes);
     expect(r.outName).toBe('scaled_ok.jpg');
-    expect(r.action).toMatch(/already within limits/);
+    expect(r.action).toMatch(/copied/);
+  });
+
+  it('copies an already-compliant PNG unchanged (no re-encode across formats)', async () => {
+    const bytes = header('png');
+    const c = new MockCodecs(mkImage(500, 400, 200)); // small, with alpha
+    const r = await optimise('icon.png', bytes, c, {});
+    expect(r.copied).toBe(true);
+    expect(r.outBytes).toBe(bytes);
+    expect(r.converted).toBe(false);
+    expect(r.outName).toBe('scaled_icon.png');
+    expect(r.outType).toBe('image/png');
+  });
+
+  it('still resizes an under-cap file that exceeds max dimension (dimension cap wins)', async () => {
+    const c = new MockCodecs(mkImage(4000, 3000));
+    const r = await optimise('huge.jpg', header('jpeg'), c, { allowWebp: false });
+    expect(r.resized).toBe(true);
+    expect(r.newDims).toEqual([2000, 1500]);
+    expect(r.copied).toBeFalsy();
   });
 
   it('skips unsupported files', async () => {
@@ -180,8 +203,11 @@ describe('optimise', () => {
   it('precise fit: picks the highest quality under the cap, not a coarse ladder step', async () => {
     // mock JPEG size = px * q * 0.005; px = 480000 → size = 2400*q.
     // Cap 199200 = 2400*83, so q83 fits exactly while q84 would not.
+    // Input must be larger than the cap, else copy-through short-circuits before encoding.
+    const big = new Uint8Array(250_000);
+    big[0] = 0xff; big[1] = 0xd8; big[2] = 0xff; // JPEG magic
     const c = new MockCodecs(mkImage(800, 600));
-    const r = await optimise('photo.jpg', header('jpeg'), c, {
+    const r = await optimise('photo.jpg', big, c, {
       allowWebp: false, maxBytes: 199200,
     });
     expect(r.compressed).toBe(true);

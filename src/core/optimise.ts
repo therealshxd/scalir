@@ -20,7 +20,7 @@ export async function optimise(
   const opts: Options = { ...DEFAULT_OPTIONS, ...options };
   const res: OptimiseResult = {
     name, outName: '', status: 'ok', action: '', resized: false, compressed: false,
-    converted: false, origDims: [0, 0], newDims: [0, 0], origBytes: bytes.length,
+    converted: false, copied: false, origDims: [0, 0], newDims: [0, 0], origBytes: bytes.length,
     newBytes: 0, outType: '', message: '',
   };
 
@@ -60,6 +60,19 @@ export async function optimise(
     : (inputFmt === 'heic' ? 'jpeg' : inputFmt);
   const inputAsFmt: Fmt | null = inputFmt === 'heic' ? null : inputFmt;
   if (baseFmt !== inputAsFmt) res.converted = true;
+
+  // Copy-through: already within both caps and not converting → emit the original bytes
+  // unchanged rather than re-encoding (which can needlessly enlarge or rewrite a fine file).
+  if (!res.resized && !res.converted && bytes.length <= opts.maxBytes) {
+    res.copied = true;
+    res.outBytes = bytes;                                  // original bytes, untouched
+    res.newBytes = bytes.length;
+    res.outName = makeOutName(name, opts.prefix, null);    // keep original name + extension
+    res.outType = mimeOf(baseFmt);                         // == input mime (not converted)
+    res.action = `copied · already under ${Math.round(opts.maxBytes / 1024)}KB`;
+    return res;
+  }
+
   const ceil = QUALITY_LADDER[0];
 
   // Rule 2: encode at top quality, then shrink to fit if needed.

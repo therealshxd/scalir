@@ -47,6 +47,7 @@ export interface OptimiseResult {
   resized: boolean;
   compressed: boolean;
   converted: boolean;
+  copied?: boolean; // emitted the original bytes unchanged (already within both caps)
   origDims: [number, number];
   newDims: [number, number];
   origBytes: number;
