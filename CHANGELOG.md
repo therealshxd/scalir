@@ -7,10 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-28
+
 ### Added
+- **Parallel processing** — batches now run across a pool of Web Workers
+  (one per core, balanced: `hardwareConcurrency − 1`, capped at 6) instead of one image at
+  a time, dramatically faster on large batches. Results still render in original order.
+- **Cancel** button to stop a run mid-batch; already-optimised images are kept.
 - Public **Roadmap** page (`#/roadmap`) on the site and a `ROADMAP.md` at the repo root,
   outlining planned versions (parallel processing, AVIF + more formats, web-design
   workflow features) and exploratory ideas (PDF compression).
+
+### Fixed
+- Images already under the size cap **and** within the max-dimension are now **copied
+  through unchanged** instead of re-encoded — re-encoding at top quality could needlessly
+  enlarge or rewrite an already-compliant file. They still appear in the batch output
+  (ZIP / save-to-folder) alongside the optimised images.
 
 ## [1.0.3] - 2026-06-28
 
@@ -61,7 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web Worker processing, ZIP / save-to-folder output, EXIF orientation handling.
 - Desktop builds (Tauri 2) for Windows and Linux; Docker images for self-hosting.
 
-[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/therealshxd/scalir/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/therealshxd/scalir/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/therealshxd/scalir/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/therealshxd/scalir/compare/v1.0.0...v1.0.1

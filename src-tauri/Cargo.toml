@@ -1,6 +1,6 @@
 [package]
 name = "scalir"
-version = "1.0.3"
+version = "1.1.0"
 description = "Scalir — free, private, bulk image optimiser"
 authors = ["Shad"]
 license = "MIT"
