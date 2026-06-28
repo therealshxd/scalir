@@ -3,7 +3,7 @@
   import { SUPPORTED_EXT, extOf } from '../core/rules';
   import type { Options, OptimiseResult, OutputFormat } from '../core/types';
   import { PRESETS, type Preset } from '../core/presets';
-  import type { WorkerRequest, WorkerResponse } from './optimise.worker';
+  import { WorkerPool, defaultPoolSize } from './workerPool';
 
   type Queued = { name: string; bytes: Uint8Array; size: number };
   type Row = OptimiseResult;
@@ -29,11 +29,17 @@
   // Custom edits override a preset — drop the highlight so it reads as "custom".
   const clearPreset = () => { activePreset = null; };
   let queue = $state<Queued[]>([]);
-  let rows = $state<Row[]>([]);
+  // Results are index-aligned to `queue` so out-of-order completions (the pool runs
+  // images in parallel) still render in original order; `rows` is the completed subset.
+  let results = $state<(Row | undefined)[]>([]);
+  let rows = $derived(results.filter((r): r is Row => !!r));
   let processing = $state(false);
-  let done = $state(0);
+  let done = $derived(rows.length);
   let notice = $state('');
   let dragOver = $state(false);
+
+  const poolSize = defaultPoolSize();
+  let activePool: WorkerPool | null = null;
 
   const isImage = (name: string) => SUPPORTED_EXT.includes(extOf(name));
   const kb = (n: number) => (n / 1024).toFixed(1) + ' KB';
@@ -79,58 +85,36 @@
       addFiles(files);
     } catch { /* cancelled */ }
   }
-  function reset() { queue = []; rows = []; done = 0; clearNotice(); }
+  function reset() { queue = []; results = []; clearNotice(); }
 
-  // The engine runs in a Web Worker so the heavy WASM decode/encode stays off
-  // the main thread. Awaiting each worker message is a real macrotask, so the
-  // browser paints each row before the next image starts — no freeze, no dump.
-  let worker: Worker | null = null;
-  let jobId = 0;
-  function getWorker(): Worker {
-    worker ??= new Worker(new URL('./optimise.worker.ts', import.meta.url), { type: 'module' });
-    return worker;
-  }
-
-  function optimiseInWorker(item: Queued, o: Partial<Options>): Promise<Row> {
-    const w = getWorker();
-    const id = ++jobId;
-    return new Promise<Row>((resolve) => {
-      const cleanup = () => {
-        w.removeEventListener('message', onMessage);
-        w.removeEventListener('error', onError);
-      };
-      const onMessage = (e: MessageEvent<WorkerResponse>) => {
-        if (e.data.id !== id) return;
-        cleanup();
-        resolve(e.data.result);
-      };
-      const onError = (e: ErrorEvent) => {
-        cleanup();
-        resolve({ name: item.name, outName: '', status: 'error', action: '', resized: false,
-          compressed: false, converted: false, origDims: [0, 0], newDims: [0, 0],
-          origBytes: item.size, newBytes: 0, outType: '', message: e.message || 'worker error' });
-      };
-      w.addEventListener('message', onMessage);
-      w.addEventListener('error', onError);
-      // Input bytes are structured-cloned (not transferred) so the queue stays
-      // intact and the batch can be re-run without detached buffers.
-      w.postMessage({ id, name: item.name, bytes: item.bytes, opts: o } satisfies WorkerRequest);
-    });
-  }
-
+  // The engine runs in a pool of Web Workers so the heavy WASM decode/encode stays off
+  // the main thread and several images process in parallel across CPU cores. Each result
+  // is placed at its original queue index so the displayed order never depends on which
+  // worker finishes first. Input bytes are structured-cloned (not transferred) so the
+  // queue stays intact and a batch can be re-run.
   async function run() {
     if (!queue.length || processing) return;
-    processing = true; rows = []; done = 0; clearNotice();
+    processing = true; results = new Array(queue.length); clearNotice();
     const o: Partial<Options> = {
       maxDim: opts.maxDim, maxBytes: Math.round(opts.maxMB * 1024 * 1024),
       prefix: opts.prefix, allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor,
       outputFormat: opts.outputFormat,
     };
-    for (const item of queue) {
-      const r = await optimiseInWorker(item, o);
-      rows = [...rows, r]; done += 1;
-    }
+    const pool = new WorkerPool(poolSize);
+    activePool = pool;
+    await Promise.all(queue.map(async (item, i) => {
+      const r = await pool.submit({ name: item.name, bytes: item.bytes, opts: o });
+      if (r) { const next = results.slice(); next[i] = r; results = next; } // null = cancelled
+    }));
+    pool.terminate();
+    activePool = null;
     processing = false;
+  }
+
+  function cancel() {
+    if (!processing) return;
+    activePool?.terminate(); // settles outstanding jobs with null so run() unblocks
+    notice = `Cancelled — optimised ${done} of ${queue.length}.`;
   }
 
   function download(r: Row) {
@@ -264,6 +248,7 @@
     <button class="btn primary" disabled={!queue.length || processing} onclick={run}>
       {processing ? `Optimising ${done}/${queue.length}…` : `Optimise ${queue.length || ''} image${queue.length === 1 ? '' : 's'}`}
     </button>
+    {#if processing}<button class="btn ghost" onclick={cancel}>Cancel</button>{/if}
     {#if queue.length && !processing}<button class="btn ghost" onclick={reset}>Clear</button>{/if}
     {#if outputs > 0 && !processing}
       <button class="btn" onclick={downloadZip}>Download all (ZIP)</button>
@@ -271,7 +256,10 @@
     {/if}
   </div>
 
-  {#if processing}<div class="bar"><div style="width:{(done / queue.length) * 100}%"></div></div>{/if}
+  {#if processing}
+    <div class="bar"><div style="width:{(done / queue.length) * 100}%"></div></div>
+    <p class="muted small">Optimising {done}/{queue.length} across {poolSize} core{poolSize === 1 ? '' : 's'} — fully on your device.</p>
+  {/if}
 
   {#if rows.length}
     <div class="panel">
