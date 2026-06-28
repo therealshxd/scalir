@@ -3,12 +3,16 @@
   import Home from './lib/Home.svelte';
   import SelfHosting from './lib/SelfHosting.svelte';
   import Download from './lib/Download.svelte';
+  import Roadmap from './lib/Roadmap.svelte';
 
   const base = import.meta.env.BASE_URL;
 
-  function parse(): 'home' | 'self-hosting' | 'download' {
+  function parse(): 'home' | 'self-hosting' | 'download' | 'roadmap' {
     const h = (location.hash || '').replace(/^#\/?/, '');
-    return h === 'self-hosting' ? 'self-hosting' : h === 'download' ? 'download' : 'home';
+    return h === 'self-hosting' ? 'self-hosting'
+      : h === 'download' ? 'download'
+      : h === 'roadmap' ? 'roadmap'
+      : 'home';
   }
   let route = $state(parse());
 
@@ -30,6 +34,7 @@
     <a class="brand" href="#/"><img src={base + 'favicon-256.png'} alt="" /> Scalir</a>
     <div class="links">
       <a href="#/" onclick={gotoTool}>Try Scalir</a>
+      <a href="#/roadmap">Roadmap</a>
       <a href="#/self-hosting">Self-hosting</a>
       <a href="#/download">Download</a>
     </div>
@@ -40,6 +45,8 @@
   <SelfHosting />
 {:else if route === 'download'}
   <Download />
+{:else if route === 'roadmap'}
+  <Roadmap />
 {:else}
   <Home />
 {/if}

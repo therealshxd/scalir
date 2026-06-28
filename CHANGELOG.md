@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Public **Roadmap** page (`#/roadmap`) on the site and a `ROADMAP.md` at the repo root,
+  outlining planned versions (parallel processing, AVIF + more formats, web-design
+  workflow features) and exploratory ideas (PDF compression).
+
 ## [1.0.3] - 2026-06-28
 
 ### Added
