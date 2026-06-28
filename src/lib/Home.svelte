@@ -3,6 +3,7 @@
   const base = import.meta.env.BASE_URL;
   const EMAIL = 'hello@shad.digital';
   const REPO = 'https://github.com/therealshxd/scalir';
+  const DONATE = 'https://www.paypal.com/ncp/payment/5ZZUTJ98X9E78';
   function scrollTo(id: string) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
 </script>
 
@@ -96,7 +97,7 @@
       that should be free, not restricted to accounts and fees. I believe in the
       <strong>free and open-source web</strong>. If you do too, help a brother out with hosting costs.
     </p>
-    <div class="sec-cta"><button class="cta disabled" disabled>Donations Coming Soon</button></div>
+    <div class="sec-cta"><a class="cta" href={DONATE} target="_blank" rel="noreferrer">Donate via PayPal</a></div>
   </section>
 
   <!-- Section 7: bugs -->

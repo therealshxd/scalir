@@ -40,7 +40,7 @@ body:
     attributes:
       label: How are you running Scalir?
       options:
-        - Hosted site (scalir.shad.digital)
+        - Hosted site (scalir.org)
         - Self-hosted (Docker / deployment panel)
         - Local dev (npm run dev)
         - Desktop app

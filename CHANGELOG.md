@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.2] - In development
+## [1.0.3] - 2026-06-28
+
+### Added
+- Donation link (PayPal) on the landing page, replacing the "Donations Coming Soon"
+  placeholder; opens in a new tab.
+
+### Changed
+- Production domain updated to **scalir.org** across the app UI, Docker Compose, and docs.
+
+## [1.0.2] - 2026-06-28
 
 ### Changed
 - Refreshed dependencies to latest in-range versions (Vite, Svelte, svelte-check,
@@ -47,7 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web Worker processing, ZIP / save-to-folder output, EXIF orientation handling.
 - Desktop builds (Tauri 2) for Windows and Linux; Docker images for self-hosting.
 
-[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/therealshxd/scalir/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/therealshxd/scalir/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/therealshxd/scalir/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/therealshxd/scalir/releases/tag/v1.0.0

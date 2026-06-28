@@ -45,7 +45,7 @@ Scalir uses two long-lived branches:
 feature/* ──▶ dev ──▶ main (live)
 ```
 
-- **`main`** — production. Deployed to scalir.shad.digital. Never commit directly.
+- **`main`** — production. Deployed to scalir.org. Never commit directly.
 - **`dev`** — integration branch where work lands and is tested before release.
 - **`feature/*`** (or `fix/*`, `chore/*`) — short-lived branches off `dev`; open a PR back into `dev`.
 
@@ -80,7 +80,7 @@ Do not tag from `dev`; only `main` releases get tags.
 ### Environments (maintainer notes)
 
 - **Production** — the existing Dokploy app tracks `main` (`Dockerfile.landing`, domain
-  scalir.shad.digital).
+  scalir.org).
 - **Branch protection** — recommended: protect `main` so changes require a PR with green
   CI (GitHub → Settings → Branches).
 

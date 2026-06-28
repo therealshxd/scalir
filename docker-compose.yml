@@ -6,7 +6,7 @@ services:
       - "8080:80"
     restart: unless-stopped
 
-  # Full landing page + embedded tool (deployed to scalir.shad.digital).
+  # Full landing page + embedded tool (deployed to scalir.org).
   # Build: npm run build -> dist/
   scalir-landing:
     build:
