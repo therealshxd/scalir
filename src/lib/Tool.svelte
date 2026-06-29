@@ -162,7 +162,7 @@
       <label class="btn">Choose files<input type="file" accept="image/*" multiple onchange={onInput} hidden /></label>
       {#if hasFS}<button class="btn ghost" onclick={pickFolder}>Choose folder…</button>{/if}
     </div>
-    <p class="muted small">JPG, PNG, WebP · processed on your device, never uploaded</p>
+    <p class="muted small">JPG, PNG, WebP, HEIC · processed on your device, never uploaded</p>
   </div>
 
   {#if notice}<p class="notice">{notice}</p>{/if}

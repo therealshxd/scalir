@@ -33,17 +33,19 @@
 
     <!-- v1.1 -->
     <div class="card">
-      <h3>v1.1 — Faster bulk <span class="badge next">Next</span></h3>
+      <h3>v1.1 — Faster bulk <span class="badge shipped">Shipped</span></h3>
       <ul>
-        <li><strong>Parallel processing</strong> — use all your CPU cores instead of one, so
+        <li><strong>Parallel processing</strong> — uses all your CPU cores instead of one, so
           large batches finish dramatically faster.</li>
-        <li><strong>Cancel a run</strong> mid-batch.</li>
+        <li><strong>Cancel a run</strong> mid-batch (already-optimised images are kept).</li>
+        <li><strong>Copy-through</strong> — images already within your limits are copied
+          untouched instead of being needlessly re-encoded.</li>
       </ul>
     </div>
 
     <!-- v1.2 -->
     <div class="card">
-      <h3>v1.2 — More formats <span class="badge planned">Planned</span></h3>
+      <h3>v1.2 — More formats <span class="badge next">Next</span></h3>
       <ul>
         <li><strong>AVIF in and out</strong> — the modern web format, often noticeably
           smaller than WebP.</li>

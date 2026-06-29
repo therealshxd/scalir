@@ -23,13 +23,15 @@ You can also read this on the site: **[scalir.org/#/roadmap](https://scalir.org/
 
 ---
 
-## 🔜 v1.1 — Faster bulk
+## ✅ v1.1 — Faster bulk *(shipped)*
 
-- **Parallel processing** — use all your CPU cores instead of one, so large batches
+- **Parallel processing** — uses all your CPU cores instead of one, so large batches
   finish dramatically faster.
-- **Cancel a run** mid-batch.
+- **Cancel a run** mid-batch (already-optimised images are kept).
+- **Copy-through** — images already within your limits are copied untouched instead of
+  being needlessly re-encoded.
 
-## 📋 v1.2 — More formats
+## 🔜 v1.2 — More formats
 
 - **AVIF in and out** — the modern web format, often noticeably smaller than WebP.
 - **GIF, TIFF and BMP input** — bring in legacy and print-handoff files and re-export

@@ -9,9 +9,9 @@
 
 <!-- Hero -->
 <header class="hero">
-  <img src={base + 'pwa-512.png'} alt="Scalir logo" />
-  <h1><span class="grad">Scalir</span> — Free Bulk Image Optimisation Tool</h1>
-  <p>Optimise your images for web upload for FREE. Self-host or run on your local machine.</p>
+  <img src={base + 'pwa-512.png'} alt="Scalir — free bulk optimiser" />
+  <h1><span class="grad">Scalir</span> — Free Bulk Image Optimiser for Faster Websites</h1>
+  <p>Compress, resize and convert images in bulk — right in your browser. No uploads, no sign-up, completely free. Self-host it or run it on your machine.</p>
   <div class="ctas">
     <button class="cta" onclick={() => scrollTo('tool')}>Try Scalir</button>
     <button class="cta ghost" onclick={() => scrollTo('about')}>Read more</button>
@@ -21,7 +21,7 @@
     <li class="step">
       <span class="step-num">1</span>
       <h3>Add your images</h3>
-      <p>Drop in the files you want to compress, or choose a whole folder.</p>
+      <p>Drop in the images you want to compress, or choose a whole folder — JPG, PNG, WebP or HEIC.</p>
     </li>
     <li class="step">
       <span class="step-num">2</span>
@@ -31,7 +31,7 @@
     <li class="step">
       <span class="step-num">3</span>
       <h3>Optimise</h3>
-      <p>Hit Optimise images — everything runs on your device, nothing is uploaded.</p>
+      <p>Hit Optimise — everything runs locally on your device across all your CPU cores. Nothing is uploaded.</p>
     </li>
     <li class="step">
       <span class="step-num">4</span>
@@ -68,10 +68,11 @@
   <!-- Section 4: self-hosting -->
   <section class="section">
     <h2 class="sec-title">Host it yourself</h2>
-    <p class="sec-sub">Bulk optimisation without the overheads</p>
+    <p class="sec-sub">Private, self-hosted bulk image optimisation</p>
     <p class="sec-desc">
-      Scalir is completely free to use with no image limits. Self-hosting is available if you want to
-      run it internally, behind a firewall, or as part of your own tooling — with no external dependencies.
+      Scalir is completely free with no image limits. Self-host it with Docker in minutes to run bulk
+      image compression internally, behind your firewall, or as part of your own pipeline — no external
+      dependencies and no data ever leaving your network.
     </p>
     <div class="sec-cta"><a class="cta" href="#/self-hosting">Deploy with Docker</a></div>
   </section>
@@ -79,10 +80,11 @@
   <!-- Section 5: local -->
   <section class="section">
     <h2 class="sec-title">Local Installation</h2>
-    <p class="sec-sub">Install and run on your local machine</p>
+    <p class="sec-sub">Fast, offline image optimisation on your machine</p>
     <p class="sec-desc">
-      Prefer to run things locally? You can do this through a Docker installation on your local machine,
-      or use our installer. This tool was built as a local tool first, for speed!
+      Prefer to keep everything local? Install the desktop app for Windows or Linux, or run it with
+      Docker on your own machine. Scalir was built as a local-first tool for speed — optimise images
+      offline, with no browser tab required.
     </p>
     <div class="sec-cta"><a class="cta" href="#/download">Setup Locally</a></div>
   </section>
