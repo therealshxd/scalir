@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-06-29
+
+### Added
+- **Features** page (`#/features`) listing supported formats and the technology stack
+  (jSquash/MozJPEG/libwebp/libpng, libheif, Lanczos3, Web Workers, PWA, Tauri).
+
+### Changed
+- Roadmap (page + `ROADMAP.md`) now reflects **v1.1 as shipped** (parallel processing,
+  Cancel, copy-through) and promotes the formats milestone to next.
+- Refreshed landing-page marketing copy and added SEO metadata (description, keywords,
+  Open Graph, Twitter card, canonical URL). Personal sections left unchanged.
+
 ## [1.1.0] - 2026-06-28
 
 ### Added
@@ -73,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web Worker processing, ZIP / save-to-folder output, EXIF orientation handling.
 - Desktop builds (Tauri 2) for Windows and Linux; Docker images for self-hosting.
 
-[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/therealshxd/scalir/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/therealshxd/scalir/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/therealshxd/scalir/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/therealshxd/scalir/compare/v1.0.1...v1.0.2
