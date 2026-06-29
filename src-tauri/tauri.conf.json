@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Scalir",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "identifier": "digital.shad.scalir",
   "build": {
     "frontendDist": "../dist-app",
@@ -27,6 +27,7 @@
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
     "icon": [
       "icons/32x32.png",
@@ -37,6 +38,14 @@
     ],
     "android": {
       "debugApplicationIdSuffix": ".debug"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERGNUE2MDlBQzY3OThFRTAKUldUZ2pubkdtbUJhM3lBRDRtdzBxdDJCdzhMbjVaTDFkTmhPSkhiQzFVR3UrSzVRa3FSa1JaYlAK",
+      "endpoints": [
+        "https://github.com/therealshxd/scalir/releases/latest/download/latest.json"
+      ]
     }
   }
 }

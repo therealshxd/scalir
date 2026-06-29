@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-06-29
+
+### Added
+- **Desktop auto-updater.** The Windows and Linux desktop apps now check GitHub Releases on
+  launch and show an in-app "Install & restart" prompt when a newer version is available
+  (updates are cryptographically signed and verified). Built on the Tauri updater plugin.
+
+### Changed
+- Consolidated the separate Windows/Linux release workflows into a single matrix
+  `release.yml` so each tag publishes one complete, signed updater manifest (`latest.json`).
+
+> **Note:** auto-update only works from builds that already include it. Existing 1.1.2 (and
+> earlier) desktop installs must download 1.1.3 **once** manually; from 1.1.3 onward they
+> update in place. On Linux, only the AppImage self-updates (`.deb`/`.rpm` update via their
+> package manager).
+
 ## [1.1.2] - 2026-06-29
 
 ### Added
@@ -94,7 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web Worker processing, ZIP / save-to-folder output, EXIF orientation handling.
 - Desktop builds (Tauri 2) for Windows and Linux; Docker images for self-hosting.
 
-[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.1.3...HEAD
+[1.1.3]: https://github.com/therealshxd/scalir/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/therealshxd/scalir/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/therealshxd/scalir/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/therealshxd/scalir/compare/v1.0.3...v1.1.0

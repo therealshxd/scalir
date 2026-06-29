@@ -77,6 +77,12 @@ git push origin vX.Y.Z
 
 Do not tag from `dev`; only `main` releases get tags.
 
+The tag runs `.github/workflows/release.yml` (a single matrix over Windows + Linux), which
+builds the installers **and signed auto-updater artifacts**, then publishes one draft GitHub
+Release with a combined `latest.json`. This relies on two repo secrets —
+`TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` — whose private key is
+held by the maintainer (never committed). Review the draft release, then publish it.
+
 ### Environments (maintainer notes)
 
 - **Production** — the existing Dokploy app tracks `main` (`Dockerfile.landing`, domain
