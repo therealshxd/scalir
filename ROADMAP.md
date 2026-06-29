@@ -9,6 +9,9 @@ format you need? [Open an issue](https://github.com/therealshxd/scalir/issues/ne
 
 You can also read this on the site: **[scalir.org/#/roadmap](https://scalir.org/#/roadmap)**.
 
+Want to try things before they ship? Preview the latest **work-in-progress build** at
+**[scalir.shad.digital](https://scalir.shad.digital)**.
+
 **Status key:** ✅ Shipped · 🔜 Next · 📋 Planned · 🔬 Exploring
 
 ---

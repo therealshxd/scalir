@@ -8,6 +8,17 @@ Scalir is a free, private, **in-browser** bulk image optimiser. Point it at imag
 
 Everything runs **on your device** — no uploads, no server, no AI, no tracking. Built with Svelte + Vite and the [jSquash](https://github.com/jamsinclair/jSquash) WebAssembly codecs (MozJPEG, libwebp, libpng) derived from Google's Squoosh.
 
+## Live previews
+
+Both long-lived branches have a live deployment:
+
+| Branch | Environment | URL |
+|---|---|---|
+| `main` | **Production** (stable release) | https://scalir.org |
+| `dev` | **Preview / WIP** (latest work in progress, may be unstable) | https://scalir.shad.digital |
+
+Use the preview to try features before they ship in a release.
+
 ## Quick start
 
 ```bash

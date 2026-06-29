@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-06-29
+
+### Added
+- Roadmap page (and `ROADMAP.md`) now link to the live **work-in-progress preview build**
+  at scalir.shad.digital, so people can try features before they ship.
+- README **"Live previews"** section documenting the two-branch deployment setup
+  (`main` → scalir.org, `dev` → scalir.shad.digital) and a matching maintainer note in
+  CONTRIBUTING.md.
+
 ## [1.1.1] - 2026-06-29
 
 ### Added
@@ -85,7 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web Worker processing, ZIP / save-to-folder output, EXIF orientation handling.
 - Desktop builds (Tauri 2) for Windows and Linux; Docker images for self-hosting.
 
-[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/therealshxd/scalir/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/therealshxd/scalir/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/therealshxd/scalir/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/therealshxd/scalir/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/therealshxd/scalir/compare/v1.0.2...v1.0.3

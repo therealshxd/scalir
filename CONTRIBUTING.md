@@ -81,6 +81,9 @@ Do not tag from `dev`; only `main` releases get tags.
 
 - **Production** — the existing Dokploy app tracks `main` (`Dockerfile.landing`, domain
   scalir.org).
+- **Staging / preview** — a second Dokploy app tracks `dev` (`Dockerfile.landing`, domain
+  scalir.shad.digital). Pushing to `dev` auto-deploys a live WIP preview to test before
+  promoting to `main`.
 - **Branch protection** — recommended: protect `main` so changes require a PR with green
   CI (GitHub → Settings → Branches).
 

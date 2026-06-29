@@ -2,6 +2,7 @@
   const REPO = 'https://github.com/therealshxd/scalir';
   const ISSUES = REPO + '/issues/new/choose';
   const ROADMAP_MD = REPO + '/blob/main/ROADMAP.md';
+  const PREVIEW = 'https://scalir.shad.digital';
 </script>
 
 <div class="wrap doc">
@@ -17,6 +18,9 @@
       This is a living plan — order and scope can shift based on feedback. Got an idea or a
       format you need? <a href={ISSUES} target="_blank" rel="noreferrer">Suggest a feature</a>.
       You can also read this <a href={ROADMAP_MD} target="_blank" rel="noreferrer">on GitHub</a>.
+      Want to try things before they ship? Preview the latest
+      <a href={PREVIEW} target="_blank" rel="noreferrer">work-in-progress build</a> at
+      scalir.shad.digital.
     </div>
 
     <!-- Shipped -->
