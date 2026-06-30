@@ -1,0 +1,63 @@
+# Dependabot keeps dependencies patched across all three ecosystems in this repo.
+# Version-update PRs target `dev` so they flow through staging before `main`
+# (security-alert PRs always target the default branch regardless of this).
+# Minor + patch bumps are grouped into one PR per ecosystem to reduce noise;
+# major bumps come as separate PRs since they usually need manual review.
+version: 2
+updates:
+  # Frontend app (Svelte/Vite + jSquash codecs)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    target-branch: dev
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - javascript
+    commit-message:
+      prefix: chore(deps)
+    groups:
+      npm-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  # Tauri desktop backend (Rust)
+  - package-ecosystem: cargo
+    directory: /src-tauri
+    schedule:
+      interval: weekly
+      day: monday
+    target-branch: dev
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - rust
+    commit-message:
+      prefix: chore(deps)
+    groups:
+      cargo-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  # CI / release workflows
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    target-branch: dev
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci
+    commit-message:
+      prefix: chore(ci)
+    groups:
+      actions-all:
+        update-types:
+          - minor
+          - patch
