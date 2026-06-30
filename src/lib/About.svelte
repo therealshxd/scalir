@@ -80,6 +80,6 @@
   .card p:last-of-type { margin-bottom: 0; }
   .card p strong { color: var(--text); }
   .muted-sub { color: var(--accent) !important; font-weight: 600; margin-bottom: 10px !important; }
-  .card a { color: var(--accent); }
+  .card p a { color: var(--accent); }
   .sec-cta { display: flex; gap: 12px; flex-wrap: wrap; }
 </style>
