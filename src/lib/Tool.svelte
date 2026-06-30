@@ -162,7 +162,7 @@
       <label class="btn">Choose files<input type="file" accept="image/*" multiple onchange={onInput} hidden /></label>
       {#if hasFS}<button class="btn ghost" onclick={pickFolder}>Choose folder…</button>{/if}
     </div>
-    <p class="muted small">JPG, PNG, WebP, HEIC · processed on your device, never uploaded</p>
+    <p class="muted small">JPG, PNG, WebP, AVIF, HEIC, GIF, TIFF, BMP · processed on your device, never uploaded</p>
   </div>
 
   {#if notice}<p class="notice">{notice}</p>{/if}
@@ -200,8 +200,9 @@
           <option value="jpeg">JPEG</option>
           <option value="png">PNG</option>
           <option value="webp">WebP</option>
+          <option value="avif">AVIF</option>
         </select>
-        <span class="hint">Auto keeps the original, switching to WebP only when it helps. Or force one format.</span>
+        <span class="hint">Auto keeps the original, switching to WebP only when it helps. Or force one format (AVIF is the smallest, but slower to encode).</span>
       </label>
       <label>Quality floor
         <input type="number" bind:value={opts.qualityFloor} oninput={clearPreset} min="1" max="100" />
