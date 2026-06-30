@@ -5,15 +5,17 @@
   import Download from './lib/Download.svelte';
   import Roadmap from './lib/Roadmap.svelte';
   import Features from './lib/Features.svelte';
+  import About from './lib/About.svelte';
 
   const base = import.meta.env.BASE_URL;
 
-  function parse(): 'home' | 'self-hosting' | 'download' | 'roadmap' | 'features' {
+  function parse(): 'home' | 'self-hosting' | 'download' | 'roadmap' | 'features' | 'about' {
     const h = (location.hash || '').replace(/^#\/?/, '');
     return h === 'self-hosting' ? 'self-hosting'
       : h === 'download' ? 'download'
       : h === 'roadmap' ? 'roadmap'
       : h === 'features' ? 'features'
+      : h === 'about' ? 'about'
       : 'home';
   }
   let route = $state(parse());
@@ -40,6 +42,7 @@
       <a href="#/roadmap">Roadmap</a>
       <a href="#/self-hosting">Self-hosting</a>
       <a href="#/download">Download</a>
+      <a href="#/about">About</a>
     </div>
   </div>
 </nav>
@@ -52,6 +55,8 @@
   <Roadmap />
 {:else if route === 'features'}
   <Features />
+{:else if route === 'about'}
+  <About />
 {:else}
   <Home />
 {/if}

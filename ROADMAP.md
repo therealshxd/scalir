@@ -20,7 +20,7 @@ Want to try things before they ship? Preview the latest **work-in-progress build
 
 - Bulk image optimisation entirely in the browser (no uploads, ever).
 - Resize by longest side + compress under a target file size.
-- Input: **JPG, PNG, WebP, HEIC/HEIF** · Output: **JPG, PNG, WebP** (Auto or forced).
+- Input: **JPG, PNG, WebP, AVIF, HEIC/HEIF, GIF, TIFF, BMP** · Output: **JPG, PNG, WebP, AVIF** (Auto or forced).
 - One-click presets, ZIP download, save-straight-to-folder, PWA / offline use.
 - Self-hosting via Docker, and desktop builds (Windows / Linux).
 
@@ -34,13 +34,13 @@ Want to try things before they ship? Preview the latest **work-in-progress build
 - **Copy-through** — images already within your limits are copied untouched instead of
   being needlessly re-encoded.
 
-## 🔜 v1.2 — More formats
+## ✅ v1.2 — More formats *(shipped)*
 
 - **AVIF in and out** — the modern web format, often noticeably smaller than WebP.
 - **GIF, TIFF and BMP input** — bring in legacy and print-handoff files and re-export
   them as optimised web formats. (Animated GIFs use the first frame.)
 
-## 📋 v1.3 — Web-design workflow
+## 🔜 v1.3 — Web-design workflow
 
 - **Flexible resize modes** — exact width, exact height, percentage scale, or common
   responsive presets (not just longest-side).

@@ -21,6 +21,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@jsquash/avif": "^2.1.1",
     "@jsquash/jpeg": "^1.6.0",
     "@jsquash/png": "^3.1.1",
     "@jsquash/resize": "^2.1.1",
@@ -28,7 +29,8 @@
     "@tauri-apps/plugin-process": "^2.3.1",
     "@tauri-apps/plugin-updater": "^2.10.1",
     "jszip": "^3.10.1",
-    "libheif-js": "^1.19.8"
+    "libheif-js": "^1.19.8",
+    "utif2": "^4.1.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.1.2",

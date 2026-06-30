@@ -27,7 +27,11 @@
             <li>JPG / JPEG</li>
             <li>PNG</li>
             <li>WebP</li>
+            <li>AVIF</li>
             <li>HEIC / HEIF</li>
+            <li>GIF</li>
+            <li>TIFF</li>
+            <li>BMP</li>
           </ul>
         </div>
         <div class="fmt">
@@ -36,13 +40,14 @@
             <li>JPEG</li>
             <li>PNG</li>
             <li>WebP</li>
+            <li>AVIF</li>
             <li class="muted-chip">Auto or forced</li>
           </ul>
         </div>
       </div>
       <p class="fine">
-        HEIC/HEIF (iPhone photos) are decoded and saved as JPEG or WebP. <strong>AVIF</strong>
-        plus <strong>GIF, TIFF and BMP</strong> input are <a href="#/roadmap">coming next</a>.
+        HEIC/HEIF (iPhone photos), GIF, TIFF and BMP are decoded and saved as a web-ready
+        format (JPEG, PNG, WebP or AVIF). Animated GIFs use the first frame.
       </p>
     </div>
 
@@ -57,7 +62,8 @@
         <li><strong>Target-size compression</strong> — a quality binary-search lands the
           best-looking file that still fits under your size limit.</li>
         <li><strong>Modern formats</strong> — optionally converts to <strong>WebP</strong> when
-          it meaningfully shrinks the file.</li>
+          it meaningfully shrinks the file, or force <strong>AVIF</strong> for the smallest
+          web-ready output.</li>
         <li><strong>Copy-through</strong> — images already within your limits are copied
           untouched instead of needlessly re-encoded.</li>
         <li><strong>Privacy by default</strong> — runs fully on-device; nothing is uploaded and
@@ -74,8 +80,9 @@
       <ul class="tech">
         <li><strong>Svelte 5 + Vite</strong> — fast, lightweight front end.</li>
         <li><strong>jSquash WebAssembly codecs</strong> — MozJPEG (JPEG), libwebp (WebP),
-          libpng (PNG): the same codecs behind Squoosh, compiled to WASM.</li>
-        <li><strong>libheif</strong> — HEIC/HEIF decoding.</li>
+          libpng (PNG) and libavif (AVIF): the same codecs behind Squoosh, compiled to WASM.</li>
+        <li><strong>libheif</strong> — HEIC/HEIF decoding; <strong>UTIF</strong> — TIFF
+          decoding; GIF &amp; BMP decode natively in the browser.</li>
         <li><strong>Lanczos3 resampling</strong> (<code>@jsquash/resize</code>) — high-quality
           downscaling.</li>
         <li><strong>Web Workers</strong> — heavy encode/decode runs off the main thread, in a
@@ -115,7 +122,7 @@
     border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; margin: 0; }
   .chips li.muted-chip { color: var(--muted); font-weight: 500; }
   .fine { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
-  .fine a, .note a { color: var(--accent); }
+  .note a { color: var(--accent); }
 
   .note { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
     border-radius: 8px; padding: 12px 14px; margin: 0 0 22px; font-size: 14px; color: var(--text); }

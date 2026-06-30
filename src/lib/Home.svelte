@@ -1,36 +1,37 @@
 <script lang="ts">
   import Tool from './Tool.svelte';
   const base = import.meta.env.BASE_URL;
-  const EMAIL = 'hello@shad.digital';
-  const REPO = 'https://github.com/therealshxd/scalir';
-  const DONATE = 'https://www.paypal.com/ncp/payment/5ZZUTJ98X9E78';
   function scrollTo(id: string) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
 </script>
 
 <!-- Hero -->
 <header class="hero">
-  <img src={base + 'pwa-512.png'} alt="Scalir — free bulk optimiser" />
-  <h1><span class="grad">Scalir</span> — Free Bulk Image Optimiser for Faster Websites</h1>
-  <p>Compress, resize and convert images in bulk — right in your browser. No uploads, no sign-up, completely free. Self-host it or run it on your machine.</p>
+  <img src={base + 'pwa-512.png'} alt="Scalir" />
+  <h1><span class="grad">Free Bulk Image Compressor</span> — Scalir</h1>
+  <p>
+    Compress, resize and convert images in bulk — right in your browser. JPG, PNG, WebP, AVIF
+    and more. No uploads, no sign-up, completely free. Private by design: every image is
+    processed on your own device.
+  </p>
   <div class="ctas">
-    <button class="cta" onclick={() => scrollTo('tool')}>Try Scalir</button>
-    <button class="cta ghost" onclick={() => scrollTo('about')}>Read more</button>
+    <button class="cta" onclick={() => scrollTo('tool')}>Compress images now</button>
+    <a class="cta ghost" href="#/features">See features</a>
   </div>
 
   <ol class="steps">
     <li class="step">
       <span class="step-num">1</span>
       <h3>Add your images</h3>
-      <p>Drop in the images you want to compress, or choose a whole folder — JPG, PNG, WebP or HEIC.</p>
+      <p>Drop in the images you want to compress, or choose a whole folder — JPG, PNG, WebP, AVIF, HEIC, GIF, TIFF or BMP.</p>
     </li>
     <li class="step">
       <span class="step-num">2</span>
       <h3>Pick a preset or tweak</h3>
-      <p>Start from a preset like Tiny or Web optimized, then fine-tune the settings if you need to.</p>
+      <p>Start from a preset like Tiny or Web optimized, then fine-tune size, quality and output format if you need to.</p>
     </li>
     <li class="step">
       <span class="step-num">3</span>
-      <h3>Optimise</h3>
+      <h3>Compress</h3>
       <p>Hit Optimise — everything runs locally on your device across all your CPU cores. Nothing is uploaded.</p>
     </li>
     <li class="step">
@@ -42,30 +43,78 @@
 </header>
 
 <div class="wrap">
-  <!-- Section 2: the tool -->
+  <!-- The tool -->
   <section class="section">
-    <h2 class="sec-title">Optimise your images</h2>
+    <h2 class="sec-title">Compress &amp; resize your images</h2>
     <p class="sec-sub">Resize over 2000px · compress under 1&nbsp;MB · saved with a scaled_ prefix</p>
     <Tool />
   </section>
 
-  <!-- Section 3: why -->
-  <section class="section" id="about">
-    <h2 class="sec-title">Why did you build this?</h2>
-    <p class="sec-sub">I'm tired of paying for tools, so I thought I'd build my own.</p>
-    <p class="sec-desc">
-      I got tired of looking for tools that should be free asking me for account signups or payment
-      to continue, so I built my own. I built this tool for myself and use it every day across client
-      work. I use it to optimise images before uploading to WordPress sites, which reduces server
-      overheads from plugins like Smush and the cost of services like Smush.
-      <br /><br />
-      This works locally, on your own computer. No files are stored or kept on my side — they are just
-      processed by the tool. Once done, you get a zip file with your scaled images. The tool also gives
-      you a good estimate of total space saved per run.
-    </p>
+  <!-- Benefits / why Scalir -->
+  <section class="section">
+    <h2 class="sec-title">A free image optimiser that respects your privacy</h2>
+    <p class="sec-sub">Bulk image compression, resizing and conversion — 100% in your browser</p>
+    <div class="grid">
+      <div class="card">
+        <h3>Bulk image compression</h3>
+        <p>Compress hundreds of images at once. Scalir uses all your CPU cores in parallel, so large batches finish fast — with no per-image limits when you self-host.</p>
+      </div>
+      <div class="card">
+        <h3>Smart resizing</h3>
+        <p>Cap the longest side with high-quality Lanczos3 resampling. Aspect ratio is always kept and images are never cropped or upscaled.</p>
+      </div>
+      <div class="card">
+        <h3>Modern formats — WebP &amp; AVIF</h3>
+        <p>Convert JPG and PNG to WebP or AVIF for the smallest possible web-ready files, or keep your original format. Mix any inputs in one batch.</p>
+      </div>
+      <div class="card">
+        <h3>Private — nothing uploaded</h3>
+        <p>Every image is decoded, resized and compressed on your own device. Nothing is ever uploaded, and EXIF/GPS metadata is stripped on export.</p>
+      </div>
+      <div class="card">
+        <h3>Free &amp; open source</h3>
+        <p>No accounts, no watermarks, no paywall. Scalir is MIT-licensed and self-hostable with Docker for unlimited use behind your firewall.</p>
+      </div>
+      <div class="card">
+        <h3>Works offline</h3>
+        <p>Install Scalir as a PWA or run the desktop app. Once loaded it works fully offline — fast image compression with no browser tab required.</p>
+      </div>
+    </div>
   </section>
 
-  <!-- Section 4: self-hosting -->
+  <!-- Supported formats -->
+  <section class="section">
+    <h2 class="sec-title">Supported formats</h2>
+    <p class="sec-sub">Bring almost anything in; export a clean, web-ready format</p>
+    <div class="formats">
+      <div class="fmt">
+        <span class="fmt-label">Input</span>
+        <ul class="chips">
+          <li>JPG / JPEG</li>
+          <li>PNG</li>
+          <li>WebP</li>
+          <li>AVIF</li>
+          <li>HEIC / HEIF</li>
+          <li>GIF</li>
+          <li>TIFF</li>
+          <li>BMP</li>
+        </ul>
+      </div>
+      <div class="fmt">
+        <span class="fmt-label">Output</span>
+        <ul class="chips">
+          <li>JPEG</li>
+          <li>PNG</li>
+          <li>WebP</li>
+          <li>AVIF</li>
+          <li class="muted-chip">Auto or forced</li>
+        </ul>
+      </div>
+    </div>
+    <p class="fine">Animated GIFs use the first frame. <a href="#/features">See all features &amp; tech →</a></p>
+  </section>
+
+  <!-- Self-hosting -->
   <section class="section">
     <h2 class="sec-title">Host it yourself</h2>
     <p class="sec-sub">Private, self-hosted bulk image optimisation</p>
@@ -77,54 +126,73 @@
     <div class="sec-cta"><a class="cta" href="#/self-hosting">Deploy with Docker</a></div>
   </section>
 
-  <!-- Section 5: local -->
+  <!-- Local -->
   <section class="section">
-    <h2 class="sec-title">Local Installation</h2>
+    <h2 class="sec-title">Local installation</h2>
     <p class="sec-sub">Fast, offline image optimisation on your machine</p>
     <p class="sec-desc">
       Prefer to keep everything local? Install the desktop app for Windows or Linux, or run it with
       Docker on your own machine. Scalir was built as a local-first tool for speed — optimise images
       offline, with no browser tab required.
     </p>
-    <div class="sec-cta"><a class="cta" href="#/download">Setup Locally</a></div>
+    <div class="sec-cta"><a class="cta" href="#/download">Setup locally</a></div>
   </section>
 
-  <!-- Section 6: donate -->
+  <!-- FAQ -->
   <section class="section">
-    <h2 class="sec-title">Donate if you love it!</h2>
-    <p class="sec-sub">I built this for free, and expect nothing in return</p>
-    <p class="sec-desc">
-      However, as you know, things cost money to host. I'd like to maintain this project and expand on
-      it over time based on user feedback — ideally creating a suite of applications for simple tasks
-      that should be free, not restricted to accounts and fees. I believe in the
-      <strong>free and open-source web</strong>. If you do too, help a brother out with hosting costs.
-    </p>
-    <div class="sec-cta"><a class="cta" href={DONATE} target="_blank" rel="noreferrer">Donate via PayPal</a></div>
-  </section>
-
-  <!-- Section 7: bugs -->
-  <section class="section">
-    <h2 class="sec-title">Report bugs and issues</h2>
-    <p class="sec-sub">Tell me if there's something wrong!</p>
-    <p class="sec-desc">
-      This tool was built with the help of Claude AI. It is not an AI tool, nor does it need to be.
-      It's a simple processor for images — does what it says on the tin: compression for the web.
-      If you find any bugs, please report them on the
-      <a href={REPO} target="_blank" rel="noreferrer">GitHub repo</a> or drop me a message at
-      <a href={'mailto:' + EMAIL}>{EMAIL}</a> and I'll review what's going wrong!
-    </p>
-  </section>
-
-  <!-- Section 8: terms -->
-  <section class="section">
-    <h2 class="sec-title">Terms &amp; Conditions</h2>
-    <p class="sec-sub">Simple. Just use the tool, and maybe mention me on Reddit.</p>
-    <p class="sec-desc">
-      I'm not asking for much here. Use the tool; if it's helpful, share it with friends and family,
-      or post it on your social media or Reddit. I don't want to be paid for this — I just want people
-      to stop thinking everything needs to be about money. It's under the
-      <a href={REPO + '/blob/main/LICENSE'} target="_blank" rel="noreferrer">MIT license</a>, so whatever
-      that says, just obey those rules and we're all good, homie.
-    </p>
+    <h2 class="sec-title">Frequently asked questions</h2>
+    <p class="sec-sub">Quick answers about compressing images with Scalir</p>
+    <div class="faq">
+      <div class="qa">
+        <h3>Is Scalir free?</h3>
+        <p>Yes — Scalir is completely free and open source under the MIT license. There are no accounts, no watermarks and no paid tier. Self-host it for unlimited use.</p>
+      </div>
+      <div class="qa">
+        <h3>Are my images uploaded to a server?</h3>
+        <p>No. Every image is compressed, resized and converted entirely in your browser, on your own device. Nothing is ever uploaded, so your images stay completely private.</p>
+      </div>
+      <div class="qa">
+        <h3>What image formats can I compress?</h3>
+        <p>You can bring in JPG, PNG, WebP, AVIF, HEIC/HEIF, GIF, TIFF and BMP, and export to JPEG, PNG, WebP or AVIF — automatically or forced to a format you choose.</p>
+      </div>
+      <div class="qa">
+        <h3>Can I compress images in bulk?</h3>
+        <p>Yes. Scalir is built for bulk image compression — drop in a whole folder and it processes everything in parallel across your CPU cores, then hands back a ZIP or saves to a folder.</p>
+      </div>
+      <div class="qa">
+        <h3>Does it work offline?</h3>
+        <p>Yes. Scalir is an installable PWA (and has a desktop app for Windows and Linux). After the first load it works fully offline.</p>
+      </div>
+      <div class="qa">
+        <h3>Is there a file-size or image limit?</h3>
+        <p>The hosted app has a small soft per-session limit as a gentle nudge. The self-hosted and desktop builds are completely unlimited.</p>
+      </div>
+    </div>
   </section>
 </div>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 14px; }
+  .grid .card { margin: 0; }
+  .grid .card h3 { margin: 0 0 8px; font-size: 17px; }
+  .grid .card p { color: var(--muted); margin: 0; line-height: 1.55; font-size: 14.5px; }
+
+  .formats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0 12px; }
+  .fmt-label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .4px;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips li { background: #0f1218; border: 1px solid var(--line); color: var(--text);
+    border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+  .chips li.muted-chip { color: var(--muted); font-weight: 500; }
+  .fine { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
+  .fine a { color: var(--accent); }
+
+  .faq { display: grid; gap: 14px; margin-top: 14px; }
+  .qa h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; }
+  .qa p { color: var(--muted); margin: 0; line-height: 1.6; max-width: 75ch; }
+
+  .sec-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 820px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid, .formats { grid-template-columns: 1fr; } }
+</style>

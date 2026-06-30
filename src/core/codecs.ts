@@ -22,6 +22,41 @@ async function getLibheif() {
   return _libheif;
 }
 
+// AVIF (@jsquash/avif) is a heavy WASM codec — load it lazily, only when an AVIF
+// file is decoded or AVIF output is selected, so it stays out of the initial bundle.
+let _avif: typeof import('@jsquash/avif') | null = null;
+async function getAvif() {
+  if (!_avif) _avif = await import('@jsquash/avif');
+  return _avif;
+}
+
+// TIFF has no jSquash codec and browsers can't decode it natively — use utif2.
+async function decodeTiff(bytes: Uint8Array): Promise<ImageDataLike> {
+  const UTIF = await import('utif2');
+  const ab = toArrayBuffer(bytes);
+  const ifds = UTIF.decode(ab);
+  if (!ifds?.length) throw new Error('no images found in TIFF file');
+  const ifd = ifds[0];
+  UTIF.decodeImage(ab, ifd);
+  const rgba = UTIF.toRGBA8(ifd); // Uint8Array, RGBA
+  return { data: new Uint8ClampedArray(rgba.buffer, rgba.byteOffset, rgba.byteLength), width: ifd.width, height: ifd.height };
+}
+
+// GIF and BMP have no jSquash codec, but every browser decodes them natively.
+// createImageBitmap + OffscreenCanvas work inside Web Workers and read the first
+// frame of an animated GIF automatically.
+async function decodeNative(bytes: Uint8Array, mime: string): Promise<ImageDataLike> {
+  const blob = new Blob([toArrayBuffer(bytes)], { type: mime });
+  const bmp = await createImageBitmap(blob);
+  const canvas = new OffscreenCanvas(bmp.width, bmp.height);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('OffscreenCanvas 2D context unavailable');
+  ctx.drawImage(bmp, 0, 0);
+  const id = ctx.getImageData(0, 0, bmp.width, bmp.height);
+  bmp.close();
+  return { data: id.data, width: id.width, height: id.height };
+}
+
 async function decodeHeic(bytes: Uint8Array): Promise<ImageDataLike> {
   const libheif = await getLibheif();
   const decoder = new libheif.HeifDecoder();
@@ -42,7 +77,15 @@ async function decodeHeic(bytes: Uint8Array): Promise<ImageDataLike> {
 export const jsquashCodecs: Codecs = {
   async decode(fmt: InputFmt, bytes: Uint8Array): Promise<ImageDataLike> {
     if (fmt === 'heic') return decodeHeic(bytes);
+    if (fmt === 'tiff') return decodeTiff(bytes);
+    if (fmt === 'gif') return decodeNative(bytes, 'image/gif');
+    if (fmt === 'bmp') return decodeNative(bytes, 'image/bmp');
     const ab = toArrayBuffer(bytes);
+    if (fmt === 'avif') {
+      const out = await (await getAvif()).decode(ab);
+      if (!out) throw new Error('AVIF decode failed');
+      return out as ImageDataLike;
+    }
     const img =
       fmt === 'jpeg' ? await decodeJpeg(ab) :
       fmt === 'png' ? await decodePng(ab) :
@@ -55,6 +98,7 @@ export const jsquashCodecs: Codecs = {
     let ab: ArrayBuffer;
     if (fmt === 'jpeg') ab = await encodeJpeg(data, { quality });
     else if (fmt === 'webp') ab = await encodeWebp(data, { quality });
+    else if (fmt === 'avif') ab = await (await getAvif()).encode(data, { quality });
     else ab = await encodePng(data); // PNG is lossless; quality ignored
     return new Uint8Array(ab);
   },

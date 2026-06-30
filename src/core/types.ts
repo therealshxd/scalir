@@ -2,8 +2,8 @@
 // The engine is framework-agnostic and depends only on a Codecs interface,
 // so it can run in the browser (jSquash) or under test (mock codecs).
 
-export type Fmt = 'jpeg' | 'png' | 'webp';
-export type InputFmt = Fmt | 'heic';
+export type Fmt = 'jpeg' | 'png' | 'webp' | 'avif';            // encodable outputs
+export type InputFmt = Fmt | 'heic' | 'gif' | 'tiff' | 'bmp';  // + decode-only inputs
 
 export interface ImageDataLike {
   data: Uint8ClampedArray;
