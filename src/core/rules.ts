@@ -1,6 +1,8 @@
 import type { Fmt, InputFmt, ImageDataLike } from './types';
 
-export const SUPPORTED_EXT = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif'];
+export const SUPPORTED_EXT = [
+  'jpg', 'jpeg', 'png', 'webp', 'avif', 'heic', 'heif', 'gif', 'tif', 'tiff', 'bmp',
+];
 export const QUALITY_LADDER = [95, 90, 85, 80, 75, 70, 65, 60];
 
 export function extOf(name: string): string {
@@ -16,16 +18,34 @@ export function detectFormat(name: string, bytes: Uint8Array): InputFmt | null {
     bytes.length >= 12 &&
     bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50 // "WEBP"
   ) return 'webp';
-  // HEIC/HEIF: ISO Base Media File Format — bytes 4-7 are 'ftyp' box type
+  // GIF: "GIF" (both GIF87a and GIF89a)
+  if (bytes.length >= 3 && bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return 'gif';
+  // BMP: "BM"
+  if (bytes.length >= 2 && bytes[0] === 0x42 && bytes[1] === 0x4d) return 'bmp';
+  // TIFF: little-endian "II*\0" or big-endian "MM\0*"
   if (
-    bytes.length >= 8 &&
+    bytes.length >= 4 &&
+    ((bytes[0] === 0x49 && bytes[1] === 0x49 && bytes[2] === 0x2a && bytes[3] === 0x00) ||
+      (bytes[0] === 0x4d && bytes[1] === 0x4d && bytes[2] === 0x00 && bytes[3] === 0x2a))
+  ) return 'tiff';
+  // ISO Base Media File Format — bytes 4-7 are the 'ftyp' box type. AVIF and HEIC
+  // share this container, so read the major brand (bytes 8-11) to tell them apart.
+  if (
+    bytes.length >= 12 &&
     bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70 // 'ftyp'
-  ) return 'heic';
+  ) {
+    const brand = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]);
+    return brand === 'avif' || brand === 'avis' ? 'avif' : 'heic';
+  }
   const e = extOf(name);
   if (e === 'jpg' || e === 'jpeg') return 'jpeg';
   if (e === 'png') return 'png';
   if (e === 'webp') return 'webp';
+  if (e === 'avif') return 'avif';
   if (e === 'heic' || e === 'heif') return 'heic';
+  if (e === 'gif') return 'gif';
+  if (e === 'tif' || e === 'tiff') return 'tiff';
+  if (e === 'bmp') return 'bmp';
   return null;
 }
 
@@ -78,9 +98,15 @@ export function hasAlpha(img: ImageDataLike): boolean {
 }
 
 export function mimeOf(f: Fmt): string {
-  return f === 'jpeg' ? 'image/jpeg' : f === 'png' ? 'image/png' : 'image/webp';
+  return f === 'jpeg' ? 'image/jpeg'
+    : f === 'png' ? 'image/png'
+    : f === 'avif' ? 'image/avif'
+    : 'image/webp';
 }
 
 export function extForFmt(f: Fmt): string {
-  return f === 'jpeg' ? '.jpg' : f === 'png' ? '.png' : '.webp';
+  return f === 'jpeg' ? '.jpg'
+    : f === 'png' ? '.png'
+    : f === 'avif' ? '.avif'
+    : '.webp';
 }

@@ -9,6 +9,24 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon-32.png', 'apple-touch-icon-180.png'],
+      workbox: {
+        // Precache the app shell and the small codecs (incl. the ~1.2 MB AVIF decoder),
+        // but not the multi-MB AVIF *encoders* — they're only needed when a user forces
+        // AVIF output, so we fetch them on demand and runtime-cache them for offline reuse.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,wasm}'],
+        globIgnores: ['**/avif_enc*.wasm'],
+        runtimeCaching: [
+          {
+            urlPattern: /avif_enc.*\.wasm$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'scalir-avif-encoder',
+              expiration: { maxEntries: 4 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
+      },
       manifest: {
         name: 'Scalir — Bulk Image Optimiser',
         short_name: 'Scalir',

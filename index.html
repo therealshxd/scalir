@@ -6,25 +6,80 @@
     <link rel="icon" type="image/png" href="./favicon-32.png" sizes="32x32" />
     <link rel="apple-touch-icon" href="./apple-touch-icon-180.png" />
     <meta name="theme-color" content="#0f1115" />
-    <meta name="description" content="Compress, resize and convert images in bulk — free, private, and entirely in your browser. No uploads or sign-up. Supports JPG, PNG, WebP and HEIC." />
-    <meta name="keywords" content="bulk image optimiser, image compression, compress images, resize images, webp converter, image optimizer, free image optimiser, private, in-browser" />
+    <meta name="description" content="Free bulk image compressor — compress, resize and convert images online in your browser. JPG, PNG, WebP, AVIF, HEIC, GIF, TIFF, BMP. No uploads, no sign-up, completely private." />
+    <meta name="keywords" content="image compressor, compress images, compress images online, bulk image compressor, free image compressor, resize images, image optimizer, image optimiser, webp converter, avif converter, private image compressor, no upload" />
     <link rel="canonical" href="https://scalir.org/" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Scalir" />
-    <meta property="og:title" content="Scalir — Free Bulk Image Optimiser" />
+    <meta property="og:title" content="Scalir — Free Bulk Image Compressor" />
     <meta property="og:description" content="Compress, resize and convert images in bulk — free, private, and entirely in your browser. No uploads, no sign-up." />
     <meta property="og:url" content="https://scalir.org/" />
     <meta property="og:image" content="https://scalir.org/pwa-512.png" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Scalir — Free Bulk Image Optimiser" />
+    <meta name="twitter:title" content="Scalir — Free Bulk Image Compressor" />
     <meta name="twitter:description" content="Compress, resize and convert images in bulk — free, private, and entirely in your browser. No uploads, no sign-up." />
     <meta name="twitter:image" content="https://scalir.org/pwa-512.png" />
 
-    <title>Scalir — Free Bulk Image Optimiser (Private, In-Browser)</title>
+    <title>Scalir — Free Bulk Image Compressor (Private, In-Browser)</title>
+
+    <!-- Structured data: app + FAQ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Scalir",
+      "url": "https://scalir.org/",
+      "description": "Free bulk image compressor. Compress, resize and convert images entirely in your browser — JPG, PNG, WebP, AVIF, HEIC, GIF, TIFF and BMP. No uploads, completely private.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any (web browser)",
+      "browserRequirements": "Requires a modern web browser",
+      "softwareVersion": "1.2",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "license": "https://opensource.org/licenses/MIT"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Scalir free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes — Scalir is completely free and open source under the MIT license. There are no accounts, no watermarks and no paid tier. Self-host it for unlimited use." }
+        },
+        {
+          "@type": "Question",
+          "name": "Are my images uploaded to a server?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Every image is compressed, resized and converted entirely in your browser, on your own device. Nothing is ever uploaded, so your images stay completely private." }
+        },
+        {
+          "@type": "Question",
+          "name": "What image formats can I compress?",
+          "acceptedAnswer": { "@type": "Answer", "text": "You can bring in JPG, PNG, WebP, AVIF, HEIC/HEIF, GIF, TIFF and BMP, and export to JPEG, PNG, WebP or AVIF — automatically or forced to a format you choose." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I compress images in bulk?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Scalir is built for bulk image compression — drop in a whole folder and it processes everything in parallel across your CPU cores, then hands back a ZIP or saves to a folder." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does it work offline?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Scalir is an installable PWA and has a desktop app for Windows and Linux. After the first load it works fully offline." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a file-size or image limit?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The hosted app has a small soft per-session limit as a gentle nudge. The self-hosted and desktop builds are completely unlimited." }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="app"></div>

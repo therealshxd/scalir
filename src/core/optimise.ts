@@ -51,14 +51,18 @@ export async function optimise(
   }
   res.newDims = [img.width, img.height];
 
-  // Choose the output format. 'auto' keeps the input format (HEIC has no encoder, so
-  // it becomes JPEG); otherwise the user's forced choice wins. Mark converted whenever
-  // the output format differs from the input so the extension is updated downstream.
+  // Choose the output format. 'auto' keeps the input format when that format has an
+  // encoder (jpeg/png/webp/avif); decode-only inputs fall back to a sensible default
+  // (HEIC → JPEG; GIF/TIFF/BMP → WebP, which keeps any alpha and compresses well).
+  // A forced choice always wins. Mark converted whenever the output format differs
+  // from the input so the extension is updated downstream. AVIF is never chosen by
+  // 'auto' for a non-AVIF input (it's a slow encode) — only when explicitly forced.
+  const ENCODABLE: InputFmt[] = ['jpeg', 'png', 'webp', 'avif'];
+  const inputAsFmt: Fmt | null = ENCODABLE.includes(inputFmt) ? (inputFmt as Fmt) : null;
   const forced = opts.outputFormat !== 'auto';
   const baseFmt: Fmt = opts.outputFormat !== 'auto'
     ? opts.outputFormat
-    : (inputFmt === 'heic' ? 'jpeg' : inputFmt);
-  const inputAsFmt: Fmt | null = inputFmt === 'heic' ? null : inputFmt;
+    : (inputAsFmt ?? (inputFmt === 'heic' ? 'jpeg' : 'webp'));
   if (baseFmt !== inputAsFmt) res.converted = true;
 
   // Copy-through: already within both caps and not converting → emit the original bytes
@@ -88,7 +92,7 @@ export async function optimise(
       }
     }
     // Lossy format: find the highest quality that still fits (closest under the cap).
-    if (best.length > opts.maxBytes && (bestFmt === 'jpeg' || bestFmt === 'webp')) {
+    if (best.length > opts.maxBytes && (bestFmt === 'jpeg' || bestFmt === 'webp' || bestFmt === 'avif')) {
       best = await bestQualityUnder(
         (q) => codecs.encode(bestFmt, img, q), opts.qualityFloor, ceil, opts.maxBytes,
       );

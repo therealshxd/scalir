@@ -46,6 +46,21 @@ function header(fmt: Fmt | 'heic'): Uint8Array {
   return b;
 }
 
+// ISO-BMFF header with an arbitrary major brand (AVIF and HEIC share the container).
+function ftypHeader(brand: string): Uint8Array {
+  const b = new Uint8Array(32);
+  b[4] = 0x66; b[5] = 0x74; b[6] = 0x79; b[7] = 0x70; // 'ftyp'
+  for (let i = 0; i < 4; i++) b[8 + i] = brand.charCodeAt(i);
+  return b;
+}
+
+// First N bytes set, rest zero — for simple magic-byte signatures.
+function bytesOf(...vals: number[]): Uint8Array {
+  const b = new Uint8Array(32);
+  vals.forEach((v, i) => { b[i] = v; });
+  return b;
+}
+
 describe('rules', () => {
   it('detects format from magic bytes', () => {
     expect(detectFormat('x', header('jpeg'))).toBe('jpeg');
@@ -54,10 +69,30 @@ describe('rules', () => {
     expect(detectFormat('x', header('heic'))).toBe('heic');
     expect(detectFormat('x.txt', new Uint8Array([1, 2, 3]))).toBe(null);
   });
+  it('detects gif/bmp/tiff from magic bytes', () => {
+    expect(detectFormat('x', bytesOf(0x47, 0x49, 0x46))).toBe('gif');         // "GIF"
+    expect(detectFormat('x', bytesOf(0x42, 0x4d))).toBe('bmp');               // "BM"
+    expect(detectFormat('x', bytesOf(0x49, 0x49, 0x2a, 0x00))).toBe('tiff');  // little-endian
+    expect(detectFormat('x', bytesOf(0x4d, 0x4d, 0x00, 0x2a))).toBe('tiff');  // big-endian
+  });
+  it('distinguishes AVIF from HEIC by ftyp brand', () => {
+    expect(detectFormat('x', ftypHeader('avif'))).toBe('avif');
+    expect(detectFormat('x', ftypHeader('avis'))).toBe('avif');
+    expect(detectFormat('x', ftypHeader('heic'))).toBe('heic');
+    expect(detectFormat('x', ftypHeader('mif1'))).toBe('heic');
+  });
   it('detects heic/heif from extension when magic bytes absent', () => {
     const plain = new Uint8Array(32); // no magic bytes
     expect(detectFormat('photo.heic', plain)).toBe('heic');
     expect(detectFormat('photo.heif', plain)).toBe('heic');
+  });
+  it('detects new formats from extension when magic bytes absent', () => {
+    const plain = new Uint8Array(32);
+    expect(detectFormat('a.avif', plain)).toBe('avif');
+    expect(detectFormat('a.gif', plain)).toBe('gif');
+    expect(detectFormat('a.tif', plain)).toBe('tiff');
+    expect(detectFormat('a.tiff', plain)).toBe('tiff');
+    expect(detectFormat('a.bmp', plain)).toBe('bmp');
   });
   it('resizeTarget keeps aspect, only shrinks', () => {
     expect(resizeTarget(4000, 3000, 2000)).toEqual([2000, 1500]);
@@ -198,6 +233,42 @@ describe('optimise', () => {
     expect(r.outType).toBe('image/png');
     expect(r.newBytes).toBeGreaterThan(MB);
     expect(r.message).toMatch(/over size limit/);
+  });
+
+  it('forced AVIF: converts a JPEG and quality-searches under the cap', async () => {
+    // Same size model as the precise-fit test: avif size = 2400*q; cap = 2400*83.
+    const big = new Uint8Array(250_000);
+    big[0] = 0xff; big[1] = 0xd8; big[2] = 0xff; // JPEG magic, larger than the cap
+    const c = new MockCodecs(mkImage(800, 600));
+    const r = await optimise('photo.jpg', big, c, {
+      allowWebp: false, maxBytes: 199200, outputFormat: 'avif',
+    });
+    expect(r.converted).toBe(true);
+    expect(r.outName).toBe('scaled_photo.avif');
+    expect(r.outType).toBe('image/avif');
+    expect(r.compressed).toBe(true);
+    expect(r.newBytes).toBeLessThanOrEqual(199200);
+    expect(r.newBytes).toBe(2400 * 83);
+  });
+
+  it('GIF input in auto: outputs WebP with a changed extension', async () => {
+    const c = new MockCodecs(mkImage(800, 600));
+    const r = await optimise('anim.gif', bytesOf(0x47, 0x49, 0x46), c, {});
+    expect(r.status).toBe('ok');
+    expect(r.converted).toBe(true);
+    expect(r.outName).toBe('scaled_anim.webp');
+    expect(r.outType).toBe('image/webp');
+  });
+
+  it('AVIF input in auto: preserved as AVIF, copied through when already compliant', async () => {
+    const bytes = ftypHeader('avif');
+    const c = new MockCodecs(mkImage(800, 600));
+    const r = await optimise('photo.avif', bytes, c, {});
+    expect(r.copied).toBe(true);
+    expect(r.converted).toBe(false);
+    expect(r.outBytes).toBe(bytes);
+    expect(r.outName).toBe('scaled_photo.avif');
+    expect(r.outType).toBe('image/avif');
   });
 
   it('precise fit: picks the highest quality under the cap, not a coarse ladder step', async () => {

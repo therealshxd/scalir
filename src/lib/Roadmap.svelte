@@ -30,7 +30,8 @@
       <ul>
         <li>Bulk image optimisation entirely in the browser — nothing is ever uploaded.</li>
         <li>Resize by longest side and compress under a target file size.</li>
-        <li>Input: JPG, PNG, WebP, HEIC/HEIF · Output: JPG, PNG, WebP (Auto or forced).</li>
+        <li>Input: JPG, PNG, WebP, AVIF, HEIC/HEIF, GIF, TIFF, BMP · Output: JPG, PNG, WebP,
+          AVIF (Auto or forced).</li>
         <li>One-click presets, ZIP download, save-to-folder, offline PWA, self-hosting.</li>
       </ul>
     </div>
@@ -49,7 +50,7 @@
 
     <!-- v1.2 -->
     <div class="card">
-      <h3>v1.2 — More formats <span class="badge next">Next</span></h3>
+      <h3>v1.2 — More formats <span class="badge shipped">Shipped</span></h3>
       <ul>
         <li><strong>AVIF in and out</strong> — the modern web format, often noticeably
           smaller than WebP.</li>
@@ -61,7 +62,7 @@
 
     <!-- v1.3 -->
     <div class="card">
-      <h3>v1.3 — Web-design workflow <span class="badge planned">Planned</span></h3>
+      <h3>v1.3 — Web-design workflow <span class="badge next">Next</span></h3>
       <ul>
         <li><strong>Flexible resize modes</strong> — exact width, exact height, percentage
           scale, or common responsive presets.</li>
@@ -105,7 +106,6 @@
   ul li strong { color: var(--text); }
   .badge.shipped { color: var(--ok); background: rgba(56,193,114,.14); border-color: #1e5c38; }
   .badge.next { color: var(--accent); background: rgba(34,211,238,.14); border-color: var(--accent); }
-  .badge.planned { color: var(--warn); background: rgba(246,195,67,.14); border-color: #4a4222; }
   .badge.exploring { color: var(--muted); background: rgba(154,163,178,.12); border-color: var(--line); }
   .note { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
     border-radius: 8px; padding: 12px 14px; margin: 0 0 22px; font-size: 14px; color: var(--text); }
