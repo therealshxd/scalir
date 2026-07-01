@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import type { Codecs, Fmt, InputFmt, ImageDataLike } from '../src/core/types';
 import { optimise } from '../src/core/optimise';
 import { detectFormat, resizeTarget, hasAlpha } from '../src/core/rules';
-import { makeOutName } from '../src/core/naming';
+import { makeOutName, withSequenceNumber, type NameOptions } from '../src/core/naming';
 import { presetSummary, NO_RESIZE } from '../src/core/presets';
 import { readJpegOrientation, applyOrientation } from '../src/core/exif';
 
@@ -103,10 +103,44 @@ describe('rules', () => {
 });
 
 describe('naming', () => {
+  const N = (o: Partial<NameOptions> = {}): NameOptions =>
+    ({ prefix: 'scaled_', suffix: '', lowercase: false, slugify: false, ...o });
+
   it('keeps extension by default, swaps on convert', () => {
-    expect(makeOutName('beach.jpg', 'scaled_', null)).toBe('scaled_beach.jpg');
-    expect(makeOutName('beach.jpeg', 'scaled_', null)).toBe('scaled_beach.jpeg');
-    expect(makeOutName('logo.png', 'scaled_', '.webp')).toBe('scaled_logo.webp');
+    expect(makeOutName('beach.jpg', N(), null)).toBe('scaled_beach.jpg');
+    expect(makeOutName('beach.jpeg', N(), null)).toBe('scaled_beach.jpeg');
+    expect(makeOutName('logo.png', N(), '.webp')).toBe('scaled_logo.webp');
+  });
+
+  it('applies suffix before the extension', () => {
+    expect(makeOutName('beach.jpg', N({ suffix: '_web' }), null)).toBe('scaled_beach_web.jpg');
+    expect(makeOutName('logo.png', N({ prefix: '', suffix: '-v2' }), '.webp')).toBe('logo-v2.webp');
+  });
+
+  it('lowercases the whole name including the extension', () => {
+    expect(makeOutName('Beach.JPG', N({ prefix: 'IMG_', lowercase: true }), null)).toBe('img_beach.jpg');
+  });
+
+  it('slugifies spaces and strips unsafe characters, collapsing dashes', () => {
+    expect(makeOutName('My  Photo (final).jpg', N({ prefix: '', slugify: true }), null))
+      .toBe('My-Photo-final.jpg');
+    // combined lowercase + slugify
+    expect(makeOutName('Café Sunset.JPG', N({ prefix: 'web_', lowercase: true, slugify: true }), null))
+      .toBe('web_caf-sunset.jpg');
+  });
+});
+
+describe('withSequenceNumber', () => {
+  it('appends a dash + number padded to the batch width, before the extension', () => {
+    expect(withSequenceNumber('scaled_photo.jpg', 1, 5)).toBe('scaled_photo-01.jpg');
+    expect(withSequenceNumber('scaled_photo.jpg', 12, 5)).toBe('scaled_photo-12.jpg');
+    expect(withSequenceNumber('a.webp', 7, 1000)).toBe('a-0007.webp');
+  });
+  it('pads to a minimum of two digits even for tiny batches', () => {
+    expect(withSequenceNumber('x.png', 3, 1)).toBe('x-03.png');
+  });
+  it('handles names without an extension', () => {
+    expect(withSequenceNumber('noext', 2, 10)).toBe('noext-02');
   });
 });
 

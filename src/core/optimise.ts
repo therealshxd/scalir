@@ -71,7 +71,7 @@ export async function optimise(
     res.copied = true;
     res.outBytes = bytes;                                  // original bytes, untouched
     res.newBytes = bytes.length;
-    res.outName = makeOutName(name, opts.prefix, null);    // keep original name + extension
+    res.outName = makeOutName(name, opts, null);           // keep original name + extension
     res.outType = mimeOf(baseFmt);                         // == input mime (not converted)
     res.action = `copied · already under ${Math.round(opts.maxBytes / 1024)}KB`;
     return res;
@@ -107,7 +107,7 @@ export async function optimise(
     res.compressed = true;
   }
 
-  res.outName = makeOutName(name, opts.prefix, res.converted ? extForFmt(bestFmt) : null);
+  res.outName = makeOutName(name, opts, res.converted ? extForFmt(bestFmt) : null);
   res.outBytes = best;
   res.newBytes = best.length;
   res.outType = mimeOf(bestFmt);

@@ -23,6 +23,9 @@ export interface Options {
   maxDim: number;        // longest-side cap in px (default 2000)
   maxBytes: number;      // file-size cap in bytes (default 1 MB)
   prefix: string;        // output filename prefix (default 'scaled_')
+  suffix: string;        // output filename suffix, before the extension (default '')
+  lowercase: boolean;    // lower-case the output filename
+  slugify: boolean;      // spaces → dashes and strip unsafe characters
   allowWebp: boolean;    // may convert to WebP to hit the size cap (auto only)
   qualityFloor: number;  // never encode below this quality
   webpAdvantage: number; // WebP must be < this fraction of the alt to switch
@@ -33,6 +36,9 @@ export const DEFAULT_OPTIONS: Options = {
   maxDim: 2000,
   maxBytes: 1024 * 1024,
   prefix: 'scaled_',
+  suffix: '',
+  lowercase: false,
+  slugify: false,
   allowWebp: true,
   qualityFloor: 60,
   webpAdvantage: 0.9,
