@@ -3,6 +3,7 @@ import type { Codecs, Fmt, InputFmt, ImageDataLike } from '../src/core/types';
 import { optimise } from '../src/core/optimise';
 import { detectFormat, resizeTarget, hasAlpha } from '../src/core/rules';
 import { makeOutName } from '../src/core/naming';
+import { presetSummary, NO_RESIZE } from '../src/core/presets';
 import { readJpegOrientation, applyOrientation } from '../src/core/exif';
 
 const MB = 1024 * 1024;
@@ -106,6 +107,32 @@ describe('naming', () => {
     expect(makeOutName('beach.jpg', 'scaled_', null)).toBe('scaled_beach.jpg');
     expect(makeOutName('beach.jpeg', 'scaled_', null)).toBe('scaled_beach.jpeg');
     expect(makeOutName('logo.png', 'scaled_', '.webp')).toBe('scaled_logo.webp');
+  });
+});
+
+describe('presetSummary', () => {
+  const MB = 1024 * 1024;
+  const rows = (o: Parameters<typeof presetSummary>[0]) =>
+    Object.fromEntries(presetSummary(o).map((r) => [r.label, r.value]));
+
+  it('summarises a forced-format preset', () => {
+    const s = rows({ maxDim: 1920, maxBytes: 1 * MB, outputFormat: 'webp', qualityFloor: 60, allowWebp: true });
+    expect(s['Max dimension']).toBe('1920 px');
+    expect(s['Max size']).toBe('≤ 1 MB');
+    expect(s['Format']).toBe('WebP');
+    expect(s['Quality floor']).toBe('60');
+  });
+
+  it('shows "Auto" for auto format and "Full size" for no-resize', () => {
+    const s = rows({ maxDim: NO_RESIZE, maxBytes: 2 * MB, outputFormat: 'auto', qualityFloor: 75, allowWebp: true });
+    expect(s['Max dimension']).toBe('Full size');
+    expect(s['Format']).toBe('Auto');
+    expect(s['Max size']).toBe('≤ 2 MB');
+  });
+
+  it('trims trailing zeros in the size (0.5 MB)', () => {
+    const s = rows({ maxDim: 1000, maxBytes: Math.round(0.5 * MB), outputFormat: 'jpeg', qualityFloor: 55, allowWebp: false });
+    expect(s['Max size']).toBe('≤ 0.5 MB');
   });
 });
 

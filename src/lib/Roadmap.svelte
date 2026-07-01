@@ -66,7 +66,8 @@
       <p class="sub">Shipping one feature at a time, each as its own release.</p>
       <ul>
         <li><strong>Remembered settings</strong> — your last-used settings and custom presets
-          persist between visits. <span class="badge shipped">Shipped in 1.3.1</span></li>
+          (with titles, descriptions, and at-a-glance settings previews) persist between
+          visits. <span class="badge shipped">Shipped in 1.3.1–1.3.2</span></li>
         <li><strong>Smarter output naming</strong> — prefix and suffix, lowercase, slugify
           spaces, optional sequential numbering for clean, web-ready filenames.</li>
         <li><strong>Flexible resize modes</strong> — exact width, exact height, percentage
