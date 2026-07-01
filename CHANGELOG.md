@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-07-01
+
+### Added
+- **Smarter output naming.** In addition to a prefix, you can now add a **suffix**, force
+  **lowercase** filenames, **slugify** (turn spaces into dashes and drop unsafe characters),
+  and add **sequential numbering** (e.g. `scaled_beach-photo-01.jpg`, zero-padded to the batch
+  size). A live example shows how your settings shape the filename as you type.
+
 ## [1.3.2] - 2026-07-01
 
 ### Added

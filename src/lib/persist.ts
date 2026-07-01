@@ -13,14 +13,18 @@ export interface UiOpts {
   maxDim: number;
   maxMB: number;
   prefix: string;
+  suffix: string;
+  lowercase: boolean;
+  slugify: boolean;
+  sequential: boolean;
   allowWebp: boolean;
   qualityFloor: number;
   outputFormat: OutputFormat;
 }
 
 export const DEFAULT_UI_OPTS: UiOpts = {
-  maxDim: 2000, maxMB: 1, prefix: 'scaled_', allowWebp: true,
-  qualityFloor: 60, outputFormat: 'auto',
+  maxDim: 2000, maxMB: 1, prefix: 'scaled_', suffix: '', lowercase: false,
+  slugify: false, sequential: false, allowWebp: true, qualityFloor: 60, outputFormat: 'auto',
 };
 
 const SETTINGS_KEY = 'scalir:settings:v1';
