@@ -213,14 +213,22 @@
     <div class="chips">
       {#each allPresets as p}
         <div class="chip-wrap">
+          <!-- The whole card is the button: title, description, and the settings breakdown
+               are all visible inline (no hover needed — works on touch/mobile). -->
           <button
             type="button"
-            class="chip {activePreset === p.id ? 'active' : ''}"
+            class="preset {activePreset === p.id ? 'active' : ''} {p.origin === 'custom' ? 'has-del' : ''}"
             onclick={() => applyPreset(p)}
           >
-            <span class="chip-name">{p.name}</span>
-            <span class="chip-savings">
-              {p.origin === 'custom' ? (p.blurb || 'Custom preset') : p.savings}
+            <span class="preset-head">
+              <span class="preset-title">{p.name}</span>
+              {#if p.origin !== 'custom' && p.savings}<span class="preset-savings">{p.savings}</span>{/if}
+            </span>
+            {#if p.blurb}<span class="preset-desc">{p.blurb}</span>{/if}
+            <span class="preset-rows">
+              {#each presetSummary(p.opts) as row}
+                <span class="preset-row"><span class="preset-label">{row.label}</span><span class="preset-val">{row.value}</span></span>
+              {/each}
             </span>
           </button>
           {#if p.origin === 'custom'}
@@ -232,16 +240,6 @@
               onclick={() => deletePreset(p.id)}
             >×</button>
           {/if}
-          <!-- Settings breakdown, shown on hover / keyboard focus of the chip. -->
-          <div class="preset-card" role="tooltip">
-            <span class="pc-name">{p.name}</span>
-            {#if p.blurb}<span class="pc-desc">{p.blurb}</span>{/if}
-            <div class="pc-rows">
-              {#each presetSummary(p.opts) as row}
-                <div class="pc-row"><span class="pc-label">{row.label}</span><span class="pc-value">{row.value}</span></div>
-              {/each}
-            </div>
-          </div>
         </div>
       {/each}
     </div>
@@ -400,32 +398,25 @@
 
   .presets { margin-top: 16px; }
   .presets-title { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip-wrap { position: relative; display: inline-flex; }
-  .chip { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
-    max-width: 240px; background: #0f1218; border: 1px solid var(--line); color: var(--text);
-    border-radius: 10px; padding: 8px 12px; cursor: pointer; transition: border-color .15s, background .15s; }
-  .chip:hover { border-color: var(--accent); }
-  .chip.active { border-color: var(--accent); background: #11202a; }
-  .chip-name, .chip-savings { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .chip-name { font-size: 13px; font-weight: 600; }
-  .chip-savings { font-size: 11px; color: var(--accent); font-weight: 600; }
-
-  /* Settings breakdown popover, revealed on chip hover / keyboard focus. */
-  .preset-card { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 20;
-    width: max-content; max-width: 260px; background: var(--panel); border: 1px solid var(--line);
-    border-radius: 10px; padding: 10px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
-    opacity: 0; visibility: hidden; transform: translateY(4px); pointer-events: none;
-    transition: opacity .12s, transform .12s, visibility .12s; }
-  .chip-wrap:hover .preset-card, .chip-wrap:focus-within .preset-card {
-    opacity: 1; visibility: visible; transform: translateY(0); }
-  .pc-name { display: block; font-size: 13px; font-weight: 700; color: var(--text); }
-  .pc-desc { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); line-height: 1.4; }
-  .pc-rows { margin-top: 8px; border-top: 1px solid var(--line); padding-top: 8px; display: grid; gap: 4px; }
-  .pc-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; }
-  .pc-label { color: var(--muted); }
-  .pc-value { color: var(--text); font-weight: 600; white-space: nowrap; }
-  .chip-del { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; padding: 0;
+  /* Preset cards: each button shows title, description and the settings breakdown inline,
+     laid out in a responsive grid that stacks to one column on narrow screens. */
+  .chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .chip-wrap { position: relative; }
+  .preset { display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left;
+    background: #0f1218; border: 1px solid var(--line); color: var(--text); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer; transition: border-color .15s, background .15s; }
+  .preset:hover { border-color: var(--accent); }
+  .preset.active { border-color: var(--accent); background: #11202a; }
+  .preset-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .preset.has-del .preset-head { padding-right: 22px; } /* clear the delete × */
+  .preset-title { font-size: 14px; font-weight: 700; }
+  .preset-savings { font-size: 11px; color: var(--accent); font-weight: 600; white-space: nowrap; flex: none; }
+  .preset-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .preset-rows { display: grid; gap: 3px; margin-top: 6px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .preset-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+  .preset-label { color: var(--muted); }
+  .preset-val { color: var(--text); font-weight: 600; white-space: nowrap; }
+  .chip-del { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; padding: 0;
     display: flex; align-items: center; justify-content: center; border-radius: 50%;
     border: 1px solid var(--line); background: #0f1218; color: var(--muted);
     font-size: 13px; line-height: 1; cursor: pointer; transition: color .15s, border-color .15s; }

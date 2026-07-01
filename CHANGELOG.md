@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Described custom presets.** Saving a preset now takes a **title and an optional
-  description**; the description shows on the preset's chip instead of a generic "custom" tag.
-- **Settings previews on presets.** Hovering (or keyboard-focusing) any preset — built-in or
-  custom — shows a card with exactly what it applies: max dimension, max size, output format,
-  and quality floor.
+  description**, both shown on the preset.
+- **Presets are now informative cards.** Every preset — built-in or custom — is shown as a card
+  with its title, description, and exactly what it applies (max dimension, max size, output
+  format, quality floor) all visible inline. No hover needed, so it reads clearly on mobile.
 
 ## [1.3.1] - 2026-07-01
 
