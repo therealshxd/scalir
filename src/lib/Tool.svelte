@@ -1,8 +1,11 @@
 <script lang="ts">
   import JSZip from 'jszip';
   import { SUPPORTED_EXT, extOf } from '../core/rules';
-  import type { Options, OptimiseResult, OutputFormat } from '../core/types';
+  import type { Options, OptimiseResult } from '../core/types';
   import { PRESETS, type Preset } from '../core/presets';
+  import {
+    loadSettings, saveSettings, loadCustomPresets, saveCustomPresets,
+  } from './persist';
   import { WorkerPool, defaultPoolSize } from './workerPool';
 
   type Queued = { name: string; bytes: Uint8Array; size: number };
@@ -11,12 +14,19 @@
   const FREE_LIMIT = 0;
   const hasFS = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
-  let opts = $state({
-    maxDim: 2000, maxMB: 1, prefix: 'scaled_', allowWebp: true,
-    qualityFloor: 60, outputFormat: 'auto' as OutputFormat,
-  });
+  // Hydrate from localStorage so a returning visitor keeps their last-used settings; falls
+  // back to defaults when nothing is stored (or storage is unavailable). Persisted on change.
+  let opts = $state(loadSettings());
+  $effect(() => { saveSettings($state.snapshot(opts)); });
+
+  // User-saved presets, shown alongside the built-ins and individually deletable.
+  let customPresets = $state<Preset[]>(loadCustomPresets());
+  let allPresets = $derived<Preset[]>([...PRESETS, ...customPresets]);
   // Which preset's values are currently loaded; cleared as soon as a field is edited.
   let activePreset = $state<string | null>(null);
+  // Inline "save as preset" naming state (avoids window.prompt, unreliable in Tauri WebView).
+  let namingPreset = $state(false);
+  let newPresetName = $state('');
 
   function applyPreset(p: Preset) {
     opts.maxDim = p.opts.maxDim;
@@ -28,6 +38,34 @@
   }
   // Custom edits override a preset — drop the highlight so it reads as "custom".
   const clearPreset = () => { activePreset = null; };
+
+  function saveAsPreset() {
+    const name = newPresetName.trim();
+    if (!name) return;
+    const preset: Preset = {
+      id: 'custom-' + Date.now(),
+      name,
+      blurb: 'Your saved preset',
+      savings: 'custom',
+      origin: 'custom',
+      opts: {
+        maxDim: opts.maxDim,
+        maxBytes: Math.round(opts.maxMB * 1024 * 1024),
+        outputFormat: opts.outputFormat,
+        qualityFloor: opts.qualityFloor,
+        allowWebp: opts.allowWebp,
+      },
+    };
+    customPresets = [...customPresets, preset];
+    saveCustomPresets($state.snapshot(customPresets));
+    activePreset = preset.id;
+    namingPreset = false; newPresetName = '';
+  }
+  function deletePreset(id: string) {
+    customPresets = customPresets.filter((p) => p.id !== id);
+    saveCustomPresets($state.snapshot(customPresets));
+    if (activePreset === id) activePreset = null;
+  }
   let queue = $state<Queued[]>([]);
   // Results are index-aligned to `queue` so out-of-order completions (the pool runs
   // images in parallel) still render in original order; `rows` is the completed subset.
@@ -170,17 +208,42 @@
   <div class="panel presets">
     <p class="presets-title">Quick presets</p>
     <div class="chips">
-      {#each PRESETS as p}
-        <button
-          type="button"
-          class="chip {activePreset === p.id ? 'active' : ''}"
-          title={p.blurb}
-          onclick={() => applyPreset(p)}
-        >
-          <span class="chip-name">{p.name}</span>
-          <span class="chip-savings">{p.savings}</span>
-        </button>
+      {#each allPresets as p}
+        <div class="chip-wrap">
+          <button
+            type="button"
+            class="chip {activePreset === p.id ? 'active' : ''}"
+            title={p.blurb}
+            onclick={() => applyPreset(p)}
+          >
+            <span class="chip-name">{p.name}</span>
+            <span class="chip-savings">{p.savings}</span>
+          </button>
+          {#if p.origin === 'custom'}
+            <button
+              type="button"
+              class="chip-del"
+              title="Delete this preset"
+              aria-label="Delete preset {p.name}"
+              onclick={() => deletePreset(p.id)}
+            >×</button>
+          {/if}
+        </div>
       {/each}
+    </div>
+    <div class="save-preset">
+      {#if namingPreset}
+        <!-- svelte-ignore a11y_autofocus -->
+        <input
+          class="preset-name" type="text" placeholder="Preset name" maxlength="40"
+          bind:value={newPresetName} autofocus
+          onkeydown={(e) => { if (e.key === 'Enter') saveAsPreset(); if (e.key === 'Escape') { namingPreset = false; newPresetName = ''; } }}
+        />
+        <button class="btn small" disabled={!newPresetName.trim()} onclick={saveAsPreset}>Save preset</button>
+        <button class="link" onclick={() => { namingPreset = false; newPresetName = ''; }}>Cancel</button>
+      {:else}
+        <button class="link" onclick={() => { namingPreset = true; newPresetName = ''; }}>+ Save current settings as a preset</button>
+      {/if}
     </div>
   </div>
 
@@ -315,6 +378,7 @@
   .presets { margin-top: 16px; }
   .presets-title { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip-wrap { position: relative; display: inline-flex; }
   .chip { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
     background: #0f1218; border: 1px solid var(--line); color: var(--text); border-radius: 10px;
     padding: 8px 12px; cursor: pointer; transition: border-color .15s, background .15s; }
@@ -322,6 +386,14 @@
   .chip.active { border-color: var(--accent); background: #11202a; }
   .chip-name { font-size: 13px; font-weight: 600; }
   .chip-savings { font-size: 11px; color: var(--accent); font-weight: 600; }
+  .chip-del { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; padding: 0;
+    display: flex; align-items: center; justify-content: center; border-radius: 50%;
+    border: 1px solid var(--line); background: #0f1218; color: var(--muted);
+    font-size: 13px; line-height: 1; cursor: pointer; transition: color .15s, border-color .15s; }
+  .chip-del:hover { color: var(--err); border-color: var(--err); }
+  .save-preset { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+  input.preset-name { width: auto; flex: 0 1 220px; margin-top: 0; }
+  .btn.small { padding: 7px 12px; font-size: 13px; }
 
   .help { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
   .help summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); }
