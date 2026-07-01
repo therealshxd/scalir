@@ -69,7 +69,8 @@
           (with titles, descriptions, and at-a-glance settings previews) persist between
           visits. <span class="badge shipped">Shipped in 1.3.1–1.3.2</span></li>
         <li><strong>Smarter output naming</strong> — prefix and suffix, lowercase, slugify
-          spaces, optional sequential numbering for clean, web-ready filenames.</li>
+          spaces, optional sequential numbering for clean, web-ready filenames.
+          <span class="badge shipped">Shipped in 1.3.3</span></li>
         <li><strong>Flexible resize modes</strong> — exact width, exact height, percentage
           scale, or a common responsive width (multi-size export comes later).</li>
         <li><strong>Before/after preview</strong> — preview each result with a before/after

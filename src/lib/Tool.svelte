@@ -1,6 +1,7 @@
 <script lang="ts">
   import JSZip from 'jszip';
   import { SUPPORTED_EXT, extOf } from '../core/rules';
+  import { makeOutName, withSequenceNumber } from '../core/naming';
   import type { Options, OptimiseResult } from '../core/types';
   import { PRESETS, presetSummary, type Preset } from '../core/presets';
   import {
@@ -18,6 +19,15 @@
   // back to defaults when nothing is stored (or storage is unavailable). Persisted on change.
   let opts = $state(loadSettings());
   $effect(() => { saveSettings($state.snapshot(opts)); });
+
+  // Live example of how the current naming settings shape an output filename.
+  let namePreview = $derived.by(() => {
+    let n = makeOutName('My Photo.JPG', {
+      prefix: opts.prefix, suffix: opts.suffix, lowercase: opts.lowercase, slugify: opts.slugify,
+    }, null);
+    if (opts.sequential) n = withSequenceNumber(n, 1, 1);
+    return n;
+  });
 
   // User-saved presets, shown alongside the built-ins and individually deletable.
   let customPresets = $state<Preset[]>(loadCustomPresets());
@@ -138,14 +148,21 @@
     processing = true; results = new Array(queue.length); clearNotice();
     const o: Partial<Options> = {
       maxDim: opts.maxDim, maxBytes: Math.round(opts.maxMB * 1024 * 1024),
-      prefix: opts.prefix, allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor,
-      outputFormat: opts.outputFormat,
+      prefix: opts.prefix, suffix: opts.suffix, lowercase: opts.lowercase, slugify: opts.slugify,
+      allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor, outputFormat: opts.outputFormat,
     };
+    // Sequential numbering is applied here (not in the worker): the pool completes images
+    // out of order, so the stable queue index `i` — not the worker id — is the file's number.
+    const total = queue.length;
+    const seq = opts.sequential;
     const pool = new WorkerPool(poolSize);
     activePool = pool;
     await Promise.all(queue.map(async (item, i) => {
       const r = await pool.submit({ name: item.name, bytes: item.bytes, opts: o });
-      if (r) { const next = results.slice(); next[i] = r; results = next; } // null = cancelled
+      if (r) {
+        if (seq && r.outName) r.outName = withSequenceNumber(r.outName, i + 1, total);
+        const next = results.slice(); next[i] = r; results = next; // null = cancelled
+      }
     }));
     pool.terminate();
     activePool = null;
@@ -296,12 +313,31 @@
         <input type="text" bind:value={opts.prefix} oninput={clearPreset} />
         <span class="hint">Added to the start of each saved file's name.</span>
       </label>
+      <label>Suffix
+        <input type="text" bind:value={opts.suffix} oninput={clearPreset} />
+        <span class="hint">Added to the end of the name, before the extension.</span>
+      </label>
     </div>
     <label class="check">
       <input type="checkbox" bind:checked={opts.allowWebp} onchange={clearPreset} />
       Allow WebP conversion
       <span class="hint">In Auto mode, lets us switch to WebP to hit your size target.</span>
     </label>
+    <div class="naming-opts">
+      <label class="check">
+        <input type="checkbox" bind:checked={opts.lowercase} onchange={clearPreset} />
+        Lowercase filenames
+      </label>
+      <label class="check">
+        <input type="checkbox" bind:checked={opts.slugify} onchange={clearPreset} />
+        Slugify (spaces → dashes)
+      </label>
+      <label class="check">
+        <input type="checkbox" bind:checked={opts.sequential} onchange={clearPreset} />
+        Sequential numbering
+      </label>
+    </div>
+    <p class="name-preview">Example: <span class="muted">My Photo.JPG</span> → <b>{namePreview}</b></p>
 
     <details class="help">
       <summary>What do these mean?</summary>
@@ -395,6 +431,10 @@
   .check { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; color: var(--text); font-weight: 500; }
   .check input { width: auto; }
   .check .hint { flex-basis: 100%; margin-top: 2px; }
+  .naming-opts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 10px; }
+  .naming-opts .check { margin-top: 0; }
+  .name-preview { margin-top: 12px; font-size: 12.5px; color: var(--muted); }
+  .name-preview b { color: var(--accent); font-weight: 600; word-break: break-all; }
 
   .presets { margin-top: 16px; }
   .presets-title { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }

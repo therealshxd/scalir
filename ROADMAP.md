@@ -45,8 +45,8 @@ Want to try things before they ship? Preview the latest **work-in-progress build
 - ✅ **Remembered settings** — your last-used settings (and custom presets, now with titles,
   descriptions, and at-a-glance settings previews) persist between visits, so repeat batches
   are one click. *(shipped in 1.3.1–1.3.2)*
-- **Smarter output naming** — prefix *and* suffix, lowercase, slugify spaces, optional
-  sequential numbering for clean, web-ready filenames.
+- ✅ **Smarter output naming** — prefix *and* suffix, lowercase, slugify spaces, optional
+  sequential numbering for clean, web-ready filenames. *(shipped in 1.3.3)*
 - **Flexible resize modes** — exact width, exact height, percentage scale, or a common
   responsive width (multi-size/`srcset` export comes later).
 - **Before/after preview** — preview each result with a before/after compare and tweak a
