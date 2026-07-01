@@ -12,6 +12,7 @@ export interface Preset {
   name: string;
   blurb: string;   // what it's for
   savings: string; // typical estimate, e.g. "~85% smaller"
+  origin?: 'builtin' | 'custom'; // custom presets are user-saved + deletable (undefined ⇒ builtin)
   opts: Pick<Options, 'maxDim' | 'maxBytes' | 'outputFormat' | 'qualityFloor' | 'allowWebp'>;
 }
 

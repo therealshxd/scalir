@@ -62,14 +62,15 @@
 
     <!-- v1.3 -->
     <div class="card">
-      <h3>v1.3 — Web-design workflow <span class="badge next">Next</span></h3>
+      <h3>v1.3 — Web-design workflow <span class="badge next">In progress</span></h3>
+      <p class="sub">Shipping one feature at a time, each as its own release.</p>
       <ul>
-        <li><strong>Flexible resize modes</strong> — exact width, exact height, percentage
-          scale, or common responsive presets.</li>
+        <li><strong>Remembered settings</strong> — your last-used settings and custom presets
+          persist between visits. <span class="badge shipped">Shipped in 1.3.1</span></li>
         <li><strong>Smarter output naming</strong> — prefix and suffix, lowercase, slugify
           spaces, optional sequential numbering for clean, web-ready filenames.</li>
-        <li><strong>Remembered settings</strong> — your last-used settings and custom presets
-          persist between visits.</li>
+        <li><strong>Flexible resize modes</strong> — exact width, exact height, percentage
+          scale, or a common responsive width (multi-size export comes later).</li>
         <li><strong>Before/after preview</strong> — preview each result with a before/after
           compare and tweak a single image's quality before saving the batch.</li>
       </ul>
@@ -101,6 +102,7 @@
 </div>
 
 <style>
+  .sub { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
   ul { color: var(--muted); padding-left: 20px; margin: 8px 0 0; }
   ul li { margin-bottom: 8px; line-height: 1.5; }
   ul li strong { color: var(--text); }

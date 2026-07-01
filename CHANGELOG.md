@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-07-01
+
+First slice of the **v1.3 "Web-design workflow"** milestone, shipped as its own release.
+
+### Added
+- **Remembered settings.** Your last-used options (dimensions, size target, format, quality
+  floor, prefix, WebP toggle) now persist between visits, so repeat batches are one click.
+  Saved locally in your browser — nothing leaves your device.
+- **Custom presets.** Save the current settings as a named preset with **"+ Save current
+  settings as a preset"**, then apply it from the Quick presets row any time. Custom presets
+  sit alongside the built-ins and can be deleted individually.
+
+## [1.2.1] - 2026-06-30
+
+### Fixed
+- Excluded the AVIF encoder assets from the desktop app's PWA precache, so the app build no
+  longer bloats its offline cache with encoders it loads on demand.
+
+## [1.2.0] - 2026-06-30
+
+### Added
+- **AVIF input and output**, plus **GIF, TIFF and BMP input** — bring in legacy/print-handoff
+  files and re-export them as optimised web formats. (Animated GIFs use the first frame.)
+- Exposed the AVIF output option in the tool and listed the new input formats.
+
+### Changed
+- SEO-focused landing page redesign.
+
+### Fixed
+- Donate button text was invisible (cyan on cyan) on the About page.
+
 ## [1.1.3] - 2026-06-29
 
 ### Added
