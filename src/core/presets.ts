@@ -53,3 +53,26 @@ export const PRESETS: Preset[] = [
     opts: { maxDim: NO_RESIZE, maxBytes: 2 * MB, outputFormat: 'auto', qualityFloor: 60, allowWebp: true },
   },
 ];
+
+// Human-readable size in MB with trailing zeros trimmed (0.5 MB, 1 MB, 2 MB…).
+function mb(bytes: number): string {
+  return `${Number((bytes / MB).toFixed(2))} MB`;
+}
+
+// Friendly format labels matching the UI's own capitalisation (WebP, not WEBP).
+const FORMAT_LABEL: Record<Preset['opts']['outputFormat'], string> = {
+  auto: 'Auto', jpeg: 'JPEG', png: 'PNG', webp: 'WebP', avif: 'AVIF',
+};
+
+// A structured, label/value breakdown of what a preset actually does — rendered in the
+// preset tooltip so users can see each preset's settings at a glance before applying it.
+export function presetSummary(
+  opts: Preset['opts'],
+): { label: string; value: string }[] {
+  return [
+    { label: 'Max dimension', value: opts.maxDim >= NO_RESIZE ? 'Full size' : `${opts.maxDim} px` },
+    { label: 'Max size', value: `≤ ${mb(opts.maxBytes)}` },
+    { label: 'Format', value: FORMAT_LABEL[opts.outputFormat] },
+    { label: 'Quality floor', value: String(opts.qualityFloor) },
+  ];
+}

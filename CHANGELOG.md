@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-07-01
+
+### Added
+- **Described custom presets.** Saving a preset now takes a **title and an optional
+  description**; the description shows on the preset's chip instead of a generic "custom" tag.
+- **Settings previews on presets.** Hovering (or keyboard-focusing) any preset — built-in or
+  custom — shows a card with exactly what it applies: max dimension, max size, output format,
+  and quality floor.
+
 ## [1.3.1] - 2026-07-01
 
 First slice of the **v1.3 "Web-design workflow"** milestone, shipped as its own release.
