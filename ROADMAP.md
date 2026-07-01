@@ -42,8 +42,9 @@ Want to try things before they ship? Preview the latest **work-in-progress build
 
 ## 🔜 v1.3 — Web-design workflow *(in progress — shipping one feature per release)*
 
-- ✅ **Remembered settings** — your last-used settings (and custom presets) persist between
-  visits, so repeat batches are one click. *(shipped in 1.3.1)*
+- ✅ **Remembered settings** — your last-used settings (and custom presets, now with titles,
+  descriptions, and at-a-glance settings previews) persist between visits, so repeat batches
+  are one click. *(shipped in 1.3.1–1.3.2)*
 - **Smarter output naming** — prefix *and* suffix, lowercase, slugify spaces, optional
   sequential numbering for clean, web-ready filenames.
 - **Flexible resize modes** — exact width, exact height, percentage scale, or a common

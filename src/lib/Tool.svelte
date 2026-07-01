@@ -2,7 +2,7 @@
   import JSZip from 'jszip';
   import { SUPPORTED_EXT, extOf } from '../core/rules';
   import type { Options, OptimiseResult } from '../core/types';
-  import { PRESETS, type Preset } from '../core/presets';
+  import { PRESETS, presetSummary, type Preset } from '../core/presets';
   import {
     loadSettings, saveSettings, loadCustomPresets, saveCustomPresets,
   } from './persist';
@@ -24,9 +24,12 @@
   let allPresets = $derived<Preset[]>([...PRESETS, ...customPresets]);
   // Which preset's values are currently loaded; cleared as soon as a field is edited.
   let activePreset = $state<string | null>(null);
-  // Inline "save as preset" naming state (avoids window.prompt, unreliable in Tauri WebView).
+  // Inline "save as preset" state (avoids window.prompt, unreliable in Tauri WebView).
+  // A custom preset gets a title (required) and an optional description shown on its chip.
   let namingPreset = $state(false);
   let newPresetName = $state('');
+  let newPresetDesc = $state('');
+  const cancelNaming = () => { namingPreset = false; newPresetName = ''; newPresetDesc = ''; };
 
   function applyPreset(p: Preset) {
     opts.maxDim = p.opts.maxDim;
@@ -45,8 +48,8 @@
     const preset: Preset = {
       id: 'custom-' + Date.now(),
       name,
-      blurb: 'Your saved preset',
-      savings: 'custom',
+      blurb: newPresetDesc.trim(), // user-written description (may be empty)
+      savings: '',
       origin: 'custom',
       opts: {
         maxDim: opts.maxDim,
@@ -59,7 +62,7 @@
     customPresets = [...customPresets, preset];
     saveCustomPresets($state.snapshot(customPresets));
     activePreset = preset.id;
-    namingPreset = false; newPresetName = '';
+    cancelNaming();
   }
   function deletePreset(id: string) {
     customPresets = customPresets.filter((p) => p.id !== id);
@@ -210,14 +213,23 @@
     <div class="chips">
       {#each allPresets as p}
         <div class="chip-wrap">
+          <!-- The whole card is the button: title, description, and the settings breakdown
+               are all visible inline (no hover needed — works on touch/mobile). -->
           <button
             type="button"
-            class="chip {activePreset === p.id ? 'active' : ''}"
-            title={p.blurb}
+            class="preset {activePreset === p.id ? 'active' : ''} {p.origin === 'custom' ? 'has-del' : ''}"
             onclick={() => applyPreset(p)}
           >
-            <span class="chip-name">{p.name}</span>
-            <span class="chip-savings">{p.savings}</span>
+            <span class="preset-head">
+              <span class="preset-title">{p.name}</span>
+              {#if p.origin !== 'custom' && p.savings}<span class="preset-savings">{p.savings}</span>{/if}
+            </span>
+            {#if p.blurb}<span class="preset-desc">{p.blurb}</span>{/if}
+            <span class="preset-rows">
+              {#each presetSummary(p.opts) as row}
+                <span class="preset-row"><span class="preset-label">{row.label}</span><span class="preset-val">{row.value}</span></span>
+              {/each}
+            </span>
           </button>
           {#if p.origin === 'custom'}
             <button
@@ -233,16 +245,25 @@
     </div>
     <div class="save-preset">
       {#if namingPreset}
-        <!-- svelte-ignore a11y_autofocus -->
-        <input
-          class="preset-name" type="text" placeholder="Preset name" maxlength="40"
-          bind:value={newPresetName} autofocus
-          onkeydown={(e) => { if (e.key === 'Enter') saveAsPreset(); if (e.key === 'Escape') { namingPreset = false; newPresetName = ''; } }}
-        />
-        <button class="btn small" disabled={!newPresetName.trim()} onclick={saveAsPreset}>Save preset</button>
-        <button class="link" onclick={() => { namingPreset = false; newPresetName = ''; }}>Cancel</button>
+        <div class="preset-form">
+          <!-- svelte-ignore a11y_autofocus -->
+          <input
+            class="preset-name" type="text" placeholder="Preset title" maxlength="40"
+            bind:value={newPresetName} autofocus
+            onkeydown={(e) => { if (e.key === 'Enter') saveAsPreset(); if (e.key === 'Escape') cancelNaming(); }}
+          />
+          <input
+            class="preset-name" type="text" placeholder="Description (optional)" maxlength="80"
+            bind:value={newPresetDesc}
+            onkeydown={(e) => { if (e.key === 'Enter') saveAsPreset(); if (e.key === 'Escape') cancelNaming(); }}
+          />
+          <div class="preset-form-actions">
+            <button class="btn small" disabled={!newPresetName.trim()} onclick={saveAsPreset}>Save preset</button>
+            <button class="link" onclick={cancelNaming}>Cancel</button>
+          </div>
+        </div>
       {:else}
-        <button class="link" onclick={() => { namingPreset = true; newPresetName = ''; }}>+ Save current settings as a preset</button>
+        <button class="link" onclick={() => { namingPreset = true; newPresetName = ''; newPresetDesc = ''; }}>+ Save current settings as a preset</button>
       {/if}
     </div>
   </div>
@@ -377,21 +398,32 @@
 
   .presets { margin-top: 16px; }
   .presets-title { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip-wrap { position: relative; display: inline-flex; }
-  .chip { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
-    background: #0f1218; border: 1px solid var(--line); color: var(--text); border-radius: 10px;
-    padding: 8px 12px; cursor: pointer; transition: border-color .15s, background .15s; }
-  .chip:hover { border-color: var(--accent); }
-  .chip.active { border-color: var(--accent); background: #11202a; }
-  .chip-name { font-size: 13px; font-weight: 600; }
-  .chip-savings { font-size: 11px; color: var(--accent); font-weight: 600; }
-  .chip-del { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; padding: 0;
+  /* Preset cards: each button shows title, description and the settings breakdown inline,
+     laid out in a responsive grid that stacks to one column on narrow screens. */
+  .chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .chip-wrap { position: relative; }
+  .preset { display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left;
+    background: #0f1218; border: 1px solid var(--line); color: var(--text); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer; transition: border-color .15s, background .15s; }
+  .preset:hover { border-color: var(--accent); }
+  .preset.active { border-color: var(--accent); background: #11202a; }
+  .preset-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .preset.has-del .preset-head { padding-right: 22px; } /* clear the delete × */
+  .preset-title { font-size: 14px; font-weight: 700; }
+  .preset-savings { font-size: 11px; color: var(--accent); font-weight: 600; white-space: nowrap; flex: none; }
+  .preset-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .preset-rows { display: grid; gap: 3px; margin-top: 6px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .preset-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+  .preset-label { color: var(--muted); }
+  .preset-val { color: var(--text); font-weight: 600; white-space: nowrap; }
+  .chip-del { position: absolute; top: 8px; right: 8px; width: 20px; height: 20px; padding: 0;
     display: flex; align-items: center; justify-content: center; border-radius: 50%;
     border: 1px solid var(--line); background: #0f1218; color: var(--muted);
     font-size: 13px; line-height: 1; cursor: pointer; transition: color .15s, border-color .15s; }
   .chip-del:hover { color: var(--err); border-color: var(--err); }
   .save-preset { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+  .preset-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .preset-form-actions { display: flex; align-items: center; gap: 10px; }
   input.preset-name { width: auto; flex: 0 1 220px; margin-top: 0; }
   .btn.small { padding: 7px 12px; font-size: 13px; }
 
