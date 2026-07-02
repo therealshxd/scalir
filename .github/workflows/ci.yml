@@ -7,6 +7,10 @@ on:
   push:
     branches: [dev, main]
 
+# Least-privilege GITHUB_TOKEN: CI only reads the repo (check/test/build/audit).
+permissions:
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
