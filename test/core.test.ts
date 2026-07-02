@@ -104,12 +104,23 @@ describe('rules', () => {
 
 describe('naming', () => {
   const N = (o: Partial<NameOptions> = {}): NameOptions =>
-    ({ prefix: 'scaled_', suffix: '', lowercase: false, slugify: false, ...o });
+    ({ prefix: 'scaled_', rename: '', suffix: '', lowercase: false, slugify: false, ...o });
 
   it('keeps extension by default, swaps on convert', () => {
     expect(makeOutName('beach.jpg', N(), null)).toBe('scaled_beach.jpg');
     expect(makeOutName('beach.jpeg', N(), null)).toBe('scaled_beach.jpeg');
     expect(makeOutName('logo.png', N(), '.webp')).toBe('scaled_logo.webp');
+  });
+
+  it('rename replaces the original base name, keeping prefix/suffix/extension', () => {
+    expect(makeOutName('DSC_0001.jpg', N({ rename: 'gallery' }), null)).toBe('scaled_gallery.jpg');
+    expect(makeOutName('DSC_0001.jpg', N({ prefix: '', rename: 'hero', suffix: '-lg' }), '.webp'))
+      .toBe('hero-lg.webp');
+    // empty/whitespace rename → original stem
+    expect(makeOutName('beach.jpg', N({ rename: '   ' }), null)).toBe('scaled_beach.jpg');
+    // rename runs through lowercase + slugify like any other name
+    expect(makeOutName('x.JPG', N({ prefix: '', rename: 'My Gallery', lowercase: true, slugify: true }), null))
+      .toBe('my-gallery.jpg');
   });
 
   it('applies suffix before the extension', () => {
