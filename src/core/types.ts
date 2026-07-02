@@ -23,6 +23,7 @@ export interface Options {
   maxDim: number;        // longest-side cap in px (default 2000)
   maxBytes: number;      // file-size cap in bytes (default 1 MB)
   prefix: string;        // output filename prefix (default 'scaled_')
+  rename: string;        // replaces the original base name when non-empty (default '')
   suffix: string;        // output filename suffix, before the extension (default '')
   lowercase: boolean;    // lower-case the output filename
   slugify: boolean;      // spaces → dashes and strip unsafe characters
@@ -36,6 +37,7 @@ export const DEFAULT_OPTIONS: Options = {
   maxDim: 2000,
   maxBytes: 1024 * 1024,
   prefix: 'scaled_',
+  rename: '',
   suffix: '',
   lowercase: false,
   slugify: false,

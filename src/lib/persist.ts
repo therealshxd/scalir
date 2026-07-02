@@ -13,6 +13,7 @@ export interface UiOpts {
   maxDim: number;
   maxMB: number;
   prefix: string;
+  rename: string;
   suffix: string;
   lowercase: boolean;
   slugify: boolean;
@@ -20,11 +21,17 @@ export interface UiOpts {
   allowWebp: boolean;
   qualityFloor: number;
   outputFormat: OutputFormat;
+  // View-only: which panels are expanded. Persisted so the layout is remembered; never sent
+  // to the worker.
+  presetsOpen: boolean;
+  settingsOpen: boolean;
+  advancedOpen: boolean;
 }
 
 export const DEFAULT_UI_OPTS: UiOpts = {
-  maxDim: 2000, maxMB: 1, prefix: 'scaled_', suffix: '', lowercase: false,
+  maxDim: 2000, maxMB: 1, prefix: 'scaled_', rename: '', suffix: '', lowercase: false,
   slugify: false, sequential: false, allowWebp: true, qualityFloor: 60, outputFormat: 'auto',
+  presetsOpen: true, settingsOpen: true, advancedOpen: false,
 };
 
 const SETTINGS_KEY = 'scalir:settings:v1';

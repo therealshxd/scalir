@@ -23,11 +23,19 @@
   // Live example of how the current naming settings shape an output filename.
   let namePreview = $derived.by(() => {
     let n = makeOutName('My Photo.JPG', {
-      prefix: opts.prefix, suffix: opts.suffix, lowercase: opts.lowercase, slugify: opts.slugify,
+      prefix: opts.prefix, rename: opts.rename, suffix: opts.suffix,
+      lowercase: opts.lowercase, slugify: opts.slugify,
     }, null);
     if (opts.sequential) n = withSequenceNumber(n, 1, 1);
     return n;
   });
+
+  // A fixed rename applied to a whole batch would make every file collide, so switch on
+  // sequential numbering as soon as the user types a name (they can still turn it back off).
+  function onRenameInput() {
+    clearPreset();
+    if (opts.rename.trim()) opts.sequential = true;
+  }
 
   // User-saved presets, shown alongside the built-ins and individually deletable.
   let customPresets = $state<Preset[]>(loadCustomPresets());
@@ -148,7 +156,8 @@
     processing = true; results = new Array(queue.length); clearNotice();
     const o: Partial<Options> = {
       maxDim: opts.maxDim, maxBytes: Math.round(opts.maxMB * 1024 * 1024),
-      prefix: opts.prefix, suffix: opts.suffix, lowercase: opts.lowercase, slugify: opts.slugify,
+      prefix: opts.prefix, rename: opts.rename, suffix: opts.suffix,
+      lowercase: opts.lowercase, slugify: opts.slugify,
       allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor, outputFormat: opts.outputFormat,
     };
     // Sequential numbering is applied here (not in the worker): the pool completes images
@@ -225,8 +234,9 @@
 
   {#if notice}<p class="notice">{notice}</p>{/if}
 
-  <div class="panel presets">
-    <p class="presets-title">Quick presets</p>
+  <details class="section" bind:open={opts.presetsOpen}>
+    <summary class="section-head"><span>Quick presets</span><span class="chev">▸</span></summary>
+    <div class="section-body">
     <div class="chips">
       {#each allPresets as p}
         <div class="chip-wrap">
@@ -283,73 +293,100 @@
         <button class="link" onclick={() => { namingPreset = true; newPresetName = ''; newPresetDesc = ''; }}>+ Save current settings as a preset</button>
       {/if}
     </div>
-  </div>
-
-  <div class="panel opts">
-    <div class="grid">
-      <label>Max dimension (px)
-        <input type="number" bind:value={opts.maxDim} oninput={clearPreset} min="1" />
-        <span class="hint">Maximum length of the longest side. Smaller = smaller file; images already smaller are left as-is.</span>
-      </label>
-      <label>Max size (MB)
-        <input type="number" step="0.1" bind:value={opts.maxMB} oninput={clearPreset} min="0.1" />
-        <span class="hint">Target file size — we compress just enough to fit under this.</span>
-      </label>
-      <label>Output format
-        <select bind:value={opts.outputFormat} onchange={clearPreset}>
-          <option value="auto">Auto (recommended)</option>
-          <option value="jpeg">JPEG</option>
-          <option value="png">PNG</option>
-          <option value="webp">WebP</option>
-          <option value="avif">AVIF</option>
-        </select>
-        <span class="hint">Auto keeps the original, switching to WebP only when it helps. Or force one format (AVIF is the smallest, but slower to encode).</span>
-      </label>
-      <label>Quality floor
-        <input type="number" bind:value={opts.qualityFloor} oninput={clearPreset} min="1" max="100" />
-        <span class="hint">Lowest quality we'll allow while hitting your size target. Higher = better looking but larger.</span>
-      </label>
-      <label>Prefix
-        <input type="text" bind:value={opts.prefix} oninput={clearPreset} />
-        <span class="hint">Added to the start of each saved file's name.</span>
-      </label>
-      <label>Suffix
-        <input type="text" bind:value={opts.suffix} oninput={clearPreset} />
-        <span class="hint">Added to the end of the name, before the extension.</span>
-      </label>
     </div>
-    <label class="check">
-      <input type="checkbox" bind:checked={opts.allowWebp} onchange={clearPreset} />
-      Allow WebP conversion
-      <span class="hint">In Auto mode, lets us switch to WebP to hit your size target.</span>
-    </label>
-    <div class="naming-opts">
-      <label class="check">
-        <input type="checkbox" bind:checked={opts.lowercase} onchange={clearPreset} />
-        Lowercase filenames
-      </label>
-      <label class="check">
-        <input type="checkbox" bind:checked={opts.slugify} onchange={clearPreset} />
-        Slugify (spaces → dashes)
-      </label>
-      <label class="check">
-        <input type="checkbox" bind:checked={opts.sequential} onchange={clearPreset} />
-        Sequential numbering
-      </label>
-    </div>
-    <p class="name-preview">Example: <span class="muted">My Photo.JPG</span> → <b>{namePreview}</b></p>
+  </details>
 
-    <details class="help">
-      <summary>What do these mean?</summary>
-      <ul>
-        <li><b>Presets</b> fill the settings below for a common goal. Tweaking any field switches you back to custom settings.</li>
-        <li><b>Max dimension</b> caps the longest side (width or height) in pixels — aspect ratio is always kept, nothing is cropped or stretched. An image already under the cap isn't enlarged.</li>
-        <li><b>Max size</b> is your file-size target. We reduce quality just enough to land under it without going lower than the quality floor.</li>
-        <li><b>Output format</b> — <i>Auto</i> keeps your original format (and only converts to WebP when that meaningfully helps). Pick JPEG for maximum compatibility, WebP for the smallest files, or PNG to stay lossless.</li>
-        <li><b>Quality floor</b> is the worst quality we're willing to use to hit the size target. If we can't fit under your size even at the floor, we stop there and flag it rather than ruining the image.</li>
-      </ul>
-    </details>
-  </div>
+  <details class="section" bind:open={opts.settingsOpen}>
+    <summary class="section-head"><span>Settings</span><span class="chev">▸</span></summary>
+    <div class="section-body">
+      <!-- Simple: the essentials most people need. -->
+      <div class="grid2">
+        <label>Max size (MB)
+          <div class="slider-row">
+            <input type="range" min="0.1" max="10" step="0.1" bind:value={opts.maxMB} oninput={clearPreset} />
+            <input class="num" type="number" step="0.1" min="0.1" bind:value={opts.maxMB} oninput={clearPreset} />
+          </div>
+          <span class="hint">Target file size — we compress just enough to fit under this.</span>
+        </label>
+        <label>Output format
+          <select bind:value={opts.outputFormat} onchange={clearPreset}>
+            <option value="auto">Auto (recommended)</option>
+            <option value="jpeg">JPEG</option>
+            <option value="png">PNG</option>
+            <option value="webp">WebP</option>
+            <option value="avif">AVIF</option>
+          </select>
+          <span class="hint">Auto keeps the original, switching to WebP only when it helps. Or force one format (AVIF is the smallest, but slower to encode).</span>
+        </label>
+      </div>
+
+      <details class="advanced" bind:open={opts.advancedOpen}>
+        <summary>Advanced settings</summary>
+        <div class="advanced-body">
+          <div class="grid2">
+            <label>Max dimension (px)
+              <input type="number" bind:value={opts.maxDim} oninput={clearPreset} min="1" />
+              <span class="hint">Maximum length of the longest side. Smaller = smaller file; images already smaller are left as-is.</span>
+            </label>
+            <label>Quality floor
+              <div class="slider-row">
+                <input type="range" min="1" max="100" step="1" bind:value={opts.qualityFloor} oninput={clearPreset} />
+                <input class="num" type="number" min="1" max="100" bind:value={opts.qualityFloor} oninput={clearPreset} />
+              </div>
+              <span class="hint">Lowest quality we'll allow while hitting your size target. Higher = better looking but larger.</span>
+            </label>
+          </div>
+          <label class="check">
+            <input type="checkbox" bind:checked={opts.allowWebp} onchange={clearPreset} />
+            Allow WebP conversion
+            <span class="hint">In Auto mode, lets us switch to WebP to hit your size target.</span>
+          </label>
+
+          <p class="group-title">File names</p>
+          <div class="grid3">
+            <label>Prefix
+              <input type="text" bind:value={opts.prefix} oninput={clearPreset} />
+              <span class="hint">Added to the start of each saved file's name.</span>
+            </label>
+            <label>File name
+              <input type="text" placeholder="(keep original name)" bind:value={opts.rename} oninput={onRenameInput} />
+              <span class="hint">Rename every file to this. Blank keeps the original name.</span>
+            </label>
+            <label>Suffix
+              <input type="text" bind:value={opts.suffix} oninput={clearPreset} />
+              <span class="hint">Added to the end of the name, before the extension.</span>
+            </label>
+          </div>
+          <div class="naming-opts">
+            <label class="check">
+              <input type="checkbox" bind:checked={opts.lowercase} onchange={clearPreset} />
+              Lowercase filenames
+            </label>
+            <label class="check">
+              <input type="checkbox" bind:checked={opts.slugify} onchange={clearPreset} />
+              Slugify (spaces → dashes)
+            </label>
+            <label class="check">
+              <input type="checkbox" bind:checked={opts.sequential} onchange={clearPreset} />
+              Sequential numbering
+            </label>
+          </div>
+          <p class="name-preview">Example: <span class="muted">My Photo.JPG</span> → <b>{namePreview}</b></p>
+
+          <details class="help">
+            <summary>What do these mean?</summary>
+            <ul>
+              <li><b>Presets</b> fill the settings for a common goal. Tweaking any field switches you back to custom settings.</li>
+              <li><b>Max dimension</b> caps the longest side (width or height) in pixels — aspect ratio is always kept, nothing is cropped or stretched. An image already under the cap isn't enlarged.</li>
+              <li><b>Max size</b> is your file-size target. We reduce quality just enough to land under it without going lower than the quality floor.</li>
+              <li><b>Output format</b> — <i>Auto</i> keeps your original format (and only converts to WebP when that meaningfully helps). Pick JPEG for maximum compatibility, WebP for the smallest files, or PNG to stay lossless.</li>
+              <li><b>Quality floor</b> is the worst quality we're willing to use to hit the size target. If we can't fit under your size even at the floor, we stop there and flag it rather than ruining the image.</li>
+            </ul>
+          </details>
+        </div>
+      </details>
+    </div>
+  </details>
 
   {#if queue.length > 0 && !processing && !rows.length}
     <div class="panel queue-list">
@@ -422,12 +459,39 @@
   .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
   .btn:disabled { opacity: .45; cursor: default; }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: start; }
+  /* Collapsible panels (presets / settings) — a clickable header with a rotating chevron. */
+  .section { border: 1px solid var(--line); border-radius: 12px; margin-top: 16px; }
+  .section > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
+    justify-content: space-between; gap: 8px; padding: 13px 16px; font-size: 14px; font-weight: 600; color: var(--text); }
+  .section > summary::-webkit-details-marker { display: none; }
+  .section > summary:hover { color: var(--accent); }
+  .section-body { padding: 0 16px 16px; }
+  .chev { color: var(--muted); font-size: 12px; transition: transform .15s; }
+  .section[open] > summary .chev { transform: rotate(90deg); }
+
+  /* Advanced sub-expander inside the Settings panel. */
+  .advanced { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .advanced > summary { list-style: none; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); }
+  .advanced > summary::-webkit-details-marker { display: none; }
+  .advanced > summary::before { content: '▸ '; display: inline-block; transition: transform .15s; }
+  .advanced[open] > summary::before { transform: rotate(90deg); }
+  .advanced-body { margin-top: 12px; }
+  .group-title { margin: 16px 0 0; font-size: 12px; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--muted); }
+
+  .grid2, .grid3 { display: grid; gap: 12px; align-items: start; }
+  .grid2 { grid-template-columns: repeat(2, 1fr); }
+  .grid3 { grid-template-columns: repeat(3, 1fr); }
+
+  /* Range + textbox pair, bound to the same value. */
+  .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+  .slider-row input[type=range] { flex: 1; margin: 0; accent-color: var(--accent); }
+  .slider-row input.num { width: 72px; flex: none; margin-top: 0; }
+
   label { display: block; font-size: 13px; color: var(--muted); font-weight: 600; }
   input[type=number], input[type=text], select { width: 100%; margin-top: 5px; background: #0f1218;
     border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 9px 10px; font-size: 14px; }
   .hint { display: block; margin-top: 5px; font-size: 11.5px; font-weight: 400; color: var(--muted); line-height: 1.4; }
-  .opts { margin-top: 16px; }
   .check { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; color: var(--text); font-weight: 500; }
   .check input { width: auto; }
   .check .hint { flex-basis: 100%; margin-top: 2px; }
@@ -436,10 +500,9 @@
   .name-preview { margin-top: 12px; font-size: 12.5px; color: var(--muted); }
   .name-preview b { color: var(--accent); font-weight: 600; word-break: break-all; }
 
-  .presets { margin-top: 16px; }
-  .presets-title { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
-  /* Preset cards: each button shows title, description and the settings breakdown inline,
-     laid out in a responsive grid that stacks to one column on narrow screens. */
+  /* Preset cards: compact by default (title + description + savings); the settings breakdown
+     is revealed only when the card is active or hovered/focused — active-tap covers mobile.
+     Laid out in a responsive grid that stacks to one column on narrow screens. */
   .chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
   .chip-wrap { position: relative; }
   .preset { display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left;
@@ -452,7 +515,10 @@
   .preset-title { font-size: 14px; font-weight: 700; }
   .preset-savings { font-size: 11px; color: var(--accent); font-weight: 600; white-space: nowrap; flex: none; }
   .preset-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
-  .preset-rows { display: grid; gap: 3px; margin-top: 6px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .preset-rows { display: none; gap: 3px; margin-top: 6px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .preset.active .preset-rows,
+  .chip-wrap:hover .preset-rows,
+  .chip-wrap:focus-within .preset-rows { display: grid; }
   .preset-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
   .preset-label { color: var(--muted); }
   .preset-val { color: var(--text); font-weight: 600; white-space: nowrap; }
@@ -496,5 +562,8 @@
   .queue-list li { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--line); }
   .queue-list li:last-child { border-bottom: 0; }
   .q-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
-  @media (max-width: 560px) { .grid, .summary { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) {
+    .summary { grid-template-columns: repeat(2, 1fr); }
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
 </style>

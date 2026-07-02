@@ -1,7 +1,7 @@
 import type { Options } from './types';
 
 /** The naming-related settings makeOutName needs (a subset of Options). */
-export type NameOptions = Pick<Options, 'prefix' | 'suffix' | 'lowercase' | 'slugify'>;
+export type NameOptions = Pick<Options, 'prefix' | 'rename' | 'suffix' | 'lowercase' | 'slugify'>;
 
 /** Split a filename into its stem and extension (ext includes the leading dot, or ''). */
 function splitExt(name: string): [stem: string, ext: string] {
@@ -24,7 +24,8 @@ function slugify(s: string): string {
  * Sequential numbering is applied separately, on the main thread — see withSequenceNumber.
  */
 export function makeOutName(name: string, opts: NameOptions, newExt: string | null): string {
-  const [stem, origExt] = splitExt(name);
+  const [origStem, origExt] = splitExt(name);
+  const stem = opts.rename.trim() || origStem; // a set rename replaces the original name
   let core = `${opts.prefix}${stem}${opts.suffix}`;
   let ext = newExt != null ? newExt : origExt;
   if (opts.lowercase) { core = core.toLowerCase(); ext = ext.toLowerCase(); }

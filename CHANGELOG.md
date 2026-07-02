@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3.3] - 2026-07-01
+## [1.3.4] - 2026-07-02
+
+### Added
+- **Rename files.** A new **File name** field renames every output (kept between the prefix and
+  suffix); leave it blank to keep the original name. Setting it switches on sequential numbering
+  automatically so a batch can't collide.
+- **Sliders** for **quality** and **max size** — drag or type, they stay in sync.
+
+### Changed
+- **Simpler by default.** Settings are now split into a **Simple** view (presets, max size,
+  output format) with everything else tucked under an **Advanced** section, so casual use stays
+  uncluttered while power users keep every dial.
+- **Collapsible panels.** The Presets and Settings panels can be minimised, and the layout is
+  remembered between visits.
+- **Compact preset cards.** Presets show their title, description and savings at a glance; the
+  full settings breakdown appears when a preset is selected or hovered.
 
 ### Added
 - **Smarter output naming.** In addition to a prefix, you can now add a **suffix**, force
