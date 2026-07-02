@@ -19,8 +19,14 @@ export interface Codecs {
 
 export type OutputFormat = 'auto' | Fmt;
 
+export type ResizeMode = 'longest' | 'width' | 'height' | 'percent';
+
 export interface Options {
-  maxDim: number;        // longest-side cap in px (default 2000)
+  resizeMode: ResizeMode; // how maxDim/targetW/targetH/percent are interpreted (default 'longest')
+  maxDim: number;        // longest-side cap in px (default 2000) — used by 'longest'
+  targetW: number;       // exact output width in px — used by 'width'
+  targetH: number;       // exact output height in px — used by 'height'
+  percent: number;       // scale % (1–100) — used by 'percent'
   maxBytes: number;      // file-size cap in bytes (default 1 MB)
   prefix: string;        // output filename prefix (default 'scaled_')
   rename: string;        // replaces the original base name when non-empty (default '')
@@ -34,7 +40,11 @@ export interface Options {
 }
 
 export const DEFAULT_OPTIONS: Options = {
+  resizeMode: 'longest',
   maxDim: 2000,
+  targetW: 1920,
+  targetH: 1080,
+  percent: 50,
   maxBytes: 1024 * 1024,
   prefix: 'scaled_',
   rename: '',

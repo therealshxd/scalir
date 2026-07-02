@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.5] - 2026-07-02
+
+### Added
+- **Flexible resize modes.** Alongside longest-side, you can now resize by **exact width**,
+  **exact height**, or a **percentage**, with one-tap **responsive width** presets
+  (640 / 828 / 1080 / 1200 / 1920). Aspect ratio is always kept and nothing is ever upscaled —
+  a source already smaller than your target is left untouched.
+
 ## [1.3.4] - 2026-07-02
 
 ### Added
