@@ -1,6 +1,6 @@
 import type { Codecs, Fmt, InputFmt, ImageDataLike, Options, OptimiseResult } from './types';
 import { DEFAULT_OPTIONS } from './types';
-import { detectFormat, resizeTarget, bestQualityUnder, mimeOf, extForFmt, QUALITY_LADDER } from './rules';
+import { detectFormat, computeResize, bestQualityUnder, mimeOf, extForFmt, QUALITY_LADDER } from './rules';
 import { makeOutName } from './naming';
 import { readJpegOrientation, applyOrientation } from './exif';
 
@@ -43,8 +43,8 @@ export async function optimise(
   }
   res.origDims = [img.width, img.height];
 
-  // Rule 1b: resize if oversized.
-  const target = resizeTarget(img.width, img.height, opts.maxDim);
+  // Rule 1b: resize per the chosen mode (longest side / width / height / percent).
+  const target = computeResize(img.width, img.height, opts);
   if (target) {
     img = await codecs.resize(img, target[0], target[1]);
     res.resized = true;

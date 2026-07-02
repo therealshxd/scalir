@@ -4,13 +4,17 @@
 // to a no-op rather than throwing. Loads merge over the caller's defaults and copy only
 // known keys, so settings saved by an older build that lacks a newer field simply pick that
 // field up from defaults — no migration step is ever needed as later releases grow `UiOpts`.
-import type { OutputFormat } from '../core/types';
+import type { OutputFormat, ResizeMode } from '../core/types';
 import type { Preset } from '../core/presets';
 
 // The shape of the tool's live UI state. Mirrors the form controls in Tool.svelte and uses
 // `maxMB` (not the core engine's `maxBytes`); the two are bridged at submit time.
 export interface UiOpts {
+  resizeMode: ResizeMode;
   maxDim: number;
+  targetW: number;
+  targetH: number;
+  percent: number;
   maxMB: number;
   prefix: string;
   rename: string;
@@ -29,7 +33,8 @@ export interface UiOpts {
 }
 
 export const DEFAULT_UI_OPTS: UiOpts = {
-  maxDim: 2000, maxMB: 1, prefix: 'scaled_', rename: '', suffix: '', lowercase: false,
+  resizeMode: 'longest', maxDim: 2000, targetW: 1920, targetH: 1080, percent: 50,
+  maxMB: 1, prefix: 'scaled_', rename: '', suffix: '', lowercase: false,
   slugify: false, sequential: false, allowWebp: true, qualityFloor: 60, outputFormat: 'auto',
   presetsOpen: true, settingsOpen: true, advancedOpen: false,
 };

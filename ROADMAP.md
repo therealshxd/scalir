@@ -47,8 +47,8 @@ Want to try things before they ship? Preview the latest **work-in-progress build
   are one click. *(shipped in 1.3.1–1.3.2)*
 - ✅ **Smarter output naming** — prefix *and* suffix, lowercase, slugify spaces, optional
   sequential numbering for clean, web-ready filenames. *(shipped in 1.3.3)*
-- **Flexible resize modes** — exact width, exact height, percentage scale, or a common
-  responsive width (multi-size/`srcset` export comes later).
+- ✅ **Flexible resize modes** — exact width, exact height, percentage scale, or a common
+  responsive width (multi-size/`srcset` export comes later). *(shipped in 1.3.5)*
 - **Before/after preview** — preview each result with a before/after compare and tweak a
   single image's quality before saving the batch.
 

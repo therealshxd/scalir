@@ -1,4 +1,4 @@
-import type { Fmt, InputFmt, ImageDataLike } from './types';
+import type { Fmt, InputFmt, ImageDataLike, Options } from './types';
 
 export const SUPPORTED_EXT = [
   'jpg', 'jpeg', 'png', 'webp', 'avif', 'heic', 'heif', 'gif', 'tif', 'tiff', 'bmp',
@@ -54,6 +54,34 @@ export function resizeTarget(w: number, h: number, maxDim: number): [number, num
   if (Math.max(w, h) <= maxDim) return null;
   const s = maxDim / Math.max(w, h);
   return [Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s))];
+}
+
+/** Scale both dimensions by `s`, keeping aspect (min 1px). */
+function scaleDims(w: number, h: number, s: number): [number, number] {
+  return [Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s))];
+}
+
+/**
+ * Resolve the target [w,h] for the chosen resize mode, or null to leave the image as-is.
+ * Aspect ratio is always preserved and nothing is ever upscaled — a source already at or
+ * below the target returns null (unchanged, matching longest-side behaviour).
+ */
+export function computeResize(
+  w: number,
+  h: number,
+  o: Pick<Options, 'resizeMode' | 'maxDim' | 'targetW' | 'targetH' | 'percent'>,
+): [number, number] | null {
+  switch (o.resizeMode) {
+    case 'width':
+      return o.targetW >= w ? null : scaleDims(w, h, o.targetW / w);
+    case 'height':
+      return o.targetH >= h ? null : scaleDims(w, h, o.targetH / h);
+    case 'percent':
+      return o.percent >= 100 ? null : scaleDims(w, h, o.percent / 100);
+    case 'longest':
+    default:
+      return resizeTarget(w, h, o.maxDim);
+  }
 }
 
 export function qualitySteps(floor: number): number[] {

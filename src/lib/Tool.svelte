@@ -50,6 +50,7 @@
   const cancelNaming = () => { namingPreset = false; newPresetName = ''; newPresetDesc = ''; };
 
   function applyPreset(p: Preset) {
+    opts.resizeMode = 'longest'; // presets are longest-side snapshots
     opts.maxDim = p.opts.maxDim;
     opts.maxMB = p.opts.maxBytes / (1024 * 1024);
     opts.outputFormat = p.opts.outputFormat;
@@ -155,7 +156,9 @@
     if (!queue.length || processing) return;
     processing = true; results = new Array(queue.length); clearNotice();
     const o: Partial<Options> = {
-      maxDim: opts.maxDim, maxBytes: Math.round(opts.maxMB * 1024 * 1024),
+      resizeMode: opts.resizeMode, maxDim: opts.maxDim, targetW: opts.targetW,
+      targetH: opts.targetH, percent: opts.percent,
+      maxBytes: Math.round(opts.maxMB * 1024 * 1024),
       prefix: opts.prefix, rename: opts.rename, suffix: opts.suffix,
       lowercase: opts.lowercase, slugify: opts.slugify,
       allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor, outputFormat: opts.outputFormat,
@@ -334,9 +337,34 @@
         {#if opts.advancedOpen}
         <div class="advanced-body">
           <div class="grid2">
-            <label>Max dimension (px)
-              <input type="number" bind:value={opts.maxDim} oninput={clearPreset} min="1" />
-              <span class="hint">Maximum length of the longest side. Smaller = smaller file; images already smaller are left as-is.</span>
+            <label>Resize
+              <select bind:value={opts.resizeMode} onchange={clearPreset}>
+                <option value="longest">Longest side</option>
+                <option value="width">Exact width</option>
+                <option value="height">Exact height</option>
+                <option value="percent">Percentage</option>
+              </select>
+              {#if opts.resizeMode === 'longest'}
+                <input class="resize-val" type="number" min="1" bind:value={opts.maxDim} oninput={clearPreset} />
+                <span class="hint">Caps the longest side (px), keeping aspect. Images already smaller are left as-is.</span>
+              {:else if opts.resizeMode === 'width'}
+                <input class="resize-val" type="number" min="1" bind:value={opts.targetW} oninput={clearPreset} />
+                <div class="resize-chips">
+                  {#each [640, 828, 1080, 1200, 1920] as wq}
+                    <button type="button" class="rchip {opts.targetW === wq ? 'active' : ''}" onclick={() => { opts.targetW = wq; clearPreset(); }}>{wq}</button>
+                  {/each}
+                </div>
+                <span class="hint">Scales to this width (px), keeping aspect. Only shrinks — smaller images are left as-is.</span>
+              {:else if opts.resizeMode === 'height'}
+                <input class="resize-val" type="number" min="1" bind:value={opts.targetH} oninput={clearPreset} />
+                <span class="hint">Scales to this height (px), keeping aspect. Only shrinks — smaller images are left as-is.</span>
+              {:else}
+                <div class="slider-row">
+                  <input type="range" min="1" max="100" step="1" bind:value={opts.percent} oninput={clearPreset} />
+                  <input class="num" type="number" min="1" max="100" bind:value={opts.percent} oninput={clearPreset} />
+                </div>
+                <span class="hint">Scales both sides to this percentage. 100% leaves the image unchanged.</span>
+              {/if}
             </label>
             <label>Quality floor
               <div class="slider-row">
@@ -513,6 +541,13 @@
   .slider-row { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
   .slider-row input[type=range] { flex: 1; margin: 0; accent-color: var(--accent); }
   .slider-row input.num { width: 72px; flex: none; margin-top: 0; }
+
+  /* Responsive-width quick-picks for the Exact width resize mode. */
+  .resize-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .rchip { background: #0f1218; border: 1px solid var(--line); color: var(--text); border-radius: 7px;
+    padding: 5px 9px; font-size: 12px; font-weight: 600; cursor: pointer; transition: border-color .08s, background .08s; }
+  .rchip:hover { border-color: var(--accent); }
+  .rchip.active { border-color: var(--accent); background: #11202a; color: var(--accent); }
 
   label { display: block; font-size: 13px; color: var(--muted); font-weight: 600; }
   input[type=number], input[type=text], select { width: 100%; margin-top: 5px; background: #0f1218;
