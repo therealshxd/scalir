@@ -234,9 +234,12 @@
 
   {#if notice}<p class="notice">{notice}</p>{/if}
 
-  <details class="section" bind:open={opts.presetsOpen}>
-    <summary class="section-head"><span>Quick presets</span><span class="chev">▸</span></summary>
-    <div class="section-body">
+  <div class="acc" class:open={opts.presetsOpen}>
+    <button type="button" class="acc-head" aria-expanded={opts.presetsOpen} onclick={() => (opts.presetsOpen = !opts.presetsOpen)}>
+      <span class="toggle" aria-hidden="true"></span><span class="acc-title">Quick presets</span>
+    </button>
+    {#if opts.presetsOpen}
+    <div class="acc-body">
     <div class="chips">
       {#each allPresets as p}
         <div class="chip-wrap">
@@ -294,11 +297,15 @@
       {/if}
     </div>
     </div>
-  </details>
+    {/if}
+  </div>
 
-  <details class="section" bind:open={opts.settingsOpen}>
-    <summary class="section-head"><span>Settings</span><span class="chev">▸</span></summary>
-    <div class="section-body">
+  <div class="acc" class:open={opts.settingsOpen}>
+    <button type="button" class="acc-head" aria-expanded={opts.settingsOpen} onclick={() => (opts.settingsOpen = !opts.settingsOpen)}>
+      <span class="toggle" aria-hidden="true"></span><span class="acc-title">Settings</span>
+    </button>
+    {#if opts.settingsOpen}
+    <div class="acc-body">
       <!-- Simple: the essentials most people need. -->
       <div class="grid2">
         <label>Max size (MB)
@@ -320,8 +327,11 @@
         </label>
       </div>
 
-      <details class="advanced" bind:open={opts.advancedOpen}>
-        <summary>Advanced settings</summary>
+      <div class="advanced" class:open={opts.advancedOpen}>
+        <button type="button" class="adv-head" aria-expanded={opts.advancedOpen} onclick={() => (opts.advancedOpen = !opts.advancedOpen)}>
+          <span class="toggle sm" aria-hidden="true"></span><span class="adv-title">Advanced settings</span>
+        </button>
+        {#if opts.advancedOpen}
         <div class="advanced-body">
           <div class="grid2">
             <label>Max dimension (px)
@@ -384,9 +394,11 @@
             </ul>
           </details>
         </div>
-      </details>
+        {/if}
+      </div>
     </div>
-  </details>
+    {/if}
+  </div>
 
   {#if queue.length > 0 && !processing && !rows.length}
     <div class="panel queue-list">
@@ -454,27 +466,41 @@
   .small { font-size: 12.5px; }
   .pickrow { display: flex; gap: 10px; justify-content: center; margin: 10px 0; flex-wrap: wrap; }
   .btn { display: inline-block; background: var(--accent); color: var(--accent-ink); border: 0;
-    border-radius: 9px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    border-radius: 9px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: filter .08s, transform .08s; }
+  .btn:hover:not(:disabled) { filter: brightness(1.08); }
+  .btn:active:not(:disabled) { transform: translateY(1px); }
   .btn.primary { padding: 12px 20px; }
   .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
   .btn:disabled { opacity: .45; cursor: default; }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
-  /* Collapsible panels (presets / settings) — a clickable header with a rotating chevron. */
-  .section { border: 1px solid var(--line); border-radius: 12px; margin-top: 16px; }
-  .section > summary { list-style: none; cursor: pointer; display: flex; align-items: center;
-    justify-content: space-between; gap: 8px; padding: 13px 16px; font-size: 14px; font-weight: 600; color: var(--text); }
-  .section > summary::-webkit-details-marker { display: none; }
-  .section > summary:hover { color: var(--accent); }
-  .section-body { padding: 0 16px 16px; }
-  .chev { color: var(--muted); font-size: 12px; transition: transform .15s; }
-  .section[open] > summary .chev { transform: rotate(90deg); }
+  /* Collapsible panels (presets / settings) — a compact, left-aligned header with a stylised
+     +/− toggle button. Closed = just the header row, kept tight. */
+  .acc { border: 1px solid var(--line); border-radius: 12px; margin-top: 12px; }
+  .acc-head { width: 100%; background: none; border: 0; cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+  .acc-title { font-size: 17px; font-weight: 700; color: var(--text); transition: color .08s; }
+  .acc-head:hover .acc-title { color: var(--accent); }
+  .acc-body { padding: 4px 14px 14px; }
+
+  /* Stylised toggle: a rounded button drawing a "+" that becomes "−" when the panel opens. */
+  .toggle { position: relative; flex: none; width: 26px; height: 26px; border-radius: 8px;
+    border: 1px solid var(--line); background: #0f1218; transition: border-color .08s, background .08s; }
+  .toggle.sm { width: 20px; height: 20px; border-radius: 6px; }
+  .toggle::before, .toggle::after { content: ''; position: absolute; top: 50%; left: 50%;
+    background: var(--accent); border-radius: 2px; transition: transform .1s ease; }
+  .toggle::before { width: 12px; height: 2px; transform: translate(-50%, -50%); }
+  .toggle::after { width: 2px; height: 12px; transform: translate(-50%, -50%); }
+  .toggle.sm::before { width: 9px; }
+  .toggle.sm::after { height: 9px; }
+  .acc.open .toggle::after, .advanced.open .toggle::after { transform: translate(-50%, -50%) scaleY(0); }
+  .acc-head:hover .toggle, .adv-head:hover .toggle { border-color: var(--accent); background: #11202a; }
 
   /* Advanced sub-expander inside the Settings panel. */
   .advanced { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
-  .advanced > summary { list-style: none; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); }
-  .advanced > summary::-webkit-details-marker { display: none; }
-  .advanced > summary::before { content: '▸ '; display: inline-block; transition: transform .15s; }
-  .advanced[open] > summary::before { transform: rotate(90deg); }
+  .adv-head { width: 100%; background: none; border: 0; cursor: pointer; text-align: left;
+    display: flex; align-items: center; gap: 10px; padding: 0; }
+  .adv-title { font-size: 14px; font-weight: 600; color: var(--accent); }
   .advanced-body { margin-top: 12px; }
   .group-title { margin: 16px 0 0; font-size: 12px; font-weight: 700; letter-spacing: .04em;
     text-transform: uppercase; color: var(--muted); }
@@ -507,8 +533,8 @@
   .chip-wrap { position: relative; }
   .preset { display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left;
     background: #0f1218; border: 1px solid var(--line); color: var(--text); border-radius: 12px;
-    padding: 12px 14px; cursor: pointer; transition: border-color .15s, background .15s; }
-  .preset:hover { border-color: var(--accent); }
+    padding: 12px 14px; cursor: pointer; transition: border-color .08s, background .08s, transform .08s; }
+  .preset:hover { border-color: var(--accent); transform: translateY(-2px); }
   .preset.active { border-color: var(--accent); background: #11202a; }
   .preset-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
   .preset.has-del .preset-head { padding-right: 22px; } /* clear the delete × */
