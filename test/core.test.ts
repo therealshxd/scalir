@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Codecs, Fmt, InputFmt, ImageDataLike } from '../src/core/types';
 import { optimise } from '../src/core/optimise';
-import { detectFormat, resizeTarget, hasAlpha } from '../src/core/rules';
+import { detectFormat, resizeTarget, computeResize, hasAlpha } from '../src/core/rules';
 import { makeOutName, withSequenceNumber, type NameOptions } from '../src/core/naming';
 import { presetSummary, NO_RESIZE } from '../src/core/presets';
 import { readJpegOrientation, applyOrientation } from '../src/core/exif';
@@ -99,6 +99,30 @@ describe('rules', () => {
     expect(resizeTarget(4000, 3000, 2000)).toEqual([2000, 1500]);
     expect(resizeTarget(5000, 1000, 2000)).toEqual([2000, 400]);
     expect(resizeTarget(1500, 1000, 2000)).toBe(null);
+  });
+});
+
+describe('computeResize', () => {
+  const O = (o: Partial<Parameters<typeof computeResize>[2]> = {}): Parameters<typeof computeResize>[2] =>
+    ({ resizeMode: 'longest', maxDim: 2000, targetW: 1920, targetH: 1080, percent: 50, ...o });
+
+  it('longest delegates to resizeTarget', () => {
+    expect(computeResize(4000, 3000, O({ maxDim: 2000 }))).toEqual([2000, 1500]);
+    expect(computeResize(1500, 1000, O({ maxDim: 2000 }))).toBe(null);
+  });
+  it('exact width scales keeping aspect, never upscales', () => {
+    expect(computeResize(4000, 3000, O({ resizeMode: 'width', targetW: 1200 }))).toEqual([1200, 900]);
+    expect(computeResize(800, 600, O({ resizeMode: 'width', targetW: 1200 }))).toBe(null);   // smaller → as-is
+    expect(computeResize(1200, 900, O({ resizeMode: 'width', targetW: 1200 }))).toBe(null);  // equal → as-is
+  });
+  it('exact height scales keeping aspect, never upscales', () => {
+    expect(computeResize(4000, 3000, O({ resizeMode: 'height', targetH: 600 }))).toEqual([800, 600]);
+    expect(computeResize(800, 600, O({ resizeMode: 'height', targetH: 900 }))).toBe(null);
+  });
+  it('percent scales both sides; >= 100 leaves as-is', () => {
+    expect(computeResize(4000, 3000, O({ resizeMode: 'percent', percent: 50 }))).toEqual([2000, 1500]);
+    expect(computeResize(1000, 500, O({ resizeMode: 'percent', percent: 25 }))).toEqual([250, 125]);
+    expect(computeResize(4000, 3000, O({ resizeMode: 'percent', percent: 100 }))).toBe(null);
   });
 });
 

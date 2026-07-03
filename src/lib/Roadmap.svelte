@@ -72,7 +72,8 @@
           spaces, optional sequential numbering for clean, web-ready filenames.
           <span class="badge shipped">Shipped in 1.3.3</span></li>
         <li><strong>Flexible resize modes</strong> — exact width, exact height, percentage
-          scale, or a common responsive width (multi-size export comes later).</li>
+          scale, or a common responsive width (multi-size export comes later).
+          <span class="badge shipped">Shipped in 1.3.5</span></li>
         <li><strong>Before/after preview</strong> — preview each result with a before/after
           compare and tweak a single image's quality before saving the batch.</li>
       </ul>

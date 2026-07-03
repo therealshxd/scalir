@@ -6,16 +6,19 @@
   import Roadmap from './lib/Roadmap.svelte';
   import Features from './lib/Features.svelte';
   import About from './lib/About.svelte';
+  import PrivacyPolicy from './lib/PrivacyPolicy.svelte';
+  import { initScrollDepth } from './lib/analytics';
 
   const base = import.meta.env.BASE_URL;
 
-  function parse(): 'home' | 'self-hosting' | 'download' | 'roadmap' | 'features' | 'about' {
+  function parse(): 'home' | 'self-hosting' | 'download' | 'roadmap' | 'features' | 'about' | 'privacy' {
     const h = (location.hash || '').replace(/^#\/?/, '');
     return h === 'self-hosting' ? 'self-hosting'
       : h === 'download' ? 'download'
       : h === 'roadmap' ? 'roadmap'
       : h === 'features' ? 'features'
       : h === 'about' ? 'about'
+      : h === 'privacy' ? 'privacy'
       : 'home';
   }
   let route = $state(parse());
@@ -23,7 +26,8 @@
   onMount(() => {
     const onHash = () => { route = parse(); window.scrollTo({ top: 0 }); };
     window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
+    const stopScroll = initScrollDepth();
+    return () => { window.removeEventListener('hashchange', onHash); stopScroll(); };
   });
 
   function gotoTool(e: Event) {
@@ -57,6 +61,8 @@
   <Features />
 {:else if route === 'about'}
   <About />
+{:else if route === 'privacy'}
+  <PrivacyPolicy />
 {:else}
   <Home />
 {/if}
@@ -64,6 +70,6 @@
 <div class="wrap">
   <footer class="site">
     <span>Scalir · private &amp; free · open source · no uploads</span>
-    <span>Built by Shad · MIT licensed</span>
+    <span><a href="#/privacy">Privacy</a> · Built by Shad · MIT licensed</span>
   </footer>
 </div>
