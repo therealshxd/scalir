@@ -8,6 +8,7 @@
     loadSettings, saveSettings, loadCustomPresets, saveCustomPresets,
   } from './persist';
   import { WorkerPool, defaultPoolSize } from './workerPool';
+  import { track } from './analytics';
 
   type Queued = { name: string; bytes: Uint8Array; size: number };
   type Row = OptimiseResult;
@@ -122,6 +123,7 @@
       loaded.push({ name: f.name, bytes, size: bytes.length });
     }
     queue = [...queue, ...loaded];
+    if (toAdd.length) track('images-added', { count: toAdd.length });
     if (skipped > 0 && !notice) notice = `${skipped} non-image file(s) ignored.`;
   }
 
@@ -154,6 +156,7 @@
   // queue stays intact and a batch can be re-run.
   async function run() {
     if (!queue.length || processing) return;
+    track('optimise', { images: queue.length });
     processing = true; results = new Array(queue.length); clearNotice();
     const o: Partial<Options> = {
       resizeMode: opts.resizeMode, maxDim: opts.maxDim, targetW: opts.targetW,
