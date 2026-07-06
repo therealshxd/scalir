@@ -9,6 +9,7 @@
   } from './persist';
   import { WorkerPool, defaultPoolSize } from './workerPool';
   import { track } from './analytics';
+  import Compare from './Compare.svelte';
 
   type Queued = { name: string; bytes: Uint8Array; size: number };
   type Row = OptimiseResult;
@@ -98,6 +99,10 @@
   let done = $derived(rows.length);
   let notice = $state('');
   let dragOver = $state(false);
+  // Per-image compare/quality modal: compareIndex is the queue index being compared; editedIdx
+  // marks rows whose result was manually re-encoded in the compare view (overriding the batch cap).
+  let compareIndex = $state<number | null>(null);
+  let editedIdx = $state<Set<number>>(new Set());
 
   const poolSize = defaultPoolSize();
   let activePool: WorkerPool | null = null;
@@ -147,7 +152,30 @@
       addFiles(files);
     } catch { /* cancelled */ }
   }
-  function reset() { queue = []; results = []; clearNotice(); }
+  function reset() { queue = []; results = []; editedIdx = new Set(); compareIndex = null; clearNotice(); }
+
+  // The engine submit-map, built from the current UI settings. Shared by the batch run and the
+  // per-image compare re-encode so both always optimise with identical options.
+  function buildOpts(): Partial<Options> {
+    return {
+      resizeMode: opts.resizeMode, maxDim: opts.maxDim, targetW: opts.targetW,
+      targetH: opts.targetH, percent: opts.percent,
+      maxBytes: Math.round(opts.maxMB * 1024 * 1024),
+      prefix: opts.prefix, rename: opts.rename, suffix: opts.suffix,
+      lowercase: opts.lowercase, slugify: opts.slugify,
+      allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor, outputFormat: opts.outputFormat,
+    };
+  }
+
+  function openCompare(i: number) { compareIndex = i; track('compare-opened'); }
+  // Swap a compare-tweaked result into the batch at its original index; download/ZIP/save all read
+  // `results`, so the tweak flows through automatically. Mark the row as manually edited.
+  function applyCompare(i: number, r: OptimiseResult, quality: number) {
+    const next = results.slice(); next[i] = r; results = next;
+    editedIdx = new Set(editedIdx).add(i);
+    track('quality-applied', { quality });
+    compareIndex = null;
+  }
 
   // The engine runs in a pool of Web Workers so the heavy WASM decode/encode stays off
   // the main thread and several images process in parallel across CPU cores. Each result
@@ -157,15 +185,8 @@
   async function run() {
     if (!queue.length || processing) return;
     track('optimise', { images: queue.length });
-    processing = true; results = new Array(queue.length); clearNotice();
-    const o: Partial<Options> = {
-      resizeMode: opts.resizeMode, maxDim: opts.maxDim, targetW: opts.targetW,
-      targetH: opts.targetH, percent: opts.percent,
-      maxBytes: Math.round(opts.maxMB * 1024 * 1024),
-      prefix: opts.prefix, rename: opts.rename, suffix: opts.suffix,
-      lowercase: opts.lowercase, slugify: opts.slugify,
-      allowWebp: opts.allowWebp, qualityFloor: opts.qualityFloor, outputFormat: opts.outputFormat,
-    };
+    processing = true; results = new Array(queue.length); editedIdx = new Set(); clearNotice();
+    const o = buildOpts();
     // Sequential numbering is applied here (not in the worker): the pool completes images
     // out of order, so the stable queue index `i` — not the worker id — is the file's number.
     const total = queue.length;
@@ -473,19 +494,32 @@
       <table>
         <thead><tr><th>File</th><th>Result</th><th>Size</th><th></th></tr></thead>
         <tbody>
-          {#each rows as r}
+          {#each results as r, i}
+            {#if r}
             <tr>
               <td>{r.name}{#if r.outName}<br /><span class="muted">→ {r.outName}</span>{/if}</td>
-              <td><span class="pill {r.status}">{r.status}</span> {r.action}{#if r.message}<span class="err"> · {r.message}</span>{/if}</td>
+              <td><span class="pill {r.status}">{r.status}</span> {r.action}{#if editedIdx.has(i)}<span class="pill edited">edited</span>{/if}{#if r.message}<span class="err"> · {r.message}</span>{/if}</td>
               <td>{kb(r.origBytes)}{#if r.newBytes} → {kb(r.newBytes)}{/if}</td>
-              <td>{#if r.outBytes}<button class="link" onclick={() => download(r)}>Download</button>{/if}</td>
+              <td class="row-actions">{#if r.outBytes}<button class="link" onclick={() => openCompare(i)}>Compare</button><button class="link" onclick={() => download(r)}>Download</button>{/if}</td>
             </tr>
+            {/if}
           {/each}
         </tbody>
       </table>
     </div>
   {/if}
 </div>
+
+{#if compareIndex !== null && results[compareIndex]}
+  {@const ci = compareIndex}
+  <Compare
+    item={queue[ci]}
+    result={results[ci]!}
+    baseOpts={buildOpts()}
+    onApply={(r, q) => applyCompare(ci, r, q)}
+    onClose={() => (compareIndex = null)}
+  />
+{/if}
 
 <style>
   .tool { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
@@ -617,7 +651,10 @@
   .pill.ok { background: rgba(56,193,114,.16); color: var(--ok); }
   .pill.skipped { background: rgba(154,163,178,.16); color: var(--muted); }
   .pill.error { background: rgba(239,83,80,.16); color: var(--err); }
+  .pill.edited { border: 1px solid var(--accent); color: var(--accent); margin-left: 6px; }
   .err { color: var(--err); }
+  .row-actions { white-space: nowrap; }
+  .row-actions button + button { margin-left: 12px; }
   .link { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font-size: 13px; text-decoration: underline; }
   .panel { margin-top: 16px; }
   .queue-list { font-size: 13px; }

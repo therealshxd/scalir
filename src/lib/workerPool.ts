@@ -28,7 +28,7 @@ export function createOptimiseWorker(): WorkerLike {
   return new Worker(new URL('./optimise.worker.ts', import.meta.url), { type: 'module' });
 }
 
-export type PoolJob = Omit<WorkerRequest, 'id'>; // { name, bytes, opts }
+export type PoolJob = Omit<WorkerRequest, 'id'>; // { name, bytes, opts, mode? }
 
 type Task = { job: PoolJob; resolve: (r: OptimiseResult | null) => void };
 

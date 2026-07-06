@@ -138,3 +138,11 @@ export function extForFmt(f: Fmt): string {
     : f === 'avif' ? '.avif'
     : '.webp';
 }
+
+/** Inverse of mimeOf — map an output MIME type back to its encodable Fmt (defaults to webp). */
+export function fmtFromMime(mime: string): Fmt {
+  return mime === 'image/jpeg' ? 'jpeg'
+    : mime === 'image/png' ? 'png'
+    : mime === 'image/avif' ? 'avif'
+    : 'webp';
+}

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.6] - 2026-07-06
+
+### Added
+- **Before/after preview.** Each optimised image now has a **Compare** button that opens a
+  draggable before/after slider — wipe between the original and the optimised result to see
+  exactly what the compression did.
+- **Per-image quality.** In the compare view, a **quality slider** re-encodes that single image
+  at a fixed quality (ignoring the batch size cap) so you can rescue an over-compressed photo
+  before saving; **Apply** swaps it into the batch and it flows straight through to ZIP/Save.
+- **Privacy-first analytics + privacy policy.** Cookieless, self-hosted [Umami](https://umami.is)
+  usage stats on the public site only (the desktop app, self-hosted copies and localhost send
+  nothing, and Do Not Track is honoured), plus a new **Privacy** page linked in the footer.
+
 ## [1.3.5] - 2026-07-02
 
 ### Added
