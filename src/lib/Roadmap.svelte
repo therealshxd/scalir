@@ -62,8 +62,8 @@
 
     <!-- v1.3 -->
     <div class="card">
-      <h3>v1.3 — Web-design workflow <span class="badge next">In progress</span></h3>
-      <p class="sub">Shipping one feature at a time, each as its own release.</p>
+      <h3>v1.3 — Web-design workflow <span class="badge shipped">Shipped</span></h3>
+      <p class="sub">Shipped one feature at a time, each as its own release.</p>
       <ul>
         <li><strong>Remembered settings</strong> — your last-used settings and custom presets
           (with titles, descriptions, and at-a-glance settings previews) persist between
@@ -75,7 +75,8 @@
           scale, or a common responsive width (multi-size export comes later).
           <span class="badge shipped">Shipped in 1.3.5</span></li>
         <li><strong>Before/after preview</strong> — preview each result with a before/after
-          compare and tweak a single image's quality before saving the batch.</li>
+          compare and tweak a single image's quality before saving the batch.
+          <span class="badge shipped">Shipped in 1.3.6</span></li>
       </ul>
     </div>
 
@@ -110,7 +111,6 @@
   ul li { margin-bottom: 8px; line-height: 1.5; }
   ul li strong { color: var(--text); }
   .badge.shipped { color: var(--ok); background: rgba(56,193,114,.14); border-color: #1e5c38; }
-  .badge.next { color: var(--accent); background: rgba(34,211,238,.14); border-color: var(--accent); }
   .badge.exploring { color: var(--muted); background: rgba(154,163,178,.12); border-color: var(--line); }
   .note { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
     border-radius: 8px; padding: 12px 14px; margin: 0 0 22px; font-size: 14px; color: var(--text); }

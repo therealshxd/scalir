@@ -65,6 +65,26 @@ export async function optimise(
     : (inputAsFmt ?? (inputFmt === 'heic' ? 'jpeg' : 'webp'));
   if (baseFmt !== inputAsFmt) res.converted = true;
 
+  // Per-image manual quality (compare view): encode ONCE at exactly this quality, ignoring the
+  // size cap and copy-through. The caller pins outputFormat to the batch result's format, so the
+  // compare varies only quality. PNG ignores quality (lossless), but the UI disables the slider
+  // for lossless outputs so this stays meaningful.
+  if (opts.fixedQuality != null) {
+    const q = Math.max(1, Math.min(100, Math.round(opts.fixedQuality)));
+    const out = await codecs.encode(baseFmt, img, q);
+    res.compressed = true;
+    res.outBytes = out;
+    res.newBytes = out.length;
+    res.outName = makeOutName(name, opts, res.converted ? extForFmt(baseFmt) : null);
+    res.outType = mimeOf(baseFmt);
+    const bits: string[] = [];
+    if (res.resized) bits.push(`resized ${res.origDims[0]}×${res.origDims[1]}→${res.newDims[0]}×${res.newDims[1]}`);
+    bits.push(`quality ${q} · ${Math.round(res.newBytes / 1024)}KB`);
+    if (res.converted) bits.push(`→ ${baseFmt.toUpperCase()}`);
+    res.action = bits.join(', ');
+    return res;
+  }
+
   // Copy-through: already within both caps and not converting → emit the original bytes
   // unchanged rather than re-encoding (which can needlessly enlarge or rewrite a fine file).
   if (!res.resized && !res.converted && bytes.length <= opts.maxBytes) {
