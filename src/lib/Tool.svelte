@@ -280,6 +280,7 @@
           <button
             type="button"
             class="preset {activePreset === p.id ? 'active' : ''} {p.origin === 'custom' ? 'has-del' : ''}"
+            data-track="preset" data-track-value={p.origin === 'custom' ? 'custom' : p.name}
             onclick={() => applyPreset(p)}
           >
             <span class="preset-head">
@@ -464,8 +465,8 @@
     {#if processing}<button class="btn ghost" onclick={cancel}>Cancel</button>{/if}
     {#if queue.length && !processing}<button class="btn ghost" onclick={reset}>Clear</button>{/if}
     {#if outputs > 0 && !processing}
-      <button class="btn" onclick={downloadZip}>Download all (ZIP)</button>
-      {#if hasFS}<button class="btn ghost" onclick={saveToFolder}>Save all to folder…</button>{/if}
+      <button class="btn" data-track="download-zip" onclick={downloadZip}>Download all (ZIP)</button>
+      {#if hasFS}<button class="btn ghost" data-track="save-folder" onclick={saveToFolder}>Save all to folder…</button>{/if}
     {/if}
   </div>
 
