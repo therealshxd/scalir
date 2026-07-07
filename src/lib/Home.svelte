@@ -14,7 +14,7 @@
     processed on your own device.
   </p>
   <div class="ctas">
-    <button class="cta" onclick={() => scrollTo('tool')}>Compress images now</button>
+    <button class="cta" data-track="cta" data-track-value="home-compress" onclick={() => scrollTo('tool')}>Compress images now</button>
     <a class="cta ghost" href="#/features">See features</a>
   </div>
 
@@ -123,7 +123,7 @@
       image compression internally, behind your firewall, or as part of your own pipeline — no external
       dependencies and no data ever leaving your network.
     </p>
-    <div class="sec-cta"><a class="cta" href="#/self-hosting">Deploy with Docker</a></div>
+    <div class="sec-cta"><a class="cta" data-track="cta" data-track-value="home-self-host" href="#/self-hosting">Deploy with Docker</a></div>
   </section>
 
   <!-- Local -->
@@ -135,7 +135,7 @@
       Docker on your own machine. Scalir was built as a local-first tool for speed — optimise images
       offline, with no browser tab required.
     </p>
-    <div class="sec-cta"><a class="cta" href="#/download">Setup locally</a></div>
+    <div class="sec-cta"><a class="cta" data-track="cta" data-track-value="home-download" href="#/download">Setup locally</a></div>
   </section>
 
   <!-- FAQ -->

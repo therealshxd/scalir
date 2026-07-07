@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Features page rebuilt as a landing page** — one section per feature with keyword-rich copy
   and quick "Try Scalir" jumps into the tool, for clearer structure and better SEO.
 
+### Fixed
+- **Per-page analytics.** Page views are now recorded per route on the hash-routed site —
+  previously every visit registered as just the landing page. Key CTAs and buttons are also
+  tagged for click analytics. *(Public site only; the desktop app, self-hosted copies and
+  localhost still send nothing, and Do Not Track is honoured.)*
+
 ## [1.3.6] - 2026-07-06
 
 ### Added

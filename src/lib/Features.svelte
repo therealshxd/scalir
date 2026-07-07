@@ -18,7 +18,7 @@
       convert images in bulk — JPG, PNG, WebP, AVIF, HEIC and more — entirely on your own device.
       No uploads, no accounts, no server. Here's everything it can do, feature by feature.
     </p>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button>
       <a class="cta ghost" href="#/roadmap">See the roadmap</a></div>
   </section>
 
@@ -37,7 +37,7 @@
       <li>No per-image limits when you self-host or run the desktop app.</li>
       <li>Download everything as a ZIP or save straight to a folder.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Smart resizing -->
@@ -55,7 +55,7 @@
       <li>Lanczos3 resampling for crisp, artefact-free downscaling.</li>
       <li>Only ever shrinks — smaller images are left untouched.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Target-size compression -->
@@ -73,7 +73,7 @@
       <li>A quality floor protects images from over-compression.</li>
       <li>Already-small files are copied through untouched, never re-encoded.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Before/after preview (new) -->
@@ -92,7 +92,7 @@
       <li>Per-image quality slider re-encodes a single photo on the fly.</li>
       <li>Optimise one image on its own, or the whole batch together.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Modern formats -->
@@ -110,7 +110,7 @@
       <li>AVIF for the very smallest files when you need them.</li>
       <li>Powered by the same jSquash/Squoosh WASM codecs, on-device.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Wide input support -->
@@ -128,7 +128,7 @@
       <li>Legacy TIFF and BMP re-exported as modern web formats.</li>
       <li>Animated GIFs use the first frame.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Presets & naming -->
@@ -147,7 +147,7 @@
       <li>Prefix, suffix, lowercase, slugify and sequential numbering.</li>
       <li>Live filename preview as you type.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Privacy -->
@@ -164,7 +164,7 @@
       <li>EXIF/GPS metadata stripped on export; orientation kept correct.</li>
       <li>Works the same offline as online — your data stays with you.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button></div>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
   <!-- Output & offline -->
@@ -182,7 +182,7 @@
       <li>Native desktop apps for Windows and Linux.</li>
       <li>Self-host with Docker for unlimited internal use.</li>
     </ul>
-    <div class="sec-cta"><button class="cta" onclick={gotoTool}>Try Scalir</button>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button>
       <a class="cta ghost" href="#/self-hosting">Self-host with Docker</a></div>
   </section>
 
@@ -228,7 +228,7 @@
       <strong>Nothing leaves your device.</strong> Every step happens locally in your browser — your
       images are never uploaded.
     </div>
-    <div class="sec-cta" style="margin-top:22px"><button class="cta" onclick={gotoTool}>Try Scalir</button>
+    <div class="sec-cta" style="margin-top:22px"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button>
       <a class="cta ghost" href="#/roadmap">See what's next</a></div>
   </section>
 </div>
