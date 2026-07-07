@@ -103,7 +103,7 @@
     <p class="lead" style="margin-top:24px">
       Want something that isn't here?
       <a href={ISSUES} target="_blank" rel="noreferrer">Suggest a feature</a>.
-      <a href="#/">← Back to the tool</a>
+      <a href="/">← Back to the tool</a>
     </p>
   </section>
 </div>

@@ -76,7 +76,7 @@
       </p>
     </div>
 
-    <p class="lead" style="margin-top:18px"><a href="#/">← Back to the tool</a></p>
+    <p class="lead" style="margin-top:18px"><a href="/">← Back to the tool</a></p>
   </section>
 </div>
 

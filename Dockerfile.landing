@@ -1,13 +1,18 @@
-FROM node:22-alpine AS build
+# Debian base (not alpine) so Playwright's Chromium — used by the SEO prerender — installs cleanly.
+FROM node:22 AS build
 WORKDIR /app
 # Use the npm version pinned in package.json (packageManager) via Corepack.
 RUN corepack enable && corepack prepare npm@11.17.0 --activate
 COPY package*.json ./
 RUN npm ci
+# Chromium (+ OS deps) for scripts/prerender.mjs; version matches the installed playwright.
+RUN npx playwright install --with-deps chromium
 COPY . .
-RUN npm run build
+# build:seo = vite build → prerender each route to static HTML + emit sitemap.xml.
+RUN npm run build:seo
 
 FROM nginx:alpine AS final
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

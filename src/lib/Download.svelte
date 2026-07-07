@@ -13,7 +13,7 @@
     <p class="lead">
       Run Scalir on your own machine — no internet required after setup, no data leaves your device.
       Native builds for Windows and Linux are available now, and Docker works on any platform. On
-      macOS? The <a href="#/">free web version</a> runs the full tool right in your browser.
+      macOS? The <a href="/">free web version</a> runs the full tool right in your browser.
     </p>
 
     <!-- Native installers -->
@@ -84,7 +84,7 @@ docker compose down
 docker rm -f scalir && docker rmi scalir</code></pre>
     </div>
 
-    <p class="lead" style="margin-top:24px"><a href="#/">← Back to the tool</a></p>
+    <p class="lead" style="margin-top:24px"><a href="/">← Back to the tool</a></p>
   </section>
 </div>
 
