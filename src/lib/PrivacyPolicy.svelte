@@ -40,6 +40,22 @@
       </p>
     </div>
 
+    <!-- Search Console -->
+    <div class="card">
+      <h3>Search performance monitoring</h3>
+      <p class="muted-sub">Domain-level, via Google Search Console — no scripts on the site.</p>
+      <p>
+        To see how Scalir performs in Google Search — which pages get shown, how often they're
+        clicked, and their average ranking — we use
+        <a href="https://search.google.com/search-console/about" target="_blank" rel="noreferrer">Google Search Console</a>.
+        This works at the <strong>domain level</strong> through site verification:
+        <strong>no Google scripts, tags or cookies are added to the site</strong>, and nothing runs
+        in your browser. Search Console only reports on data Google already holds as a search engine
+        — aggregate, anonymised search queries and impressions — and it never sees your images or
+        anything you do inside the tool.
+      </p>
+    </div>
+
     <!-- What we collect -->
     <div class="card">
       <h3>What we collect</h3>
