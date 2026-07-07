@@ -154,7 +154,7 @@ npx serve dist-app</code></pre>
 
     <p class="lead" style="margin-top:24px">
       If Scalir is useful to you, a short mention anywhere you like is all I ask.
-      <a href="#/">← Back to the tool</a>
+      <a href="/">← Back to the tool</a>
     </p>
   </section>
 </div>

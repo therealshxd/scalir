@@ -7,11 +7,11 @@
 // Umami additionally honour the browser's Do Not Track signal. Umami is cookieless and
 // stores no personal data.
 //
-// Scalir is a hash-router SPA (routes are `#/features`, `#/roadmap`, …). Umami's automatic
-// tracking only records the initial page load and History-API navigations — it never sees a
-// `hashchange` — so it would report every visit as just `/` or `/#/`. We therefore turn its
-// auto-tracking OFF (`data-auto-track="false"`) and drive pageviews ourselves via
-// `trackPageview()`, normalising each route to a clean pathname (`#/features` → `/features`).
+// Scalir's landing site is a client-side-routed SPA. We keep Umami's auto-tracking OFF
+// (`data-auto-track="false"`) and drive everything ourselves so we control exactly what's sent:
+// `trackPageview()` reports the current pathname (fired on script load + on every route change in
+// App.svelte), and `initClickTracking()` handles `data-track` buttons. This stays correct
+// regardless of routing mechanics and keeps one code path for pageviews and events.
 
 const SITE_IDS: Record<string, string> = {
   'scalir.org': 'ef1fc97f-3c1a-439f-9a0f-adf3d815a501',
@@ -26,11 +26,11 @@ type Umami = { track?: (a: TrackArg, d?: Record<string, unknown>) => void };
 const umami = (): Umami | undefined =>
   (window as unknown as { umami?: Umami }).umami;
 
-// Normalise the current hash route to a clean pathname so Umami's Pages report groups sensibly:
-// `#/features` → `/features`, `#/self-hosting` → `/self-hosting`, `#/` or no hash → `/`.
+// The route is a real pathname now (`/features`, `/roadmap`, …), so report it directly, only
+// trimming a trailing slash so `/features` and `/features/` don't split in the Pages report.
 function routePath(): string {
-  const seg = (location.hash || '').replace(/^#\/?/, '').split(/[/?#]/)[0];
-  return '/' + seg;
+  const p = location.pathname || '/';
+  return p !== '/' && p.endsWith('/') ? p.slice(0, -1) : p;
 }
 
 export function initAnalytics(): void {

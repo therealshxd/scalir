@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { navigate } from './seo';
   const REPO = 'https://github.com/therealshxd/scalir';
 
   // "Try Scalir" jumps back to the home route and scrolls to the tool (same pattern as the nav).
   function gotoTool(e: Event) {
     e.preventDefault();
-    location.hash = '#/';
+    navigate('/');
     setTimeout(() => document.getElementById('tool')?.scrollIntoView({ behavior: 'smooth' }), 60);
   }
 </script>
@@ -19,7 +20,7 @@
       No uploads, no accounts, no server. Here's everything it can do, feature by feature.
     </p>
     <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button>
-      <a class="cta ghost" href="#/roadmap">See the roadmap</a></div>
+      <a class="cta ghost" href="/roadmap">See the roadmap</a></div>
   </section>
 
   <!-- Bulk compression -->
@@ -183,7 +184,7 @@
       <li>Self-host with Docker for unlimited internal use.</li>
     </ul>
     <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button>
-      <a class="cta ghost" href="#/self-hosting">Self-host with Docker</a></div>
+      <a class="cta ghost" href="/self-hosting">Self-host with Docker</a></div>
   </section>
 
   <!-- Supported formats -->
@@ -229,7 +230,7 @@
       images are never uploaded.
     </div>
     <div class="sec-cta" style="margin-top:22px"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button>
-      <a class="cta ghost" href="#/roadmap">See what's next</a></div>
+      <a class="cta ghost" href="/roadmap">See what's next</a></div>
   </section>
 </div>
 

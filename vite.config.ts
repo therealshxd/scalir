@@ -3,7 +3,9 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: './',
+  // Absolute base so asset URLs (/assets/…, /favicon-*.png) resolve correctly from prerendered
+  // sub-directory pages like /features/index.html — a relative base would break those.
+  base: '/',
   plugins: [
     svelte(),
     VitePWA({

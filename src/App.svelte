@@ -8,48 +8,72 @@
   import About from './lib/About.svelte';
   import PrivacyPolicy from './lib/PrivacyPolicy.svelte';
   import { initScrollDepth, initClickTracking, trackPageview } from './lib/analytics';
+  import { routeFromPath, isRoute, setMeta, navigate } from './lib/seo';
 
   const base = import.meta.env.BASE_URL;
 
-  function parse(): 'home' | 'self-hosting' | 'download' | 'roadmap' | 'features' | 'about' | 'privacy' {
-    const h = (location.hash || '').replace(/^#\/?/, '');
-    return h === 'self-hosting' ? 'self-hosting'
-      : h === 'download' ? 'download'
-      : h === 'roadmap' ? 'roadmap'
-      : h === 'features' ? 'features'
-      : h === 'about' ? 'about'
-      : h === 'privacy' ? 'privacy'
-      : 'home';
-  }
-  let route = $state(parse());
+  let route = $state(routeFromPath(location.pathname));
 
   onMount(() => {
-    // Record a pageview on every route change. The initial view is fired once the Umami script
-    // loads (see analytics.ts); this covers all subsequent hash navigations.
-    const onHash = () => { route = parse(); window.scrollTo({ top: 0 }); trackPageview(); };
-    window.addEventListener('hashchange', onHash);
+    // Back-compat: rewrite any legacy hash URL (e.g. #/features) to its real path so old links,
+    // bookmarks and shares still resolve after the move to path-based routing.
+    const legacy = location.hash.replace(/^#\/?/, '');
+    if (legacy) {
+      history.replaceState({}, '', '/' + legacy);
+      route = routeFromPath(location.pathname);
+    }
+    setMeta(route);
+
+    const onPop = () => {
+      route = routeFromPath(location.pathname);
+      setMeta(route);
+      window.scrollTo({ top: 0 });
+      trackPageview();
+    };
+    window.addEventListener('popstate', onPop);
+
+    // Intercept plain left-clicks on internal route links → SPA navigation (no full reload).
+    // Skips modified clicks, new-tab/download links, external links and non-route paths.
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element | null)?.closest?.('a');
+      if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+      const href = a.getAttribute('href');
+      if (!href) return;
+      const url = new URL(href, location.href);
+      if (url.origin !== location.origin || !isRoute(url.pathname)) return;
+      e.preventDefault();
+      navigate(url.pathname);
+    };
+    document.addEventListener('click', onClick);
+
     const stopScroll = initScrollDepth();
     const stopClicks = initClickTracking();
-    return () => { window.removeEventListener('hashchange', onHash); stopScroll(); stopClicks(); };
+    return () => {
+      window.removeEventListener('popstate', onPop);
+      document.removeEventListener('click', onClick);
+      stopScroll();
+      stopClicks();
+    };
   });
 
   function gotoTool(e: Event) {
     e.preventDefault();
-    if (route !== 'home') location.hash = '#/';
+    navigate('/');
     setTimeout(() => document.getElementById('tool')?.scrollIntoView({ behavior: 'smooth' }), 60);
   }
 </script>
 
 <nav class="nav">
   <div class="nav-inner">
-    <a class="brand" href="#/"><img src={base + 'favicon-256.png'} alt="" /> Scalir</a>
+    <a class="brand" href="/"><img src={base + 'favicon-256.png'} alt="" /> Scalir</a>
     <div class="links">
-      <a href="#/" onclick={gotoTool}>Try Scalir</a>
-      <a href="#/features">Features</a>
-      <a href="#/roadmap">Roadmap</a>
-      <a href="#/self-hosting">Self-hosting</a>
-      <a href="#/download">Download</a>
-      <a href="#/about">About</a>
+      <a href="/" onclick={gotoTool}>Try Scalir</a>
+      <a href="/features">Features</a>
+      <a href="/roadmap">Roadmap</a>
+      <a href="/self-hosting">Self-hosting</a>
+      <a href="/download">Download</a>
+      <a href="/about">About</a>
     </div>
   </div>
 </nav>
@@ -73,6 +97,6 @@
 <div class="wrap">
   <footer class="site">
     <span>Scalir · private &amp; free · open source · no uploads</span>
-    <span><a href="#/privacy">Privacy</a> · Built by Shad · MIT licensed</span>
+    <span><a href="/privacy">Privacy</a> · Built by Shad · MIT licensed</span>
   </footer>
 </div>
