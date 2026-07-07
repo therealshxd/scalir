@@ -1,0 +1,24 @@
+# Scalir
+
+> Scalir is a free, private, open-source bulk image compressor that runs entirely in your web browser. Compress, resize and convert images (JPG, PNG, WebP, AVIF, HEIC, GIF, TIFF, BMP) with no uploads, no accounts and no server — every image is processed on your own device.
+
+Scalir is built for people who need to optimise many images at once without handing them to a cloud service. It runs the same WebAssembly codecs as Squoosh (MozJPEG, libwebp, libavif, libpng) locally, across all CPU cores. It also ships as an installable PWA and as native desktop apps for Windows and Linux, and can be self-hosted with Docker for unlimited internal use.
+
+Key facts:
+- Free and open source (MIT license). No accounts, watermarks or paid tier.
+- 100% client-side: images are never uploaded; EXIF/GPS metadata is stripped on export.
+- Input formats: JPG, PNG, WebP, AVIF, HEIC/HEIF, GIF, TIFF, BMP. Output: JPEG, PNG, WebP, AVIF (auto or forced).
+- Bulk compression in parallel across CPU cores, high-quality Lanczos3 resizing, target-size compression, before/after preview with per-image quality, and smart output naming.
+- Works offline after first load; self-hostable via Docker.
+
+## Pages
+- [Home](https://scalir.org/): The bulk image compressor tool and overview.
+- [Features](https://scalir.org/features): Full feature breakdown — bulk compression, resizing, formats, before/after preview, privacy.
+- [Roadmap](https://scalir.org/roadmap): What has shipped and what is planned next.
+- [Self-hosting](https://scalir.org/self-hosting): Run Scalir with Docker on your own server, unlimited and private.
+- [Download](https://scalir.org/download): Free desktop apps for Windows and Linux.
+- [About](https://scalir.org/about): What Scalir is, how it works, and who built it.
+- [Privacy](https://scalir.org/privacy): Privacy policy — nothing ever leaves your device.
+
+## Source
+- [GitHub repository](https://github.com/therealshxd/scalir): Source code (TypeScript, Svelte, Rust/Tauri), MIT licensed.

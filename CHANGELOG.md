@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.8] - 2026-07-07
+
+### Changed
+- **Real page URLs for SEO.** The marketing site moved from hash routes (`/#/features`) to real
+  paths (`/features`, `/roadmap`, …) so every page is an independent, indexable URL. Old
+  `/#/…` links redirect automatically.
+
+### Added
+- **Per-page metadata + prerendering.** Each route is prerendered to static HTML with its own
+  title, description, canonical and Open Graph tags, so search engines and AI agents get
+  fully-formed pages (not an empty app shell).
+- **Richer structured data** (Organization, WebSite, WebApplication, SoftwareSourceCode; per-page
+  FAQ/Breadcrumb), a **multi-URL `sitemap.xml`**, an **`llms.txt`** for AI agents, and a proper
+  **1200×630 social share image**.
+- Staging is now `noindex` to avoid duplicate-content competition with the production site.
+
 ## [1.3.7] - 2026-07-07
 
 ### Added

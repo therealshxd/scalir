@@ -68,10 +68,10 @@
     </div>
 
     <div class="sec-cta" style="margin-top:22px">
-      <a class="cta" href="#/">Try Scalir</a>
-      <a class="cta ghost" href="#/features">See features</a>
+      <a class="cta" href="/">Try Scalir</a>
+      <a class="cta ghost" href="/features">See features</a>
     </div>
-    <p class="lead" style="margin-top:18px"><a href="#/">← Back to the tool</a></p>
+    <p class="lead" style="margin-top:18px"><a href="/">← Back to the tool</a></p>
   </section>
 </div>
 
