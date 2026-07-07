@@ -168,14 +168,19 @@
   }
 
   function openCompare(i: number) { compareIndex = i; track('compare-opened'); }
-  // Swap a compare-tweaked result into the batch at its original index; download/ZIP/save all read
-  // `results`, so the tweak flows through automatically. Mark the row as manually edited.
-  function applyCompare(i: number, r: OptimiseResult, quality: number) {
+  // Commit a single image's result (from the compare) into the batch at its original index —
+  // used both to tweak an already-optimised row and to optimise a still-queued image on its own,
+  // leaving the rest queued. download/ZIP/save all read `results`, so it flows through. Sequential
+  // numbering is applied here (as in run()) so a single commit still matches the batch naming.
+  function optimiseOne(i: number, r: OptimiseResult, quality: number) {
+    if (opts.sequential && r.outName) r.outName = withSequenceNumber(r.outName, i + 1, queue.length);
     const next = results.slice(); next[i] = r; results = next;
     editedIdx = new Set(editedIdx).add(i);
-    track('quality-applied', { quality });
+    track('optimise-single', { quality });
     compareIndex = null;
   }
+  // Close the compare and run the normal size-target batch over every image.
+  function optimiseBatchFromCompare() { compareIndex = null; run(); }
 
   // The engine runs in a pool of Web Workers so the heavy WASM decode/encode stays off
   // the main thread and several images process in parallel across CPU cores. Each result
@@ -452,23 +457,9 @@
     {/if}
   </div>
 
-  {#if queue.length > 0 && !processing && !rows.length}
-    <div class="panel queue-list">
-      <p class="queue-title">{queue.length} image{queue.length === 1 ? '' : 's'} queued</p>
-      <ul>
-        {#each queue as item}
-          <li>
-            <span class="q-name">{item.name}</span>
-            <span class="muted">{kb(item.size)}</span>
-          </li>
-        {/each}
-      </ul>
-    </div>
-  {/if}
-
   <div class="actions">
     <button class="btn primary" disabled={!queue.length || processing} onclick={run}>
-      {processing ? `Optimising ${done}/${queue.length}…` : `Optimise ${queue.length || ''} image${queue.length === 1 ? '' : 's'}`}
+      {processing ? `Optimising ${done}/${queue.length}…` : `Optimise all ${queue.length || ''} image${queue.length === 1 ? '' : 's'}`}
     </button>
     {#if processing}<button class="btn ghost" onclick={cancel}>Cancel</button>{/if}
     {#if queue.length && !processing}<button class="btn ghost" onclick={reset}>Clear</button>{/if}
@@ -483,26 +474,41 @@
     <p class="muted small">Optimising {done}/{queue.length} across {poolSize} core{poolSize === 1 ? '' : 's'} — fully on your device.</p>
   {/if}
 
-  {#if rows.length}
+  {#if queue.length > 0}
     <div class="panel">
-      <div class="summary">
-        <div><b>{outputs}</b><span>optimised</span></div>
-        <div><b>{rows.filter((r) => r.resized).length}</b><span>resized</span></div>
-        <div><b>{rows.filter((r) => r.converted).length}</b><span>converted</span></div>
-        <div><b>{(totalSaved / 1048576).toFixed(1)} MB</b><span>saved</span></div>
-      </div>
+      {#if rows.length}
+        <div class="summary">
+          <div><b>{outputs}</b><span>optimised</span></div>
+          <div><b>{rows.filter((r) => r.resized).length}</b><span>resized</span></div>
+          <div><b>{rows.filter((r) => r.converted).length}</b><span>converted</span></div>
+          <div><b>{(totalSaved / 1048576).toFixed(1)} MB</b><span>saved</span></div>
+        </div>
+      {:else if !processing}
+        <p class="queue-title">{queue.length} image{queue.length === 1 ? '' : 's'} ready — <span class="muted">Preview any to check quality before optimising, or Optimise all.</span></p>
+      {/if}
       <table>
         <thead><tr><th>File</th><th>Result</th><th>Size</th><th></th></tr></thead>
         <tbody>
-          {#each results as r, i}
-            {#if r}
+          {#each queue as item, i}
+            {@const r = results[i]}
             <tr>
-              <td>{r.name}{#if r.outName}<br /><span class="muted">→ {r.outName}</span>{/if}</td>
-              <td><span class="pill {r.status}">{r.status}</span> {r.action}{#if editedIdx.has(i)}<span class="pill edited">edited</span>{/if}{#if r.message}<span class="err"> · {r.message}</span>{/if}</td>
-              <td>{kb(r.origBytes)}{#if r.newBytes} → {kb(r.newBytes)}{/if}</td>
-              <td class="row-actions">{#if r.outBytes}<button class="link" onclick={() => openCompare(i)}>Compare</button><button class="link" onclick={() => download(r)}>Download</button>{/if}</td>
+              <td>{item.name}{#if r?.outName}<br /><span class="muted">→ {r.outName}</span>{/if}</td>
+              <td>
+                {#if r}
+                  <span class="pill {r.status}">{r.status}</span> {r.action}{#if editedIdx.has(i)}<span class="pill edited">edited</span>{/if}{#if r.message}<span class="err"> · {r.message}</span>{/if}
+                {:else}
+                  <span class="pill queued">queued</span>
+                {/if}
+              </td>
+              <td>{#if r}{kb(r.origBytes)}{#if r.newBytes} → {kb(r.newBytes)}{/if}{:else}{kb(item.size)}{/if}</td>
+              <td class="row-actions">
+                {#if r?.outBytes}
+                  <button class="link" onclick={() => openCompare(i)}>Compare</button><button class="link" onclick={() => download(r)}>Download</button>
+                {:else if !r && !processing}
+                  <button class="link" onclick={() => openCompare(i)}>Preview</button>
+                {/if}
+              </td>
             </tr>
-            {/if}
           {/each}
         </tbody>
       </table>
@@ -510,13 +516,14 @@
   {/if}
 </div>
 
-{#if compareIndex !== null && results[compareIndex]}
+{#if compareIndex !== null && queue[compareIndex]}
   {@const ci = compareIndex}
   <Compare
     item={queue[ci]}
-    result={results[ci]!}
+    result={results[ci] ?? undefined}
     baseOpts={buildOpts()}
-    onApply={(r, q) => applyCompare(ci, r, q)}
+    onApplyImage={(r, q) => optimiseOne(ci, r, q)}
+    onOptimiseBatch={optimiseBatchFromCompare}
     onClose={() => (compareIndex = null)}
   />
 {/if}
@@ -650,6 +657,7 @@
   .pill { font-size: 11px; padding: 1px 8px; border-radius: 20px; }
   .pill.ok { background: rgba(56,193,114,.16); color: var(--ok); }
   .pill.skipped { background: rgba(154,163,178,.16); color: var(--muted); }
+  .pill.queued { background: rgba(154,163,178,.16); color: var(--muted); }
   .pill.error { background: rgba(239,83,80,.16); color: var(--err); }
   .pill.edited { border: 1px solid var(--accent); color: var(--accent); margin-left: 6px; }
   .err { color: var(--err); }
@@ -657,12 +665,7 @@
   .row-actions button + button { margin-left: 12px; }
   .link { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font-size: 13px; text-decoration: underline; }
   .panel { margin-top: 16px; }
-  .queue-list { font-size: 13px; }
-  .queue-title { font-weight: 600; margin: 0 0 8px; }
-  .queue-list ul { list-style: none; margin: 0; padding: 0; }
-  .queue-list li { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--line); }
-  .queue-list li:last-child { border-bottom: 0; }
-  .q-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+  .queue-title { font-size: 13px; font-weight: 600; margin: 0 0 10px; }
   @media (max-width: 560px) {
     .summary { grid-template-columns: repeat(2, 1fr); }
     .grid2, .grid3 { grid-template-columns: 1fr; }

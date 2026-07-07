@@ -51,6 +51,9 @@ Want to try things before they ship? Preview the latest **work-in-progress build
   responsive width (multi-size/`srcset` export comes later). *(shipped in 1.3.5)*
 - ✅ **Before/after preview** — preview each result with a before/after compare and tweak a
   single image's quality before saving the batch. *(shipped in 1.3.6)*
+- ✅ **Preview before optimising & compare zoom** — preview any queued image *before* running
+  the batch, optimise a single image on its own, and zoom/pan the compare up to 200%.
+  *(shipped in 1.3.7)*
 
 ---
 
