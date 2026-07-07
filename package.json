@@ -1,6 +1,6 @@
 {
   "name": "bulk-image-optimiser",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "description": "Free, private, in-browser bulk image optimiser — resize over 2000px and compress under 1MB. No uploads, no AI, no server.",
   "type": "module",
   "license": "MIT",

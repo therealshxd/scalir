@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.9] - 2026-07-07
+
+### Added
+- **Search performance monitoring via Google Search Console.** The landing site is now monitored in
+  Google Search through **domain verification** — search-level data (queries, impressions, clicks,
+  average position) at the domain level, with **no Google scripts, tags or cookies added to the
+  site** and nothing running in visitors' browsers.
+
+### Changed
+- **Privacy policy** updated to disclose the above Google Search Console monitoring.
+
 ## [1.3.8] - 2026-07-07
 
 ### Changed
