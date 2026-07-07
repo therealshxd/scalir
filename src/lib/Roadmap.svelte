@@ -77,6 +77,9 @@
         <li><strong>Before/after preview</strong> — preview each result with a before/after
           compare and tweak a single image's quality before saving the batch.
           <span class="badge shipped">Shipped in 1.3.6</span></li>
+        <li><strong>Preview before optimising & compare zoom</strong> — preview any queued image
+          before running the batch, optimise a single image on its own, and zoom/pan the compare
+          up to 200%. <span class="badge shipped">Shipped in 1.3.7</span></li>
       </ul>
     </div>
 
