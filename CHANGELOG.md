@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.7] - 2026-07-07
+
+### Added
+- **Preview before you optimise.** Every queued image now has a **Preview** button that opens
+  the before/after compare computed live from your current settings — so you can judge the
+  quality *before* committing the whole batch, not just after.
+- **Optimise one image, or the whole batch.** From the compare you can **Optimise this image**
+  on its own (dial in its quality first) while the rest stay queued, or **Optimise whole batch**
+  to run the normal size-target compression over everything.
+- **Zoom & pan the compare.** Zoom the before/after inspector up to **200%** and drag to pan to
+  check compression artefacts up close; the wipe stays pixel-aligned to the divider.
+
+### Changed
+- **Features page rebuilt as a landing page** — one section per feature with keyword-rich copy
+  and quick "Try Scalir" jumps into the tool, for clearer structure and better SEO.
+
+### Fixed
+- **Per-page analytics.** Page views are now recorded per route on the hash-routed site —
+  previously every visit registered as just the landing page. Key CTAs and buttons are also
+  tagged for click analytics. *(Public site only; the desktop app, self-hosted copies and
+  localhost still send nothing, and Do Not Track is honoured.)*
+
+## [1.3.6] - 2026-07-06
+
+### Added
+- **Before/after preview.** Each optimised image now has a **Compare** button that opens a
+  draggable before/after slider — wipe between the original and the optimised result to see
+  exactly what the compression did.
+- **Per-image quality.** In the compare view, a **quality slider** re-encodes that single image
+  at a fixed quality (ignoring the batch size cap) so you can rescue an over-compressed photo
+  before saving; **Apply** swaps it into the batch and it flows straight through to ZIP/Save.
+- **Privacy-first analytics + privacy policy.** Cookieless, self-hosted [Umami](https://umami.is)
+  usage stats on the public site only (the desktop app, self-hosted copies and localhost send
+  nothing, and Do Not Track is honoured), plus a new **Privacy** page linked in the footer.
+
 ## [1.3.5] - 2026-07-02
 
 ### Added

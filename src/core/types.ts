@@ -37,6 +37,8 @@ export interface Options {
   qualityFloor: number;  // never encode below this quality
   webpAdvantage: number; // WebP must be < this fraction of the alt to switch
   outputFormat: OutputFormat; // 'auto' keeps original (opportunistic WebP); else force
+  fixedQuality?: number; // per-image compare override: encode once at exactly this quality,
+                         // ignoring maxBytes (WYSIWYG). Absent = normal size-targeting flow.
 }
 
 export const DEFAULT_OPTIONS: Options = {

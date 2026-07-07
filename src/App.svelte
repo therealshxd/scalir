@@ -7,7 +7,7 @@
   import Features from './lib/Features.svelte';
   import About from './lib/About.svelte';
   import PrivacyPolicy from './lib/PrivacyPolicy.svelte';
-  import { initScrollDepth } from './lib/analytics';
+  import { initScrollDepth, initClickTracking, trackPageview } from './lib/analytics';
 
   const base = import.meta.env.BASE_URL;
 
@@ -24,10 +24,13 @@
   let route = $state(parse());
 
   onMount(() => {
-    const onHash = () => { route = parse(); window.scrollTo({ top: 0 }); };
+    // Record a pageview on every route change. The initial view is fired once the Umami script
+    // loads (see analytics.ts); this covers all subsequent hash navigations.
+    const onHash = () => { route = parse(); window.scrollTo({ top: 0 }); trackPageview(); };
     window.addEventListener('hashchange', onHash);
     const stopScroll = initScrollDepth();
-    return () => { window.removeEventListener('hashchange', onHash); stopScroll(); };
+    const stopClicks = initClickTracking();
+    return () => { window.removeEventListener('hashchange', onHash); stopScroll(); stopClicks(); };
   });
 
   function gotoTool(e: Event) {

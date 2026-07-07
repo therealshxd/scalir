@@ -23,7 +23,7 @@
           <div class="os">{i.os}</div>
           <div class="meta">{i.meta}</div>
           {#if i.url}
-            <a class="cta" href={i.url} target="_blank" rel="noreferrer">{i.cta}</a>
+            <a class="cta" data-track="download-app" data-track-value={i.os.toLowerCase()} href={i.url} target="_blank" rel="noreferrer">{i.cta}</a>
           {:else}
             <button class="cta disabled" disabled>{i.cta}</button>
           {/if}

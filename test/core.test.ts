@@ -384,6 +384,52 @@ describe('optimise', () => {
   });
 });
 
+describe('optimise · fixedQuality (compare re-encode)', () => {
+  // jpeg mock size = px * (q/100) * 0.5; webp = that * 0.4.
+  it('encodes at exactly the given quality and ignores the size cap', async () => {
+    const c = new MockCodecs(mkImage(800, 600)); // 480_000 px, under the 2000 dim cap → no resize
+    const r = await optimise('photo.jpg', header('jpeg'), c, {
+      outputFormat: 'jpeg', fixedQuality: 90, maxBytes: 1000, // far below the q90 encode
+    });
+    expect(r.resized).toBe(false);
+    expect(r.compressed).toBe(true);
+    expect(r.copied).toBeFalsy();                 // never copies through under fixedQuality
+    expect(r.newBytes).toBe(480_000 * 0.9 * 0.5); // 216_000 — the q90 encode, not stepped down
+    expect(r.newBytes).toBeGreaterThan(1000);     // cap deliberately ignored
+    expect(r.message).toBe('');                   // no "over size limit" flag
+    expect(r.outName).toBe('scaled_photo.jpg');
+    expect(r.outType).toBe('image/jpeg');
+  });
+
+  it('scales linearly with quality', async () => {
+    const c = new MockCodecs(mkImage(800, 600));
+    const lo = await optimise('a.jpg', header('jpeg'), c, { outputFormat: 'jpeg', fixedQuality: 40 });
+    const hi = await optimise('a.jpg', header('jpeg'), c, { outputFormat: 'jpeg', fixedQuality: 80 });
+    expect(lo.newBytes).toBe(480_000 * 0.4 * 0.5); // 96_000
+    expect(hi.newBytes).toBe(480_000 * 0.8 * 0.5); // 192_000
+    expect(hi.newBytes).toBe(lo.newBytes * 2);
+  });
+
+  it('still resizes per resizeMode before the fixed-quality encode', async () => {
+    const c = new MockCodecs(mkImage(4000, 3000));
+    const r = await optimise('big.jpg', header('jpeg'), c, {
+      resizeMode: 'longest', maxDim: 2000, outputFormat: 'jpeg', fixedQuality: 50,
+    });
+    expect(r.resized).toBe(true);
+    expect(r.newDims).toEqual([2000, 1500]);
+    expect(r.newBytes).toBe(2000 * 1500 * 0.5 * 0.5); // 750_000, on the resized pixels
+  });
+
+  it('honours the pinned output format (WebP), marking converted', async () => {
+    const c = new MockCodecs(mkImage(800, 600));
+    const r = await optimise('photo.jpg', header('jpeg'), c, { outputFormat: 'webp', fixedQuality: 80 });
+    expect(r.converted).toBe(true);
+    expect(r.outName).toBe('scaled_photo.webp');
+    expect(r.outType).toBe('image/webp');
+    expect(r.newBytes).toBe(480_000 * 0.8 * 0.5 * 0.4); // 76_800
+  });
+});
+
 describe('exif orientation', () => {
   function jpegWithOrientation(o: number): Uint8Array {
     // FFD8 FFE1 <len> "Exif\0\0" + little-endian TIFF, 1 IFD entry: orientation

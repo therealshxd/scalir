@@ -40,7 +40,7 @@ Want to try things before they ship? Preview the latest **work-in-progress build
 - **GIF, TIFF and BMP input** — bring in legacy and print-handoff files and re-export
   them as optimised web formats. (Animated GIFs use the first frame.)
 
-## 🔜 v1.3 — Web-design workflow *(in progress — shipping one feature per release)*
+## ✅ v1.3 — Web-design workflow *(shipped — one feature per release)*
 
 - ✅ **Remembered settings** — your last-used settings (and custom presets, now with titles,
   descriptions, and at-a-glance settings previews) persist between visits, so repeat batches
@@ -49,8 +49,11 @@ Want to try things before they ship? Preview the latest **work-in-progress build
   sequential numbering for clean, web-ready filenames. *(shipped in 1.3.3)*
 - ✅ **Flexible resize modes** — exact width, exact height, percentage scale, or a common
   responsive width (multi-size/`srcset` export comes later). *(shipped in 1.3.5)*
-- **Before/after preview** — preview each result with a before/after compare and tweak a
-  single image's quality before saving the batch.
+- ✅ **Before/after preview** — preview each result with a before/after compare and tweak a
+  single image's quality before saving the batch. *(shipped in 1.3.6)*
+- ✅ **Preview before optimising & compare zoom** — preview any queued image *before* running
+  the batch, optimise a single image on its own, and zoom/pan the compare up to 200%.
+  *(shipped in 1.3.7)*
 
 ---
 
