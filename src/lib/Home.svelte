@@ -6,7 +6,7 @@
 
 <!-- Hero -->
 <header class="hero">
-  <img src={base + 'pwa-512.png'} alt="Scalir" />
+  <img src={base + 'pwa-192.png'} alt="Scalir" width="76" height="76" fetchpriority="high" />
   <h1><span class="grad">Free Bulk Image Compressor</span> — Scalir</h1>
   <p>
     Compress, resize and convert images in bulk — right in your browser. JPG, PNG, WebP, AVIF

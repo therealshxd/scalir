@@ -66,7 +66,7 @@
 
 <nav class="nav">
   <div class="nav-inner">
-    <a class="brand" href="/"><img src={base + 'favicon-256.png'} alt="" /> Scalir</a>
+    <a class="brand" href="/"><img src={base + 'pwa-192.png'} alt="" width="26" height="26" /> Scalir</a>
     <div class="links">
       <a href="/" onclick={gotoTool}>Try Scalir</a>
       <a href="/features">Features</a>

@@ -8,10 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- **Accessibility — 100 Lighthouse across the site.** Added a `<main>` landmark, fixed heading
-  order so levels never skip (hero steps and doc-page card titles), and gave in-text links an
-  underline so they're distinguishable without relying on colour. Performance, Best Practices and
-  SEO were already 100; Accessibility is now 100 too on every page.
+- **Lighthouse 100 across the board — accessibility + mobile performance, on every page.**
+  - *Accessibility:* added a `<main>` landmark, fixed heading order so levels never skip (hero
+    steps and doc-page card titles), and underlined in-text links so they're distinguishable
+    without relying on colour.
+  - *Mobile performance:* the hero and nav logos were being downloaded as oversized 512px/256px
+    PNGs (~334 KB) for tiny display sizes — now a single shared 192px image (~42 KB) with explicit
+    dimensions and `fetchpriority`, and the service-worker registration no longer blocks render.
+    Mobile LCP dropped 3.2s → 1.7s, taking Performance from 93 to 100.
 
 ## [1.3.9] - 2026-07-07
 
