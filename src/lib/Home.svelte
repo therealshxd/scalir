@@ -21,22 +21,22 @@
   <ol class="steps">
     <li class="step">
       <span class="step-num">1</span>
-      <h3>Add your images</h3>
+      <h2>Add your images</h2>
       <p>Drop in the images you want to compress, or choose a whole folder — JPG, PNG, WebP, AVIF, HEIC, GIF, TIFF or BMP.</p>
     </li>
     <li class="step">
       <span class="step-num">2</span>
-      <h3>Pick a preset or tweak</h3>
+      <h2>Pick a preset or tweak</h2>
       <p>Start from a preset like Tiny or Web optimized, then fine-tune size, quality and output format if you need to.</p>
     </li>
     <li class="step">
       <span class="step-num">3</span>
-      <h3>Compress</h3>
+      <h2>Compress</h2>
       <p>Hit Optimise — everything runs locally on your device across all your CPU cores. Nothing is uploaded.</p>
     </li>
     <li class="step">
       <span class="step-num">4</span>
-      <h3>Save your files</h3>
+      <h2>Save your files</h2>
       <p>Download them all as a .zip, or save straight to a folder on your computer.</p>
     </li>
   </ol>

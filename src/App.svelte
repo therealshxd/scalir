@@ -78,21 +78,23 @@
   </div>
 </nav>
 
-{#if route === 'self-hosting'}
-  <SelfHosting />
-{:else if route === 'download'}
-  <Download />
-{:else if route === 'roadmap'}
-  <Roadmap />
-{:else if route === 'features'}
-  <Features />
-{:else if route === 'about'}
-  <About />
-{:else if route === 'privacy'}
-  <PrivacyPolicy />
-{:else}
-  <Home />
-{/if}
+<main>
+  {#if route === 'self-hosting'}
+    <SelfHosting />
+  {:else if route === 'download'}
+    <Download />
+  {:else if route === 'roadmap'}
+    <Roadmap />
+  {:else if route === 'features'}
+    <Features />
+  {:else if route === 'about'}
+    <About />
+  {:else if route === 'privacy'}
+    <PrivacyPolicy />
+  {:else}
+    <Home />
+  {/if}
+</main>
 
 <div class="wrap">
   <footer class="site">

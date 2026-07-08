@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Accessibility — 100 Lighthouse across the site.** Added a `<main>` landmark, fixed heading
+  order so levels never skip (hero steps and doc-page card titles), and gave in-text links an
+  underline so they're distinguishable without relying on colour. Performance, Best Practices and
+  SEO were already 100; Accessibility is now 100 too on every page.
+
 ## [1.3.9] - 2026-07-07
 
 ### Added

@@ -13,7 +13,7 @@
 
     <!-- Images -->
     <div class="card">
-      <h3>Your images never leave your device</h3>
+      <h2>Your images never leave your device</h2>
       <p class="muted-sub">Everything happens in your browser.</p>
       <p>
         Scalir compresses, resizes and converts your images entirely on your own computer. Your
@@ -24,7 +24,7 @@
 
     <!-- Analytics -->
     <div class="card">
-      <h3>Analytics we use</h3>
+      <h2>Analytics we use</h2>
       <p class="muted-sub">Self-hosted, cookieless, no personal data.</p>
       <p>
         To understand how the site is used, we run our own instance of
@@ -42,7 +42,7 @@
 
     <!-- Search Console -->
     <div class="card">
-      <h3>Search performance monitoring</h3>
+      <h2>Search performance monitoring</h2>
       <p class="muted-sub">Domain-level, via Google Search Console — no scripts on the site.</p>
       <p>
         To see how Scalir performs in Google Search — which pages get shown, how often they're
@@ -58,7 +58,7 @@
 
     <!-- What we collect -->
     <div class="card">
-      <h3>What we collect</h3>
+      <h2>What we collect</h2>
       <p class="muted-sub">Aggregate, anonymous usage — nothing that identifies you.</p>
       <p>
         In aggregate, Umami records: which pages are viewed, the referring site, an approximate
@@ -72,7 +72,7 @@
 
     <!-- What we never collect -->
     <div class="card">
-      <h3>What we never collect</h3>
+      <h2>What we never collect</h2>
       <p class="muted-sub">The important part.</p>
       <p>
         We never collect your images or their filenames — only a plain count of how many were
@@ -83,7 +83,7 @@
 
     <!-- Contact -->
     <div class="card">
-      <h3>Questions?</h3>
+      <h2>Questions?</h2>
       <p class="muted-sub">Happy to help.</p>
       <p>
         Ask away at <a href={'mailto:' + EMAIL}>{EMAIL}</a> or open an issue on the

@@ -39,7 +39,7 @@
 
     <!-- Docker local run -->
     <div class="card" style="margin-top:24px">
-      <h3>Run locally with Docker <span class="badge new">Available now</span></h3>
+      <h2>Run locally with Docker <span class="badge new">Available now</span></h2>
       <p>
         The quickest way to run Scalir on your machine today. You'll need
         <a href="https://docs.docker.com/get-docker/" target="_blank" rel="noreferrer">Docker Desktop</a>
