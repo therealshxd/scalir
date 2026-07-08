@@ -37,6 +37,7 @@ const CSS = `
     -webkit-background-clip:text; background-clip:text; color:transparent; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:18px; }
   .photo { border-radius:14px; position:relative; overflow:hidden; }
+  .shot { background-size:cover; background-position:center; }
   .tag { position:absolute; font-size:20px; font-weight:800; padding:9px 16px; border-radius:999px;
     backdrop-filter:blur(3px); }
   h1 { font-size:52px; line-height:1.06; font-weight:800; letter-spacing:-1.2px; }
@@ -85,13 +86,17 @@ const PH = [
   'linear-gradient(135deg,#f6c343 0%,#ff8a5b 55%,#ef5350 100%)',
 ];
 
-// The real-photo before/after (public/img/bulk-image-compression-before-after.webp) is built
-// separately below with the true compressed byte sizes; see photoBody(). The full-resolution source
-// (6000×4000, ~5.8 MB) is fetched from Pexels on demand and cached under scripts/assets/ (gitignored)
-// — it's the "before" a user would actually drop in. Photo 28831325, Pexels License (free commercial
-// use, no attribution required): https://www.pexels.com/photo/28831325/
-const PHOTO_SRC = path.join(root, 'scripts/assets/compression-demo-autumn-lake.jpg');
-const PHOTO_URL = 'https://images.pexels.com/photos/28831325/pexels-photo-28831325.jpeg';
+// The before/after, resize and HEIC demos use REAL photos from Pexels (Pexels License: free
+// commercial use, no attribution required), fetched on demand into scripts/assets/ (gitignored) —
+// the committed public/img/*.webp outputs are the deliverables. The before/after is the strongest
+// case for a real photo: its full-resolution source is actually compressed here so the byte labels
+// are true. Photo pages: /photo/28831325 (autumn lake), /photo/957013 (alpine lake), /photo/16155640.
+const ASSETS = path.join(root, 'scripts/assets');
+const PHOTOS = {
+  compare: ['compression-demo-autumn-lake.jpg', 'https://images.pexels.com/photos/28831325/pexels-photo-28831325.jpeg'],
+  resize: ['resize-demo-konigssee.jpg', 'https://images.pexels.com/photos/957013/konigssee-long-exposure-bavaria-view-957013.jpeg?auto=compress&cs=srgb&w=3000'],
+  heic: ['heic-demo-portrait.jpg', 'https://images.pexels.com/photos/16155640/pexels-photo-16155640.jpeg?auto=compress&cs=srgb&w=1400'],
+};
 
 // Same photo both sides (compression keeps the visible quality identical) split by a compare divider;
 // the corner labels carry the real before/after byte sizes and reduction.
@@ -104,6 +109,46 @@ const photoBody = (photoDataUrl, beforeStr, afterStr, pct) => `<div class="stage
   <div class="badge2">−${pct}%</div>
   <div class="stat bl">${beforeStr} · JPEG</div>
   <div class="stat br">${afterStr} · WebP</div>
+</div>`;
+
+// Real photo shown at two dimensions (cover-fit) with the true original + web-capped size labels.
+const resizeBody = (photo, bw, bh, tw, th) => `<div class="stage">
+  <div class="kicker">Resize images online</div>
+  <div style="flex:1; display:flex; align-items:center; gap:26px;">
+    <div class="photo shot" style="width:520px;height:300px;background-image:url('${photo}');
+      outline:3px dashed rgba(230,232,236,.5);outline-offset:8px;">
+      <div class="tag" style="bottom:14px;left:14px;background:rgba(15,17,21,.78);color:#fff;font-size:18px;">${bw} × ${bh}</div>
+    </div>
+    <div style="text-align:center;">
+      <div class="arrow">→</div>
+      <div style="color:var(--accent);font-weight:800;font-size:20px;margin-top:6px;">Lanczos3</div>
+    </div>
+    <div class="photo shot" style="width:300px;height:173px;background-image:url('${photo}');">
+      <div class="tag" style="bottom:12px;left:12px;background:rgba(15,17,21,.8);color:var(--accent);border:1.5px solid #164a55;font-size:17px;">${tw} × ${th}</div>
+    </div>
+  </div>
+  <div class="sub">Downscale without losing quality — aspect ratio always kept.</div>
+  ${WM}
+</div>`;
+
+// iPhone HEIC → web-ready JPG. Same real photo in the phone and the exported file card. No size claim:
+// HEIC→JPG is about compatibility (JPEG opens everywhere), not necessarily a smaller file.
+const heicBody = (photo) => `<div class="stage">
+  <div class="kicker">Convert HEIC → JPG</div>
+  <div style="flex:1; display:flex; align-items:center; justify-content:center; gap:30px;">
+    <div style="width:230px;height:360px;border:6px solid #2a2f3a;border-radius:38px;padding:10px;background:#0b0e13;position:relative;">
+      <div class="photo shot" style="width:100%;height:100%;border-radius:26px;background-image:url('${photo}');"></div>
+      <div class="tag" style="bottom:22px;left:50%;transform:translateX(-50%);background:rgba(15,17,21,.8);color:#fff;font-size:16px;white-space:nowrap;">IMG_4021.HEIC</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="panel" style="width:300px;padding:20px;">
+      <div class="photo shot" style="height:200px;background-image:url('${photo}');background-position:center 28%;border-radius:10px;"></div>
+      <div style="margin-top:14px;font-size:20px;font-weight:800;">photo.jpg</div>
+      <div style="color:var(--muted);font-size:17px;margin-top:4px;">Web-ready · opens everywhere</div>
+    </div>
+  </div>
+  <div class="sub">Decode iPhone photos and export a web-ready JPG in seconds.</div>
+  ${WM}
 </div>`;
 
 // ── the concept graphics (filename → size + body) ────────────────────────────────────────────────
@@ -131,46 +176,6 @@ const IMAGES = [
         <span class="chip">EXIF stripped</span>
         <span class="chip">Works offline</span>
       </div>
-      ${WM}
-    </div>`,
-  },
-  {
-    file: 'resize-images-online-lanczos.webp', w: 1000, h: 600,
-    body: `<div class="stage">
-      <div class="kicker">Resize images online</div>
-      <div style="flex:1; display:flex; align-items:center; gap:26px;">
-        <div class="photo" style="width:420px;height:320px;background:${PH[1]}; outline:3px dashed rgba(230,232,236,.5); outline-offset:8px;">
-          <div class="tag" style="bottom:14px; left:14px; background:rgba(15,17,21,.72); color:#fff; font-size:18px;">3840 × 2160</div>
-        </div>
-        <div style="text-align:center;">
-          <div class="arrow">→</div>
-          <div style="color:var(--accent); font-weight:800; font-size:20px; margin-top:6px;">Lanczos3</div>
-        </div>
-        <div class="photo" style="width:280px;height:214px;background:${PH[1]};">
-          <div class="tag" style="bottom:12px; left:12px; background:rgba(34,211,238,.16); color:var(--accent); border:1.5px solid #164a55; font-size:17px;">1920 × 1080</div>
-        </div>
-      </div>
-      <div class="sub">Downscale without losing quality — aspect ratio always kept.</div>
-      ${WM}
-    </div>`,
-  },
-  {
-    file: 'convert-heic-to-jpg-iphone.webp', w: 1000, h: 600,
-    body: `<div class="stage">
-      <div class="kicker">Convert HEIC → JPG</div>
-      <div style="flex:1; display:flex; align-items:center; justify-content:center; gap:30px;">
-        <div style="width:230px;height:360px;border:6px solid #2a2f3a;border-radius:38px;padding:10px;background:#0b0e13;position:relative;">
-          <div class="photo" style="width:100%;height:100%;border-radius:26px;background:${PH[3]}"></div>
-          <div class="tag" style="bottom:22px; left:50%; transform:translateX(-50%); background:rgba(15,17,21,.8); color:#fff; font-size:16px; white-space:nowrap;">IMG_4021.HEIC</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="panel" style="width:300px;padding:20px;">
-          <div class="photo" style="height:190px;background:${PH[3]};border-radius:10px;"></div>
-          <div style="margin-top:14px;font-size:20px;font-weight:800;">photo.jpg</div>
-          <div style="color:var(--muted);font-size:17px;margin-top:4px;">Web-ready · 68% smaller</div>
-        </div>
-      </div>
-      <div class="sub">Decode iPhone photos and export a web-ready JPG in seconds.</div>
       ${WM}
     </div>`,
   },
@@ -267,22 +272,36 @@ const enc = await browser.newPage(); // reused blank page for PNG→WebP transco
 
 const fmtBytes = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB');
 
-async function ensureSource() {
-  if (existsSync(PHOTO_SRC)) return;
-  mkdirSync(path.dirname(PHOTO_SRC), { recursive: true });
-  const res = await fetch(PHOTO_URL);
-  if (!res.ok) throw new Error(`failed to fetch source photo: HTTP ${res.status}`);
-  writeFileSync(PHOTO_SRC, Buffer.from(await res.arrayBuffer()));
-  console.log(`  fetched source photo → ${path.relative(root, PHOTO_SRC)} (${fmtBytes(statSync(PHOTO_SRC).size)})`);
+// Fetch a Pexels source photo on demand into scripts/assets/ (gitignored), returning its local path.
+async function fetchPhoto(key) {
+  const [file, url] = PHOTOS[key];
+  const dest = path.join(ASSETS, file);
+  if (!existsSync(dest)) {
+    mkdirSync(ASSETS, { recursive: true });
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`failed to fetch ${key} photo: HTTP ${res.status}`);
+    writeFileSync(dest, Buffer.from(await res.arrayBuffer()));
+    console.log(`  fetched ${key} → ${path.relative(root, dest)} (${fmtBytes(statSync(dest).size)})`);
+  }
+  return dest;
 }
+const dataUrlFor = async (key) => 'data:image/jpeg;base64,' + readFileSync(await fetchPhoto(key)).toString('base64');
+// Read a data-URL image's natural pixel dimensions in-browser.
+const naturalDims = (dataUrl) =>
+  enc.evaluate(async ({ dataUrl }) => {
+    const img = new Image();
+    img.src = dataUrl;
+    await img.decode();
+    return { w: img.naturalWidth, h: img.naturalHeight };
+  }, { dataUrl });
 
-// Build the real-photo before/after: "before" = the full-resolution original's true size; "after" =
-// that same photo actually run through Scalir's "web-optimized" pass (downscale longest side to
-// 1920px + WebP q0.72), measured in-browser. So the labels on the graphic are honest, reproducible.
+// Before/after: "before" = the full-resolution original's true size; "after" = that same photo run
+// through Scalir's web-optimize pass (cap longest side 1920px + WebP q0.72), measured in-browser —
+// so the byte labels are honest and reproducible.
 async function buildPhotoImage() {
-  await ensureSource();
-  const beforeBytes = statSync(PHOTO_SRC).size;
-  const srcDataUrl = 'data:image/jpeg;base64,' + readFileSync(PHOTO_SRC).toString('base64');
+  const srcPath = await fetchPhoto('compare');
+  const beforeBytes = statSync(srcPath).size;
+  const srcDataUrl = 'data:image/jpeg;base64,' + readFileSync(srcPath).toString('base64');
   const afterBytes = await enc.evaluate(async ({ dataUrl }) => {
     const img = new Image();
     img.src = dataUrl;
@@ -305,6 +324,24 @@ async function buildPhotoImage() {
   };
 }
 
+// Resize: label the big box with the source's true native dimensions and the small box with the
+// web-capped result (longest side 1920, never upscaled) — real numbers for this exact photo.
+async function buildResizeImage() {
+  const dataUrl = await dataUrlFor('resize');
+  const { w, h } = await naturalDims(dataUrl);
+  const scale = Math.min(1, 1920 / Math.max(w, h));
+  const tw = Math.round(w * scale), th = Math.round(h * scale);
+  return {
+    file: 'resize-images-online-lanczos.webp', w: 1000, h: 600,
+    body: resizeBody(dataUrl, w, h, tw, th),
+  };
+}
+
+async function buildHeicImage() {
+  const dataUrl = await dataUrlFor('heic');
+  return { file: 'convert-heic-to-jpg-iphone.webp', w: 1000, h: 600, body: heicBody(dataUrl) };
+}
+
 async function toWebp(pngBuffer, w, h) {
   const dataUrl = 'data:image/png;base64,' + pngBuffer.toString('base64');
   for (const q of [0.9, 0.84, 0.78, 0.72, 0.66, 0.6, 0.55, 0.5]) {
@@ -324,7 +361,7 @@ async function toWebp(pngBuffer, w, h) {
   }
 }
 
-const allImages = [await buildPhotoImage(), ...IMAGES];
+const allImages = [await buildPhotoImage(), await buildResizeImage(), await buildHeicImage(), ...IMAGES];
 
 for (const img of allImages) {
   const p = await browser.newPage({ viewport: { width: img.w, height: img.h }, deviceScaleFactor: 2 });
