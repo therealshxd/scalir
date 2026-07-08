@@ -19,7 +19,7 @@
 
     <!-- Option A: Docker Compose -->
     <div class="card">
-      <h3>Option A — Docker Compose <span class="badge new">Recommended</span></h3>
+      <h2>Option A — Docker Compose <span class="badge new">Recommended</span></h2>
       <p>
         Clone the repo and bring up the <code>scalir</code> service (the tool). Nginx serves it on
         port&nbsp;8080 — point your reverse proxy at that.
@@ -51,7 +51,7 @@ docker compose up -d --build</code></pre>
 
     <!-- Option B: Dokploy / Coolify -->
     <div class="card">
-      <h3>Option B — Dokploy, Coolify &amp; similar panels</h3>
+      <h2>Option B — Dokploy, Coolify &amp; similar panels</h2>
       <p>
         If you manage your server with a Docker-based deployment panel, Scalir works out of the box
         since it ships a <code>Dockerfile</code>. The steps below are for
@@ -118,7 +118,7 @@ docker compose up -d --build</code></pre>
 
     <!-- Option C: Manual build -->
     <div class="card">
-      <h3>Option C — Manual build</h3>
+      <h2>Option C — Manual build</h2>
       <p>
         Build the static files yourself and serve them from any host — nginx, Caddy, Apache,
         Netlify, Cloudflare Pages, etc.

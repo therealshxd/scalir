@@ -13,7 +13,7 @@
 
     <!-- Why -->
     <div class="card">
-      <h3>Why did you build this?</h3>
+      <h2>Why did you build this?</h2>
       <p class="muted-sub">I'm tired of paying for tools, so I thought I'd build my own.</p>
       <p>
         I got tired of looking for tools that should be free asking me for account signups or payment
@@ -30,7 +30,7 @@
 
     <!-- Donate -->
     <div class="card">
-      <h3>Donate if you love it!</h3>
+      <h2>Donate if you love it!</h2>
       <p class="muted-sub">I built this for free, and expect nothing in return.</p>
       <p>
         However, as you know, things cost money to host. I'd like to maintain this project and expand on
@@ -43,7 +43,7 @@
 
     <!-- Bugs -->
     <div class="card">
-      <h3>Report bugs and issues</h3>
+      <h2>Report bugs and issues</h2>
       <p class="muted-sub">Tell me if there's something wrong!</p>
       <p>
         This tool was built with the help of Claude AI. It is not an AI tool, nor does it need to be.
@@ -56,7 +56,7 @@
 
     <!-- Terms -->
     <div class="card">
-      <h3>Terms &amp; Conditions</h3>
+      <h2>Terms &amp; Conditions</h2>
       <p class="muted-sub">Simple. Just use the tool, and maybe mention me on Reddit.</p>
       <p>
         I'm not asking for much here. Use the tool; if it's helpful, share it with friends and family,

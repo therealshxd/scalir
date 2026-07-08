@@ -25,7 +25,7 @@
 
     <!-- Shipped -->
     <div class="card">
-      <h3>Available now <span class="badge shipped">Shipped</span></h3>
+      <h2>Available now <span class="badge shipped">Shipped</span></h2>
       <p>The free tool you're using today.</p>
       <ul>
         <li>Bulk image optimisation entirely in the browser — nothing is ever uploaded.</li>
@@ -38,7 +38,7 @@
 
     <!-- v1.1 -->
     <div class="card">
-      <h3>v1.1 — Faster bulk <span class="badge shipped">Shipped</span></h3>
+      <h2>v1.1 — Faster bulk <span class="badge shipped">Shipped</span></h2>
       <ul>
         <li><strong>Parallel processing</strong> — uses all your CPU cores instead of one, so
           large batches finish dramatically faster.</li>
@@ -50,7 +50,7 @@
 
     <!-- v1.2 -->
     <div class="card">
-      <h3>v1.2 — More formats <span class="badge shipped">Shipped</span></h3>
+      <h2>v1.2 — More formats <span class="badge shipped">Shipped</span></h2>
       <ul>
         <li><strong>AVIF in and out</strong> — the modern web format, often noticeably
           smaller than WebP.</li>
@@ -62,7 +62,7 @@
 
     <!-- v1.3 -->
     <div class="card">
-      <h3>v1.3 — Web-design workflow <span class="badge shipped">Shipped</span></h3>
+      <h2>v1.3 — Web-design workflow <span class="badge shipped">Shipped</span></h2>
       <p class="sub">Shipped one feature at a time, each as its own release.</p>
       <ul>
         <li><strong>Remembered settings</strong> — your last-used settings and custom presets
@@ -85,7 +85,7 @@
 
     <!-- Exploring -->
     <div class="card">
-      <h3>Exploring / later <span class="badge exploring">Exploring</span></h3>
+      <h2>Exploring / later <span class="badge exploring">Exploring</span></h2>
       <ul>
         <li><strong>PDF compression</strong> — a separate, fully client-side PDF compressor
           for shrinking image-heavy PDFs.</li>
