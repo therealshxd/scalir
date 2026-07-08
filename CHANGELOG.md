@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.10] - 2026-07-08
+
 ### Fixed
 - **Lighthouse 100 across the board — accessibility + mobile performance, on every page.**
   - *Accessibility:* added a `<main>` landmark, fixed heading order so levels never skip (hero
