@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { navigate } from './seo';
+  import { navigate, FEATURES_FAQ } from './seo';
+  import Faq from './Faq.svelte';
   const REPO = 'https://github.com/therealshxd/scalir';
+  const base = import.meta.env.BASE_URL;
 
   // "Try Scalir" jumps back to the home route and scrolls to the tool (same pattern as the nav).
   function gotoTool(e: Event) {
@@ -23,6 +25,22 @@
       <a class="cta ghost" href="/roadmap">See the roadmap</a></div>
   </section>
 
+  <!-- Optimise images for web (intro keyword section) -->
+  <section class="section">
+    <h2 class="sec-title">Optimise images for web</h2>
+    <p class="sec-sub">Faster pages, smaller files — with client-side image compression</p>
+    <p class="sec-desc">
+      Scalir helps you <strong>optimise images for web</strong> and <strong>optimize images for a
+      website</strong> alike: compress, resize and convert in bulk so every asset loads fast. It's
+      <strong>client side image compression</strong> — all the work happens in your browser, so
+      there's no upload wait and your originals never leave your device.
+    </p>
+    <!-- svelte-ignore a11y_img_redundant_alt -->
+    <img class="feat-img wide" src={base + 'img/compress-images-for-web-workflow.webp'}
+      alt="Compressing images for a website to speed up page load"
+      width="1200" height="600" loading="lazy" decoding="async" />
+  </section>
+
   <!-- Bulk compression -->
   <section class="section">
     <h2 class="sec-title">Bulk image compression</h2>
@@ -43,18 +61,24 @@
 
   <!-- Smart resizing -->
   <section class="section">
-    <h2 class="sec-title">Smart resizing</h2>
+    <h2 class="sec-title">Smart resizing — a bulk image resizer</h2>
     <p class="sec-sub">High-quality downscaling that never distorts your images</p>
     <p class="sec-desc">
-      Resize images to exactly the dimensions you need using high-quality <strong>Lanczos3</strong>
-      resampling. Cap the longest side, set an exact width or height, scale by percentage, or pick a
-      common responsive width. Aspect ratio is always preserved and images are never cropped or upscaled.
+      Use Scalir as a <strong>bulk image resizer</strong>: resize images online in batches, rescale
+      images online by percentage, or cap the longest side. High-quality <strong>Lanczos3</strong>
+      downscaling means you <strong>resize images without losing quality</strong> — aspect ratio is
+      always kept, and images are only ever downscaled, never upscaled.
     </p>
+    <!-- svelte-ignore a11y_img_redundant_alt -->
+    <img class="feat-img" src={base + 'img/resize-images-online-lanczos.webp'}
+      alt="Resizing images online to a smaller dimension while keeping quality"
+      width="1000" height="600" loading="lazy" decoding="async" />
+    <h3 class="kw-h">A batch image resizer for a whole folder</h3>
     <ul class="feat-list">
-      <li>Longest-side cap, exact width, exact height, or percentage scale.</li>
-      <li>Responsive width quick-picks: 640, 828, 1080, 1200 and 1920px.</li>
-      <li>Lanczos3 resampling for crisp, artefact-free downscaling.</li>
-      <li>Only ever shrinks — smaller images are left untouched.</li>
+      <li>Resize multiple images at once, straight from a folder.</li>
+      <li>Reduce image dimensions to a responsive width (640, 828, 1080, 1200 or 1920px).</li>
+      <li>Downscale images online with no visible quality loss.</li>
+      <li>Bulk resize photos by exact width, exact height or percentage scale.</li>
     </ul>
     <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
@@ -64,16 +88,38 @@
     <h2 class="sec-title">Target-size compression</h2>
     <p class="sec-sub">Hit a file-size budget without wrecking quality</p>
     <p class="sec-desc">
-      Set a maximum file size and Scalir runs a quality binary-search to land the best-looking image
-      that still fits under your limit. A quality floor stops it from ever going too far — if an image
-      can't fit even at the floor, it's flagged rather than ruined.
+      Set a budget and Scalir will <strong>compress an image to a specific size</strong> — for example
+      <strong>compress an image under 1 MB</strong> — using a quality binary-search that
+      <strong>compresses JPG without losing quality</strong> you can see. Prefer lossless? You can
+      <strong>compress PNG online</strong> too, or let Auto pick the smallest format for you.
     </p>
+    <h3 class="kw-h">Compress an image to a target size</h3>
     <ul class="feat-list">
       <li>Set a max size in MB; Scalir compresses just enough to fit under it.</li>
-      <li>Quality binary-search finds the best quality for your budget.</li>
-      <li>A quality floor protects images from over-compression.</li>
-      <li>Already-small files are copied through untouched, never re-encoded.</li>
+      <li>Compress an image to a target size without visibly wrecking quality.</li>
+      <li>Compress JPG without losing quality, or compress PNG online instead.</li>
+      <li>A quality floor protects images from over-compression; tiny files are copied through untouched.</li>
     </ul>
+    <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
+  </section>
+
+  <!-- Comparison table (engagement / scannability) -->
+  <section class="section">
+    <h2 class="sec-title">Which preset for which task?</h2>
+    <p class="sec-sub">Pick a starting point, then fine-tune if you need to</p>
+    <div class="cmp-wrap">
+      <table class="cmp-table">
+        <thead>
+          <tr><th>Task</th><th>Preset to use</th><th>Typical result</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Resize images online for a blog</td><td>Web optimized (1920px, WebP)</td><td>~70% smaller</td></tr>
+          <tr><td>Compress image under 1 MB</td><td>Web optimized / custom max-size</td><td>≤ 1 MB</td></tr>
+          <tr><td>Convert HEIC to JPG</td><td>High quality → JPEG</td><td>iPhone-ready JPG</td></tr>
+          <tr><td>Bulk convert images to WebP</td><td>Tiny (WebP)</td><td>~85% smaller</td></tr>
+        </tbody>
+      </table>
+    </div>
     <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
   </section>
 
@@ -101,14 +147,17 @@
     <h2 class="sec-title">Modern formats — WebP &amp; AVIF</h2>
     <p class="sec-sub">Convert to the smallest web-ready formats</p>
     <p class="sec-desc">
-      Convert JPG and PNG to <strong>WebP</strong> or <strong>AVIF</strong> for dramatically smaller
-      web-ready files, or keep your original format. In Auto mode Scalir only switches to WebP when it
-      meaningfully shrinks the file, so you always get the smaller result without guessing.
+      <strong>Convert JPG to WebP</strong>, <strong>convert PNG to WebP</strong>, or
+      <strong>convert images to AVIF</strong> for the smallest web-ready files. Scalir will
+      <strong>batch convert images</strong> in one pass, and decodes iPhone photos so you can
+      <strong>convert HEIC to JPG</strong> or WebP in seconds. In Auto mode it only switches format
+      when it meaningfully shrinks the file, so you always get the smaller result without guessing.
     </p>
+    <h3 class="kw-h">Bulk convert images to WebP or AVIF</h3>
     <ul class="feat-list">
-      <li>Export to JPEG, PNG, WebP or AVIF — auto or forced.</li>
+      <li>Convert JPG to WebP or PNG to WebP, or export straight to AVIF.</li>
+      <li>Bulk convert images to WebP across a whole folder in one pass.</li>
       <li>Auto mode converts to WebP only when it actually helps.</li>
-      <li>AVIF for the very smallest files when you need them.</li>
       <li>Powered by the same jSquash/Squoosh WASM codecs, on-device.</li>
     </ul>
     <div class="sec-cta"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
@@ -123,6 +172,10 @@
       <strong>TIFF</strong> files, <strong>GIF</strong> and <strong>BMP</strong>, and re-exports them as a
       web-ready JPEG, PNG, WebP or AVIF — so you can convert HEIC to JPG or WebP in seconds, no app required.
     </p>
+    <!-- svelte-ignore a11y_img_redundant_alt -->
+    <img class="feat-img" src={base + 'img/convert-heic-to-jpg-iphone.webp'}
+      alt="Converting an iPhone HEIC photo to a web-ready JPG"
+      width="1000" height="600" loading="lazy" decoding="async" />
     <ul class="feat-list">
       <li>Inputs: JPG, PNG, WebP, AVIF, HEIC/HEIF, GIF, TIFF and BMP.</li>
       <li>Convert iPhone HEIC photos to JPG or WebP instantly.</li>
@@ -209,6 +262,14 @@
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section class="section">
+    <h2 class="sec-title">Features FAQ</h2>
+    <p class="sec-sub">Resizing, target-size compression and format conversion, answered</p>
+    <Faq items={FEATURES_FAQ} />
+    <div class="sec-cta" style="margin-top:22px"><button class="cta" data-track="cta" data-track-value="features-try" onclick={gotoTool}>Try Scalir</button></div>
+  </section>
+
   <!-- Built with -->
   <section class="section">
     <h2 class="sec-title">Built with</h2>
@@ -244,6 +305,24 @@
   .feat-list li { margin-bottom: 8px; line-height: 1.55; }
   .feat-list li strong { color: var(--text); }
   .tech li { margin-bottom: 10px; }
+
+  /* keyword sub-heading that leads a bullet list */
+  .kw-h { font-size: 15px; font-weight: 700; color: var(--text); margin: 4px 0 10px; }
+
+  /* section illustrations */
+  .feat-img { width: 100%; max-width: 640px; height: auto; display: block; margin: 4px 0 18px;
+    border: 1px solid var(--line); border-radius: 14px; }
+  .feat-img.wide { max-width: 820px; }
+
+  /* comparison table */
+  .cmp-wrap { overflow-x: auto; margin: 6px 0 4px; }
+  .cmp-table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 520px; }
+  .cmp-table th, .cmp-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .cmp-table thead th { color: var(--accent); font-weight: 700; font-size: 12.5px;
+    letter-spacing: .3px; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+  .cmp-table tbody tr:last-child td { border-bottom: 0; }
+  .cmp-table td:first-child { color: var(--text); font-weight: 600; }
+  .cmp-table td { color: var(--muted); }
 
   .formats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 4px 0 0; }
   .fmt-label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .4px;

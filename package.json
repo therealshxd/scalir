@@ -16,6 +16,7 @@
     "prerender": "node scripts/prerender.mjs",
     "build:seo": "npm run build && npm run prerender",
     "og": "node scripts/og-image.mjs",
+    "seo:img": "node scripts/seo-images.mjs",
     "preview": "vite preview",
     "build:app": "vite build --config vite.config.app.ts && mv dist-app/app.html dist-app/index.html",
     "preview:app": "vite preview --config vite.config.app.ts --outDir dist-app",
