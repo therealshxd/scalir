@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **FAQ accordions on every page** using native `<details>`/`<summary>` — answers are always present
   in the page (crawlable and keyboard-accessible) — backed by **FAQPage structured data** that
   mirrors the visible questions and answers.
-- **A preset comparison table** on Features, **descriptive cross-page links**, and **seven original,
-  on-brand illustrations** (compressed with Scalir to ~20–31 KB each, lazy-loaded and sized to avoid
-  layout shift).
+- **A preset comparison table** on Features, **descriptive cross-page links**, and **seven supporting
+  illustrations** — including a real before/after photo showing a genuine **5.8 MB → 618 KB (−90%)**
+  compression — all web-ready, lazy-loaded and sized to avoid layout shift.
 
 ### Changed
 - Hero and intro copy refreshed for clarity and conversion, and per-page FAQ content centralised so

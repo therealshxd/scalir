@@ -1,11 +1,14 @@
-// Generates the on-page SEO illustrations in public/img/*.webp — original, on-brand graphics built
-// from the app's design tokens (see src/app.css), NOT stock photos (so there's no licensing risk).
+// Generates the on-page SEO illustrations in public/img/*.webp. Six are original, on-brand graphics
+// built from the app's design tokens (see src/app.css). The before/after "compression rate" image is
+// built from a REAL photo — scripts/assets/compression-demo-autumn-lake.jpg (Pexels, photo 28831325,
+// Pexels License: free commercial use, no attribution required) — which is actually compressed here
+// (canvas → WebP) so the "before/after" byte labels on the graphic are the true numbers, not made up.
 // Each template is rendered headlessly at 2× for crispness, then transcoded to WebP entirely in
 // Chromium (canvas.toDataURL), auto-tuning quality to stay under ~150 KB. One-off dev tool:
-//   node scripts/seo-images.mjs      (or add an npm script)
-// The .webp files are committed; re-run only when you want to regenerate them.
+//   npm run seo:img   (node scripts/seo-images.mjs)
+// The .webp outputs and the source photo are committed; re-run only when you want to regenerate them.
 import { chromium } from 'playwright';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, statSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -54,6 +57,24 @@ const CSS = `
   .term { background:#0b0e13; border:1px solid var(--line); border-radius:14px; padding:22px 24px;
     font:20px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; color:#cfd6e2; }
   .term .c { color:var(--ok); } .term .a { color:var(--accent); } .term .m { color:var(--muted); }
+  /* real-photo before/after compare */
+  .pa { position:absolute; inset:0; background-size:cover; background-position:center; }
+  .shade { position:absolute; inset:0; background:linear-gradient(180deg, rgba(15,17,21,.5) 0%,
+    rgba(15,17,21,0) 20%, rgba(15,17,21,0) 60%, rgba(15,17,21,.72) 100%); }
+  .divider { position:absolute; top:0; bottom:0; left:50%; width:3px; transform:translateX(-50%);
+    background:rgba(255,255,255,.92); box-shadow:0 0 0 1px rgba(0,0,0,.3); }
+  .handle { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px;
+    border-radius:50%; background:var(--accent); color:#08303a; display:flex; align-items:center;
+    justify-content:center; font-size:26px; font-weight:800; box-shadow:0 8px 22px rgba(0,0,0,.45); }
+  .lbl { position:absolute; top:24px; font-size:21px; font-weight:800; padding:8px 17px; border-radius:999px;
+    background:rgba(15,17,21,.74); color:#fff; }
+  .lbl.tl { left:24px; } .lbl.tr { right:24px; color:var(--accent); }
+  .stat { position:absolute; bottom:24px; font-size:23px; font-weight:800; padding:10px 17px;
+    border-radius:12px; background:rgba(15,17,21,.8); color:#fff; }
+  .stat.bl { left:24px; } .stat.br { right:24px; color:var(--ok); }
+  .badge2 { position:absolute; top:24px; left:50%; transform:translateX(-50%); font-size:25px;
+    font-weight:800; color:#06230f; background:var(--ok); padding:8px 20px; border-radius:999px;
+    box-shadow:0 6px 18px rgba(0,0,0,.35); }
 `;
 const WM = `<div class="wm"><span class="dot"></span>Scalir</div>`;
 // A few colourful gradients that read as "a photo" without being one.
@@ -64,27 +85,29 @@ const PH = [
   'linear-gradient(135deg,#f6c343 0%,#ff8a5b 55%,#ef5350 100%)',
 ];
 
-// ── the 7 images (filename → size + body) ────────────────────────────────────────────────────────
+// The real-photo before/after (public/img/bulk-image-compression-before-after.webp) is built
+// separately below with the true compressed byte sizes; see photoBody(). The full-resolution source
+// (6000×4000, ~5.8 MB) is fetched from Pexels on demand and cached under scripts/assets/ (gitignored)
+// — it's the "before" a user would actually drop in. Photo 28831325, Pexels License (free commercial
+// use, no attribution required): https://www.pexels.com/photo/28831325/
+const PHOTO_SRC = path.join(root, 'scripts/assets/compression-demo-autumn-lake.jpg');
+const PHOTO_URL = 'https://images.pexels.com/photos/28831325/pexels-photo-28831325.jpeg';
+
+// Same photo both sides (compression keeps the visible quality identical) split by a compare divider;
+// the corner labels carry the real before/after byte sizes and reduction.
+const photoBody = (photoDataUrl, beforeStr, afterStr, pct) => `<div class="stage" style="padding:0;">
+  <div class="pa" style="background-image:url('${photoDataUrl}');"></div>
+  <div class="shade"></div>
+  <div class="divider"></div><div class="handle">⟷</div>
+  <div class="lbl tl">Before</div>
+  <div class="lbl tr">After</div>
+  <div class="badge2">−${pct}%</div>
+  <div class="stat bl">${beforeStr} · JPEG</div>
+  <div class="stat br">${afterStr} · WebP</div>
+</div>`;
+
+// ── the concept graphics (filename → size + body) ────────────────────────────────────────────────
 const IMAGES = [
-  {
-    file: 'bulk-image-compression-before-after.webp', w: 1200, h: 600,
-    body: `<div class="stage">
-      <div class="kicker">Bulk image compression</div>
-      <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:22px;">
-        <div class="photo" style="background:${PH[0]}">
-          <div class="tag" style="top:18px; left:18px; background:rgba(15,17,21,.6); color:#fff;">Before</div>
-          <div class="tag" style="bottom:18px; right:18px; background:rgba(15,17,21,.72); color:#fff;">4.8&nbsp;MB</div>
-        </div>
-        <div class="photo" style="background:${PH[0]}">
-          <div class="tag" style="top:18px; left:18px; background:rgba(15,17,21,.6); color:var(--accent);">After</div>
-          <div class="tag" style="bottom:18px; right:18px; background:rgba(56,193,114,.9); color:#06230f;">0.7&nbsp;MB</div>
-          <div class="tag" style="top:18px; right:18px; background:rgba(56,193,114,.16); color:var(--ok); border:1.5px solid #1e5c38;">−85%</div>
-        </div>
-      </div>
-      <div class="sub" style="margin-top:20px;">Same photo, a fraction of the size — same visible quality.</div>
-      ${WM}
-    </div>`,
-  },
   {
     file: 'private-in-browser-image-optimiser.webp', w: 1000, h: 720,
     body: `<div class="stage" style="justify-content:center;">
@@ -240,11 +263,51 @@ const page = (body, w, h) =>
    html,body{width:${w}px;height:${h}px;position:relative;}</style></head><body>${body}</body></html>`;
 
 const browser = await chromium.launch();
-const enc = await browser.newPage(); // reused blank page for PNG→WebP transcode
+const enc = await browser.newPage(); // reused blank page for PNG→WebP transcode + measuring the demo
+
+const fmtBytes = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB');
+
+async function ensureSource() {
+  if (existsSync(PHOTO_SRC)) return;
+  mkdirSync(path.dirname(PHOTO_SRC), { recursive: true });
+  const res = await fetch(PHOTO_URL);
+  if (!res.ok) throw new Error(`failed to fetch source photo: HTTP ${res.status}`);
+  writeFileSync(PHOTO_SRC, Buffer.from(await res.arrayBuffer()));
+  console.log(`  fetched source photo → ${path.relative(root, PHOTO_SRC)} (${fmtBytes(statSync(PHOTO_SRC).size)})`);
+}
+
+// Build the real-photo before/after: "before" = the full-resolution original's true size; "after" =
+// that same photo actually run through Scalir's "web-optimized" pass (downscale longest side to
+// 1920px + WebP q0.72), measured in-browser. So the labels on the graphic are honest, reproducible.
+async function buildPhotoImage() {
+  await ensureSource();
+  const beforeBytes = statSync(PHOTO_SRC).size;
+  const srcDataUrl = 'data:image/jpeg;base64,' + readFileSync(PHOTO_SRC).toString('base64');
+  const afterBytes = await enc.evaluate(async ({ dataUrl }) => {
+    const img = new Image();
+    img.src = dataUrl;
+    await img.decode();
+    const long = Math.max(img.naturalWidth, img.naturalHeight);
+    const scale = Math.min(1, 1920 / long); // web-optimize: cap longest side at 1920, never upscale
+    const w = Math.round(img.naturalWidth * scale), h = Math.round(img.naturalHeight * scale);
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, w, h);
+    return atob(c.toDataURL('image/webp', 0.72).split(',')[1]).length;
+  }, { dataUrl: srcDataUrl });
+  const pct = Math.round((1 - afterBytes / beforeBytes) * 100);
+  console.log(`  compression demo: ${fmtBytes(beforeBytes)} JPEG → ${fmtBytes(afterBytes)} WebP  (−${pct}%)`);
+  return {
+    file: 'bulk-image-compression-before-after.webp', w: 1200, h: 600,
+    body: photoBody(srcDataUrl, fmtBytes(beforeBytes), fmtBytes(afterBytes), pct),
+  };
+}
 
 async function toWebp(pngBuffer, w, h) {
   const dataUrl = 'data:image/png;base64,' + pngBuffer.toString('base64');
-  for (const q of [0.9, 0.84, 0.78, 0.72, 0.66, 0.6]) {
+  for (const q of [0.9, 0.84, 0.78, 0.72, 0.66, 0.6, 0.55, 0.5]) {
     const b64 = await enc.evaluate(async ({ dataUrl, w, h, q }) => {
       const img = new Image();
       img.src = dataUrl;
@@ -257,11 +320,13 @@ async function toWebp(pngBuffer, w, h) {
       return c.toDataURL('image/webp', q).split(',')[1];
     }, { dataUrl, w, h, q });
     const buf = Buffer.from(b64, 'base64');
-    if (buf.byteLength <= MAX_BYTES || q === 0.6) return { buf, q };
+    if (buf.byteLength <= MAX_BYTES || q === 0.5) return { buf, q };
   }
 }
 
-for (const img of IMAGES) {
+const allImages = [await buildPhotoImage(), ...IMAGES];
+
+for (const img of allImages) {
   const p = await browser.newPage({ viewport: { width: img.w, height: img.h }, deviceScaleFactor: 2 });
   await p.setContent(page(img.body, img.w, img.h), { waitUntil: 'networkidle' });
   const png = await p.screenshot({ clip: { x: 0, y: 0, width: img.w, height: img.h } });
