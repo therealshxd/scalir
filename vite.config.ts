@@ -10,6 +10,7 @@ export default defineConfig({
     svelte(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'script-defer', // non-render-blocking SW registration (perf)
       includeAssets: ['favicon-32.png', 'apple-touch-icon-180.png'],
       workbox: {
         // Precache the app shell and the small codecs (incl. the ~1.2 MB AVIF decoder),
