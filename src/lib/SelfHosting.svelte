@@ -1,14 +1,23 @@
 <script lang="ts">
+  import Faq from './Faq.svelte';
+  import { SELF_HOSTING_FAQ } from './seo';
   const REPO = 'https://github.com/therealshxd/scalir';
+  const base = import.meta.env.BASE_URL;
 </script>
 
 <div class="wrap doc">
   <section class="section" style="border-top:0">
-    <h1>Self-hosting Scalir</h1>
+    <h1>Self-hosted image compressor — run Scalir with Docker</h1>
     <p class="lead">
-      Run your own instance of Scalir — no limits, no external dependencies, no data leaving your
-      network. Pick the deployment method that suits your setup.
+      Run your own <strong>self-hosted image compressor</strong> with Docker — a private,
+      <strong>self-hosted image optimiser</strong> behind your firewall, with no per-image limits and
+      no data leaving your network. Pick the deployment method that suits your setup.
     </p>
+
+    <!-- svelte-ignore a11y_img_redundant_alt -->
+    <img class="sh-hero" src={base + 'img/self-hosted-image-compressor-docker.webp'}
+      alt="Self-hosted image compressor running in Docker behind a firewall"
+      width="1200" height="675" loading="eager" fetchpriority="high" decoding="async" />
 
     <div class="note">
       <strong>Two Dockerfiles:</strong> <code>Dockerfile</code> builds the <strong>tool only</strong>
@@ -21,8 +30,9 @@
     <div class="card">
       <h2>Option A — Docker Compose <span class="badge new">Recommended</span></h2>
       <p>
-        Clone the repo and bring up the <code>scalir</code> service (the tool). Nginx serves it on
-        port&nbsp;8080 — point your reverse proxy at that.
+        The quickest way to run Scalir as a <strong>Docker image compressor</strong>: clone the repo
+        and bring up the <code>scalir</code> service (the tool). Nginx serves it on port&nbsp;8080 —
+        point your reverse proxy at that.
       </p>
       <pre><code># 1. Clone
 git clone {REPO}
@@ -152,6 +162,10 @@ npx serve dist-app</code></pre>
 &#125;</code></pre>
     </div>
 
+    <!-- FAQ -->
+    <h2 class="sh-faq-title">Self-hosting FAQ</h2>
+    <Faq items={SELF_HOSTING_FAQ} />
+
     <p class="lead" style="margin-top:24px">
       If Scalir is useful to you, a short mention anywhere you like is all I ask.
       <a href="/">← Back to the tool</a>
@@ -166,4 +180,7 @@ npx serve dist-app</code></pre>
   .note { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
     border-radius: 8px; padding: 12px 14px; margin: 0 0 22px; font-size: 14px; color: var(--text); }
   .note code { color: var(--accent); }
+  .sh-hero { width: 100%; max-width: 820px; height: auto; display: block; margin: 8px 0 22px;
+    border: 1px solid var(--line); border-radius: 14px; }
+  .sh-faq-title { font-size: 22px; font-weight: 800; margin: 32px 0 0; }
 </style>

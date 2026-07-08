@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.11] - 2026-07-08
+
+### Added
+- **On-page SEO content across the marketing pages.** Home, Features, Download and Self-hosting now
+  work the target search terms — bulk image compressor, resize and convert, compress to a target
+  size, HEIC → JPG, offline/desktop, and self-hosted/Docker — into real, useful copy, with new
+  sections, keyword sub-headings and scannable bullet lists.
+- **FAQ accordions on every page** using native `<details>`/`<summary>` — answers are always present
+  in the page (crawlable and keyboard-accessible) — backed by **FAQPage structured data** that
+  mirrors the visible questions and answers.
+- **A preset comparison table** on Features, **descriptive cross-page links**, and **seven supporting
+  illustrations** — including a real before/after photo showing a genuine **5.8 MB → 618 KB (−90%)**
+  compression — all web-ready, lazy-loaded and sized to avoid layout shift.
+
+### Changed
+- Hero and intro copy refreshed for clarity and conversion, and per-page FAQ content centralised so
+  the on-page text and its structured data can never drift apart.
+
 ## [1.3.10] - 2026-07-08
 
 ### Fixed

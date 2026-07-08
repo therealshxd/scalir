@@ -4,3 +4,6 @@ dist-app
 dev-dist
 *.local
 .DS_Store
+
+# SEO image generator: cached source photo (re-downloaded on demand by scripts/seo-images.mjs)
+scripts/assets/
