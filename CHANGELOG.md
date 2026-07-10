@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.12] - 2026-07-10
+
 ### Added
 - **Eight SEO landing pages, each with the tool built in and preconfigured for its task:**
   convert HEIC→JPG, WebP→JPG, WebP→PNG, PNG→WebP and JPG→WebP, plus compress JPEG, compress PNG
