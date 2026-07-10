@@ -5,7 +5,7 @@
 // that reference real settings. Adding a page that violates any of them fails CI.
 import { describe, it, expect } from 'vitest';
 import { ROUTE_LIST, byId, byPath } from '../src/lib/routes.data.js';
-import { LANDING_CONTENT } from '../src/lib/landing/content';
+import { LANDING_CONTENT, type LandingSection } from '../src/lib/landing/content';
 import { HOME_FAQ, FEATURES_FAQ, DOWNLOAD_FAQ, SELF_HOSTING_FAQ } from '../src/lib/seo';
 import { DEFAULT_UI_OPTS } from '../src/lib/persist';
 
@@ -91,6 +91,43 @@ describe('landing content', () => {
       }
       for (const f of c.faq) {
         if (f.href) expect(byPath[f.href] ?? f.href.startsWith('http'), `${id} FAQ links to unknown ${f.href}`).toBeTruthy();
+      }
+    }
+  });
+
+  // Pages must rank for DIFFERENT keywords, not compete as near-duplicates of one template.
+  // Measured as word-3-gram Jaccard similarity over each page's full visible text: every pair
+  // of pages must be at least 60% unique (similarity < 40%). The live corpus sits around 4%.
+  it('keeps every pair of landing pages at least 60% unique', () => {
+    const text = (id: string): string => {
+      const c = LANDING_CONTENT[id];
+      const parts: string[] = [c.h1, c.lead, byId[id].title, byId[id].description];
+      for (const s of c.sections as LandingSection[]) {
+        if (s.type === 'prose') parts.push(s.h2, s.sub ?? '', ...s.paragraphs, ...(s.bullets ?? []));
+        else if (s.type === 'steps') parts.push(s.h2, ...s.steps.flatMap((x) => [x.title, x.body]));
+        else if (s.type === 'factTable') parts.push(s.h2, s.sub ?? '', ...s.columns, ...s.rows.flat());
+        else if (s.type === 'comparison') parts.push(s.h2, s.verdict, ...s.rows.flatMap((r) => [r.feature, r.scalir, r.other]));
+        else if (s.type === 'crossLinks') parts.push(s.h2, ...s.links.flatMap((l) => [l.label, l.blurb ?? '']));
+      }
+      parts.push(...c.faq.flatMap((f) => [f.q, f.a]));
+      return parts.join(' ').toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+    };
+    const shingles = (t: string): Set<string> => {
+      const w = t.split(/\s+/).filter(Boolean);
+      const out = new Set<string>();
+      for (let i = 0; i <= w.length - 3; i++) out.add(w.slice(i, i + 3).join(' '));
+      return out;
+    };
+    const ids = Object.keys(LANDING_CONTENT);
+    const sets = new Map(ids.map((id) => [id, shingles(text(id))]));
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        const a = sets.get(ids[i])!;
+        const b = sets.get(ids[j])!;
+        let inter = 0;
+        for (const s of a) if (b.has(s)) inter++;
+        const sim = inter / (a.size + b.size - inter);
+        expect(sim, `${ids[i]} ↔ ${ids[j]} are ${(sim * 100).toFixed(1)}% similar (must be <40%)`).toBeLessThan(0.4);
       }
     }
   });
