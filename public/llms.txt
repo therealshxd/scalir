@@ -19,6 +19,14 @@ Key facts:
 - [Download](https://scalir.org/download): Free desktop apps for Windows and Linux.
 - [About](https://scalir.org/about): What Scalir is, how it works, and who built it.
 - [Privacy](https://scalir.org/privacy): Privacy policy — nothing ever leaves your device.
+- [HEIC to JPG](https://scalir.org/convert/heic-to-jpg): Convert iPhone HEIC/HEIF photos to JPG, in bulk, without uploads.
+- [WebP to JPG](https://scalir.org/convert/webp-to-jpg): Convert WebP images to universally compatible JPG, in bulk.
+- [WebP to PNG](https://scalir.org/convert/webp-to-png): Convert WebP images to lossless PNG with transparency preserved.
+- [PNG to WebP](https://scalir.org/convert/png-to-webp): Convert PNG images to WebP for faster pages, transparency kept.
+- [JPG to WebP](https://scalir.org/convert/jpg-to-webp): Convert JPG photos to smaller WebP files at the same visual quality.
+- [Compress JPEG](https://scalir.org/compress-jpeg): Compress JPEG images to a target size with no visible quality loss.
+- [Compress PNG](https://scalir.org/compress-png): Compress PNG images losslessly, or convert to WebP for bigger savings.
+- [Compress to 100KB](https://scalir.org/compress-image-to-100kb): Compress any image to 100KB (or another exact limit) for upload forms.
 
 ## Source
 - [GitHub repository](https://github.com/therealshxd/scalir): Source code (TypeScript, Svelte, Rust/Tauri), MIT licensed.

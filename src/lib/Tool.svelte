@@ -5,7 +5,7 @@
   import type { Options, OptimiseResult } from '../core/types';
   import { PRESETS, presetSummary, type Preset } from '../core/presets';
   import {
-    loadSettings, saveSettings, loadCustomPresets, saveCustomPresets,
+    loadSettings, saveSettings, loadCustomPresets, saveCustomPresets, type UiOpts,
   } from './persist';
   import { WorkerPool, defaultPoolSize } from './workerPool';
   import { track } from './analytics';
@@ -17,10 +17,19 @@
   const FREE_LIMIT = 0;
   const hasFS = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
-  // Hydrate from localStorage so a returning visitor keeps their last-used settings; falls
-  // back to defaults when nothing is stored (or storage is unavailable). Persisted on change.
-  let opts = $state(loadSettings());
-  $effect(() => { saveSettings($state.snapshot(opts)); });
+  // Landing pages mount the tool with a task preset (e.g. HEIC → JPG); those overrides are
+  // layered over the visitor's saved settings and NOTHING persists from such a session — the
+  // home tool's saved settings are never touched by a landing page. Without a preset (home,
+  // desktop app) behaviour is unchanged: hydrate from localStorage, persist on change.
+  let { preset = null }: { preset?: Partial<UiOpts> | null } = $props();
+  // Capturing the initial `preset` is intentional: it only seeds the settings, and landing pages
+  // remount the tool ({#key} in ToolLanding.svelte) whenever the preset changes.
+  // svelte-ignore state_referenced_locally
+  let opts = $state(preset ? { ...loadSettings(), ...preset } : loadSettings());
+  // svelte-ignore state_referenced_locally
+  if (!preset) {
+    $effect(() => { saveSettings($state.snapshot(opts)); });
+  }
 
   // Live example of how the current naming settings shape an output filename.
   let namePreview = $derived.by(() => {
@@ -349,7 +358,8 @@
           <span class="hint">Target file size — we compress just enough to fit under this.</span>
         </label>
         <label>Output format
-          <select bind:value={opts.outputFormat} onchange={clearPreset}>
+          <!-- data-setting gives the prerender smoke-check a stable handle to assert presets. -->
+          <select data-setting="output-format" bind:value={opts.outputFormat} onchange={clearPreset}>
             <option value="auto">Auto (recommended)</option>
             <option value="jpeg">JPEG</option>
             <option value="png">PNG</option>
