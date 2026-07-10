@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Eight SEO landing pages, each with the tool built in and preconfigured for its task:**
+  convert HEIC→JPG, WebP→JPG, WebP→PNG, PNG→WebP and JPG→WebP, plus compress JPEG, compress PNG
+  and compress-to-100KB. Every page embeds the real optimiser preset for exactly that job (a
+  convert page outputs full-size, top-quality conversions — it never silently resizes), with
+  task-specific how-to steps, format fact tables, FAQs (backed by matching FAQPage structured
+  data) and cross-links. Landing-page presets are ephemeral: they never overwrite the settings
+  you've saved on the home tool.
+- **A site footer with grouped Convert / Compress / Product link columns**, generated from the
+  route registry — every page now links to every tool page.
+
+### Changed
+- **The landing site is now data-driven.** One shared route registry (`src/lib/routes.data.js`)
+  feeds the app's routing/metadata, the prerender, sitemap.xml **and llms.txt** (both now
+  generated — no more hand-maintained lists), and one `ToolLanding.svelte` template renders any
+  landing page from content data — adding a page is a data edit, not a new component.
+- **`npm run build:seo` now smoke-checks every prerendered page** (title, canonical, h1, and
+  that landing pages really embed the preconfigured tool) and fails the build on any mismatch.
+
 ### Fixed
 - The `softwareVersion` in the site's WebApplication structured data (index.html) had gone stale
   at 1.3.8 — corrected to the current release, and `sync-version.mjs` now keeps it in lockstep

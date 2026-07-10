@@ -1,90 +1,32 @@
 // Per-route SEO metadata for the (now path-based) landing site.
 //
 // The site is a single-page app but each route is a real URL (`/features`, `/roadmap`, …) that is
-// prerendered to its own static HTML file (see `scripts/prerender.mjs`). This module is the single
-// source of truth for each route's <title>/description/canonical/OG tags and its route-level JSON-LD,
-// applied by `setMeta()` on load and on every client navigation — so both crawlers (via the
-// prerendered HTML) and users (via the SPA) get correct, unique metadata per page.
+// prerendered to its own static HTML file (see `scripts/prerender.mjs`). Route data (paths, titles,
+// descriptions, crumbs) lives in the shared registry `routes.data.js` — imported both here and by
+// the prerender script, so there is exactly one route list. This module applies that metadata plus
+// the route-level JSON-LD via `setMeta()` on load and on every client navigation — so both crawlers
+// (via the prerendered HTML) and users (via the SPA) get correct, unique metadata per page.
+
+import { byId, byPath } from './routes.data.js';
+import { LANDING_CONTENT } from './landing/content';
 
 export const SITE = 'https://scalir.org';
 export const REPO = 'https://github.com/therealshxd/scalir';
 
-export type RouteId = 'home' | 'features' | 'roadmap' | 'self-hosting' | 'download' | 'about' | 'privacy';
-
-interface RouteMeta {
-  path: string;          // real pathname, e.g. '/features'
-  title: string;         // <title> + og:title/twitter:title
-  description: string;   // meta description + og/twitter description
-  crumb: string;         // BreadcrumbList label for sub-pages
-}
-
-// Order matters for the sitemap (home first). Keep titles ≤ ~60 chars and descriptions ≤ ~155.
-export const ROUTES: Record<RouteId, RouteMeta> = {
-  home: {
-    path: '/',
-    title: 'Scalir — Free Bulk Image Compressor (Private, In-Browser)',
-    description:
-      'Free bulk image compressor — compress, resize and convert images online in your browser. JPG, PNG, WebP, AVIF, HEIC, GIF, TIFF, BMP. No uploads, no sign-up, completely private.',
-    crumb: 'Home',
-  },
-  features: {
-    path: '/features',
-    title: 'Features — Bulk Compression, Resize & Convert | Scalir',
-    description:
-      'Everything Scalir does: bulk image compression, Lanczos3 resizing, target-size compression, before/after preview, WebP & AVIF conversion, and HEIC/TIFF support — free and 100% in your browser.',
-    crumb: 'Features',
-  },
-  roadmap: {
-    path: '/roadmap',
-    title: "Roadmap — What's Shipped & Next | Scalir",
-    description:
-      'See what has shipped and what is planned for Scalir, the free, private, in-browser image optimiser — resize modes, before/after preview, PDF compression and more.',
-    crumb: 'Roadmap',
-  },
-  'self-hosting': {
-    path: '/self-hosting',
-    title: 'Self-Host Scalir with Docker — Private Image Optimiser',
-    description:
-      'Run Scalir on your own server with Docker in minutes. Unlimited, private bulk image compression behind your firewall — no uploads, no accounts, no external dependencies.',
-    crumb: 'Self-hosting',
-  },
-  download: {
-    path: '/download',
-    title: 'Download Scalir — Desktop Image Compressor (Windows & Linux)',
-    description:
-      'Install the free Scalir desktop app for Windows and Linux, or run it with Docker. Fast, offline, private bulk image compression on your own machine.',
-    crumb: 'Download',
-  },
-  about: {
-    path: '/about',
-    title: 'About Scalir — Free, Private, Open-Source Image Optimiser',
-    description:
-      'Scalir is a free, open-source, privacy-first image optimiser that runs entirely in your browser. Learn what it is, how it works and who built it.',
-    crumb: 'About',
-  },
-  privacy: {
-    path: '/privacy',
-    title: 'Privacy Policy — Scalir',
-    description:
-      "Scalir's privacy policy: your images never leave your device, no accounts, and cookieless analytics on the public site only. Privacy by design.",
-    crumb: 'Privacy',
-  },
-};
-
-const BY_PATH: Record<string, RouteId> = Object.fromEntries(
-  (Object.keys(ROUTES) as RouteId[]).map((id) => [ROUTES[id].path, id]),
-);
+// Route ids are data-defined in routes.data.js (a closed union doesn't scale to the landing-page
+// catalogue); integrity is enforced by test/routes.test.ts and the prerender assertions instead.
+export type RouteId = string;
 
 // Map a pathname to a route id (unknown paths fall back to home). Tolerates a trailing slash.
 export function routeFromPath(pathname: string): RouteId {
   const p = pathname !== '/' && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-  return BY_PATH[p] ?? 'home';
+  return byPath[p] ?? 'home';
 }
 
 // Whether a pathname is one of our real routes (used to decide whether to intercept a link click).
 export function isRoute(pathname: string): boolean {
   const p = pathname !== '/' && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-  return p in BY_PATH;
+  return p in byPath;
 }
 
 // SPA navigation to an internal path via the History API. Dispatches a `popstate` so the single
@@ -127,7 +69,7 @@ function breadcrumbLd(id: RouteId): object {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: SITE + '/' },
-      { '@type': 'ListItem', position: 2, name: ROUTES[id].crumb, item: SITE + ROUTES[id].path },
+      { '@type': 'ListItem', position: 2, name: byId[id].crumb, item: SITE + byId[id].path },
     ],
   };
 }
@@ -146,7 +88,8 @@ function faqPageLd(items: Faq[]): object {
 function routeJsonLd(id: RouteId): object {
   const graph: object[] = [];
   if (id !== 'home') graph.push(breadcrumbLd(id));
-  const faq = FAQ_BY_ROUTE[id];
+  // Bespoke pages keep their FAQ arrays below; landing pages carry theirs in LANDING_CONTENT.
+  const faq = FAQ_BY_ROUTE[id] ?? LANDING_CONTENT[id]?.faq;
   if (faq) graph.push(faqPageLd(faq));
   // A single node is emitted flat (with @context); multiple nodes go in an @graph.
   return graph.length === 1
@@ -157,7 +100,7 @@ function routeJsonLd(id: RouteId): object {
 // Apply all head metadata for a route. Idempotent — safe to call on every navigation.
 export function setMeta(id: RouteId): void {
   if (typeof document === 'undefined') return;
-  const m = ROUTES[id];
+  const m = byId[id];
   const url = SITE + m.path;
   document.title = m.title;
   upsertMeta('name', 'description', m.description);

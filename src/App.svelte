@@ -1,18 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Home from './lib/Home.svelte';
-  import SelfHosting from './lib/SelfHosting.svelte';
-  import Download from './lib/Download.svelte';
-  import Roadmap from './lib/Roadmap.svelte';
-  import Features from './lib/Features.svelte';
-  import About from './lib/About.svelte';
-  import PrivacyPolicy from './lib/PrivacyPolicy.svelte';
+  import { BESPOKE_PAGES } from './lib/pages';
+  import ToolLanding from './lib/ToolLanding.svelte';
+  import Footer from './lib/Footer.svelte';
   import { initScrollDepth, initClickTracking, trackPageview } from './lib/analytics';
   import { routeFromPath, isRoute, setMeta, navigate } from './lib/seo';
 
   const base = import.meta.env.BASE_URL;
 
   let route = $state(routeFromPath(location.pathname));
+  // Bespoke pages keep their hand-written components; every other route is a data-driven
+  // landing page. Unknown paths already fall back to 'home' in routeFromPath.
+  const Bespoke = $derived(BESPOKE_PAGES[route]);
 
   onMount(() => {
     // Back-compat: rewrite any legacy hash URL (e.g. #/features) to its real path so old links,
@@ -79,26 +78,11 @@
 </nav>
 
 <main>
-  {#if route === 'self-hosting'}
-    <SelfHosting />
-  {:else if route === 'download'}
-    <Download />
-  {:else if route === 'roadmap'}
-    <Roadmap />
-  {:else if route === 'features'}
-    <Features />
-  {:else if route === 'about'}
-    <About />
-  {:else if route === 'privacy'}
-    <PrivacyPolicy />
+  {#if Bespoke}
+    <Bespoke />
   {:else}
-    <Home />
+    <ToolLanding id={route} />
   {/if}
 </main>
 
-<div class="wrap">
-  <footer class="site">
-    <span>Scalir · private &amp; free · open source · no uploads</span>
-    <span><a href="/privacy">Privacy</a> · Built by Shad · MIT licensed</span>
-  </footer>
-</div>
+<Footer />
