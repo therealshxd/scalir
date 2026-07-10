@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- The `softwareVersion` in the site's WebApplication structured data (index.html) had gone stale
+  at 1.3.8 — corrected to the current release, and `sync-version.mjs` now keeps it in lockstep
+  with package.json on every version bump.
+
 ## [1.3.11] - 2026-07-08
 
 ### Added
