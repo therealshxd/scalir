@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Keeps the Tauri and Cargo version in lockstep with package.json.
+// Keeps the Tauri, Cargo and index.html JSON-LD version in lockstep with package.json.
 // Runs automatically via the npm "version" lifecycle hook, e.g.:
 //   npm version 1.0.2 --no-git-tag-version
-// (bumps package.json, then this propagates the number to the two Rust-side files).
+// (bumps package.json, then this propagates the number to the other files).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -27,4 +27,13 @@ if (updated === cargo && !cargo.includes(`version = "${version}"`)) {
 }
 writeFileSync(cargoPath, updated);
 
-console.log(`Synced version ${version} → tauri.conf.json, Cargo.toml`);
+// index.html — replace the "softwareVersion" in the WebApplication JSON-LD.
+const htmlPath = join(root, 'index.html');
+const html = readFileSync(htmlPath, 'utf8');
+const htmlUpdated = html.replace(/"softwareVersion": "[^"]*"/, `"softwareVersion": "${version}"`);
+if (htmlUpdated === html && !html.includes(`"softwareVersion": "${version}"`)) {
+  throw new Error('Could not find "softwareVersion" in index.html');
+}
+writeFileSync(htmlPath, htmlUpdated);
+
+console.log(`Synced version ${version} → tauri.conf.json, Cargo.toml, index.html`);
