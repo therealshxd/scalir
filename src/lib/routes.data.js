@@ -108,9 +108,9 @@ export const ROUTE_LIST = [
   {
     id: 'convert-heic-to-jpg',
     path: '/convert/heic-to-jpg',
-    title: 'Convert HEIC to JPG Online — Free, Private & Bulk | Scalir',
+    title: 'HEIC to JPG Converter — Free, Private, Works Offline | Scalir',
     description:
-      'Convert iPhone HEIC photos to JPG in your browser — free, private, no uploads. Drop in a whole batch and get web-ready JPGs in seconds. Works offline too.',
+      'Turn iPhone HEIC photos into universally compatible JPGs on your own device. Batch-convert a whole camera roll in seconds — nothing is ever uploaded.',
     crumb: 'HEIC to JPG',
     group: 'convert',
     kind: 'landing',
@@ -120,9 +120,9 @@ export const ROUTE_LIST = [
   {
     id: 'convert-webp-to-jpg',
     path: '/convert/webp-to-jpg',
-    title: 'Convert WebP to JPG Online — Free, Private & Bulk | Scalir',
+    title: 'WebP to JPG Converter — Open WebP Images Anywhere | Scalir',
     description:
-      'Turn WebP images into universally compatible JPGs right in your browser. Free and private — no uploads, no sign-up — with batch conversion built in.',
+      "Saved a WebP that Photoshop or an upload form won't take? Convert WebP to JPG in your browser — free, instant and private, with whole-folder batches.",
     crumb: 'WebP to JPG',
     group: 'convert',
     kind: 'landing',
@@ -132,9 +132,9 @@ export const ROUTE_LIST = [
   {
     id: 'convert-webp-to-png',
     path: '/convert/webp-to-png',
-    title: 'Convert WebP to PNG Online — Free & Private | Scalir',
+    title: 'WebP to PNG Converter — Lossless, Keeps Transparency | Scalir',
     description:
-      'Convert WebP to lossless PNG in your browser with transparency preserved. Free, private, no uploads — batch-convert whole folders and download as a ZIP.',
+      'Convert WebP images to pixel-perfect PNG with alpha transparency intact — ideal for editors, decks and app-store assets. Runs entirely on your device.',
     crumb: 'WebP to PNG',
     group: 'convert',
     kind: 'landing',
@@ -144,9 +144,9 @@ export const ROUTE_LIST = [
   {
     id: 'convert-png-to-webp',
     path: '/convert/png-to-webp',
-    title: 'Convert PNG to WebP Online — Free, Private & Bulk | Scalir',
+    title: 'PNG to WebP Converter — Cut Image Weight up to 90% | Scalir',
     description:
-      'Batch-convert PNG to WebP in your browser for faster pages — big savings with transparency kept. Free and private: no uploads, no accounts, no limits.',
+      'Shrink heavy PNGs into WebP for faster pages and better Core Web Vitals, transparency included. Batch-convert an entire asset folder in one drag-and-drop.',
     crumb: 'PNG to WebP',
     group: 'convert',
     kind: 'landing',
@@ -156,9 +156,9 @@ export const ROUTE_LIST = [
   {
     id: 'convert-jpg-to-webp',
     path: '/convert/jpg-to-webp',
-    title: 'Convert JPG to WebP Online — Free, Private & Bulk | Scalir',
+    title: 'JPG to WebP Converter — Smaller Photos, Same Quality | Scalir',
     description:
-      'Convert JPG photos to WebP in your browser and cut file sizes at the same visual quality. Free, private batch conversion — no uploads, nothing installed.',
+      'Re-encode JPG photos as WebP and save roughly a third of every file with no visible difference. In-browser batch conversion for galleries and websites.',
     crumb: 'JPG to WebP',
     group: 'convert',
     kind: 'landing',
@@ -170,9 +170,9 @@ export const ROUTE_LIST = [
   {
     id: 'compress-jpeg',
     path: '/compress-jpeg',
-    title: 'Compress JPEG Online — Free, Private & Bulk | Scalir',
+    title: 'JPEG Compressor — Shrink JPGs to an Exact File Size | Scalir',
     description:
-      'Compress JPEG images in your browser — a smart quality search hits your target size with no visible loss. Free, private and bulk: no uploads, no sign-up.',
+      'Reduce JPEG file size to any target — 500KB, 1MB, you choose — while a smart quality search keeps photos looking sharp. Compress hundreds at once, locally.',
     crumb: 'Compress JPEG',
     group: 'compress',
     kind: 'landing',
@@ -182,9 +182,9 @@ export const ROUTE_LIST = [
   {
     id: 'compress-png',
     path: '/compress-png',
-    title: 'Compress PNG Online — Free, Private & Bulk | Scalir',
+    title: 'PNG Compressor — Smaller PNGs, Zero Quality Loss | Scalir',
     description:
-      'Compress PNG images in your browser — losslessly re-encoded, resized to fit, or converted to WebP for bigger savings. Free, private, no uploads.',
+      'Make PNG files smaller three ways: lossless re-encoding, smarter dimensions, or WebP conversion with transparency kept. All in your browser, no uploads.',
     crumb: 'Compress PNG',
     group: 'compress',
     kind: 'landing',
@@ -194,9 +194,9 @@ export const ROUTE_LIST = [
   {
     id: 'compress-image-to-100kb',
     path: '/compress-image-to-100kb',
-    title: 'Compress Image to 100KB Online — Free & Private | Scalir',
+    title: 'Compress Image to 100KB — Fit Any Upload Limit | Scalir',
     description:
-      'Compress images to 100KB or any exact size limit, right in your browser. Free and private with no uploads — perfect for forms, portals and applications.',
+      'Get any photo under 100KB — or 50KB, or 200KB — for job portals, visa forms and avatars. Set the limit and the best-looking result that fits comes back.',
     crumb: 'Compress to 100KB',
     group: 'compress',
     kind: 'landing',

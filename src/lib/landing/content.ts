@@ -7,7 +7,9 @@
 //
 // Copy rules: leads are keyword-led and ≥ ~60 words; every claim must be true of the real tool
 // (no cropping, no upscaling, GIF is first-frame only); UK spelling ("optimise") except inside
-// established format names.
+// established format names. Every page carries its OWN angle, step set and table — pages must
+// never read as the same template with nouns swapped, or they'll compete for (and rank for)
+// the same queries.
 import type { UiOpts } from '../persist';
 import type { Faq } from '../seo';
 import { NO_RESIZE } from '../../core/presets';
@@ -42,31 +44,31 @@ const CONVERT_PRESET: Partial<UiOpts> = { maxDim: NO_RESIZE, maxMB: 10 };
 export const LANDING_CONTENT: Record<string, LandingContent> = {
   // ── Convert ─────────────────────────────────────────────────────────────────────────────
   'convert-heic-to-jpg': {
-    h1: 'Convert HEIC to JPG — free, private and in your browser',
+    h1: 'Convert HEIC to JPG — iPhone photos, opened everywhere',
     lead:
-      'iPhones save photos as HEIC — great for storage, awkward everywhere else. Scalir converts ' +
-      'HEIC to JPG entirely on your device: drop in one photo or a whole camera roll and get ' +
-      'universally compatible JPGs back in seconds. There is nothing to install and nothing is ' +
-      'uploaded — your photos never leave your computer, which makes it safe for private ' +
-      'pictures too.',
+      'Your iPhone shoots HEIC to save space, and then Windows, an older editor or a web form ' +
+      'shrugs at the file. Scalir turns HEIC into JPG on your own device: drag in a single ' +
+      'photo or an entire camera roll and universally compatible JPGs come back in seconds. ' +
+      'Nothing installs, nothing uploads — family photos and private pictures never leave your ' +
+      'computer.',
     toolPreset: { ...CONVERT_PRESET, outputFormat: 'jpeg' },
     toolNote: 'Preconfigured for HEIC → JPG at full size — tweak anything below.',
     sections: [
       {
         type: 'steps',
-        h2: 'How to convert HEIC to JPG',
+        h2: 'From camera roll to JPG in three steps',
         steps: [
           {
-            title: 'Drop in your HEIC files',
-            body: 'Drag photos straight from Finder or Explorer, or pick a whole folder. Scalir reads HEIC and HEIF, including iPhone photos, bursts and screenshots.',
+            title: 'Add your iPhone photos',
+            body: 'AirDrop, cable or cloud folder — get the HEICs onto your computer, then drag them in. Bursts, screenshots and Live Photo stills all decode.',
           },
           {
-            title: 'Hit Optimise',
-            body: 'The output format is already set to JPEG at full resolution. Every photo is decoded and re-encoded locally, in parallel across your CPU cores.',
+            title: 'Convert the lot',
+            body: 'JPEG output at the original resolution is already selected. One click converts the whole batch in parallel, on your own CPU.',
           },
           {
-            title: 'Download your JPGs',
-            body: 'Save files individually, grab everything as a single ZIP, or write straight into a folder of your choice.',
+            title: 'Save or share',
+            body: 'Download photos one by one, as a single ZIP, or straight into a folder — ready for Windows, old editors and every upload form.',
           },
         ],
       },
@@ -83,20 +85,27 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
       },
       {
         type: 'prose',
-        h2: 'Why convert HEIC to JPG?',
+        h2: 'Why iPhones shoot HEIC — and when JPG wins',
         paragraphs: [
-          'HEIC packs the same photo into roughly half the space of JPEG, which is why Apple uses it — but step outside the Apple ecosystem and it gets awkward fast. Windows often needs paid codecs to open it, older editors refuse it outright, and countless upload forms simply reject anything that is not a JPG or PNG.',
-          'Most online converters solve this by uploading your photos to their server. Scalir does not: the HEIC decoder runs in your browser as WebAssembly, so private photos stay private. It also strips EXIF metadata — including GPS location — from the converted files.',
+          'HEIC packs the same photo into roughly half the space of JPEG, which is exactly what a phone with a full camera roll wants. The trouble starts off-device: Windows often demands paid codecs, older versions of Photoshop and Lightroom refuse the format, and countless job portals, printing services and CMS uploaders only accept JPG or PNG.',
+          'Most "HEIC converter" sites work by uploading your photos to their server first. Scalir never does — the HEIC decoder is WebAssembly running in your browser, so the conversion is private by construction, and EXIF metadata (including GPS location) is stripped from the JPGs it produces.',
+        ],
+      },
+      {
+        type: 'prose',
+        h2: 'Prefer JPG straight from the camera?',
+        paragraphs: [
+          'If you would rather not convert at all, your iPhone can shoot JPG natively: Settings → Camera → Formats → "Most Compatible". The trade-off is photos that take roughly twice the storage — which is why many people keep HEIC on the phone and convert on demand instead.',
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Shrink the converted files to a target size.' },
-          { path: '/convert/webp-to-jpg', label: 'Convert WebP to JPG', blurb: 'The same trick for images saved from the web.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'Bulk compression, resizing, formats and more.' },
-          { path: '/download', label: 'Desktop app', blurb: 'The same converter, offline on Windows and Linux.' },
+          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Get the converted photos under a size limit.' },
+          { path: '/compress-image-to-100kb', label: 'Compress to 100KB', blurb: 'iPhone photo → form-ready upload.' },
+          { path: '/download', label: 'Desktop app', blurb: 'Convert HEIC offline on Windows and Linux.' },
+          { path: '/features', label: 'All features', blurb: 'Resize, target-size compression and more.' },
         ],
       },
     ],
@@ -121,60 +130,60 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
   },
 
   'convert-webp-to-jpg': {
-    h1: 'Convert WebP to JPG — free, private and in your browser',
+    h1: 'Convert WebP to JPG — open your images anywhere',
     lead:
-      'WebP is everywhere on the web, but plenty of apps, editors and upload forms still refuse ' +
-      'it. Scalir converts WebP to JPG on your own device: drag in the files you saved from the ' +
-      'web and get standard JPGs that open anywhere. It is free, needs no sign-up, and never ' +
-      'uploads your images — every conversion happens entirely in your browser.',
+      'You right-click-saved an image and got a .webp that Photoshop, your photo frame or an ' +
+      'upload form refuses to touch. Scalir fixes that in one drag: it re-encodes WebP as ' +
+      'standard JPG locally, in your browser, with no account and no upload. One file or a ' +
+      'folder of hundreds — the JPGs come back in seconds and open in absolutely everything.',
     toolPreset: { ...CONVERT_PRESET, outputFormat: 'jpeg' },
     toolNote: 'Preconfigured for WebP → JPG at full size — tweak anything below.',
     sections: [
       {
+        type: 'prose',
+        h2: 'Where all these WebP files come from',
+        paragraphs: [
+          'Most big sites now serve WebP because it is smaller than JPEG — so when you save an image from the web, WebP is what lands in your downloads folder, whatever the page visually showed you. CDNs even convert on the fly: the site owner uploaded a JPG, your browser received a WebP.',
+          'That is fine until the file meets software from before the WebP era — older Photoshop, embroidery and print software, digital photo frames, or the stricter kind of upload form. Converting back to JPG is the universal escape hatch, and doing it locally means the image is never bounced through someone else\'s server on the way.',
+        ],
+      },
+      {
         type: 'steps',
-        h2: 'How to convert WebP to JPG',
+        h2: 'Turn WebP into JPG in three steps',
         steps: [
           {
-            title: 'Add your WebP files',
-            body: 'Drop in images saved from the web — one file, a selection, or a whole folder at once.',
+            title: 'Drop in the WebP files',
+            body: 'Straight from your downloads folder — single images or the whole thing at once.',
           },
           {
-            title: 'Hit Optimise',
-            body: 'Output is preset to JPEG at full resolution and quality 95, so the result is simply the same image as a JPG.',
+            title: 'Re-encode locally',
+            body: 'JPEG output is preset at the original size and quality 95. Transparent areas, if any, are flattened (JPG has no transparency).',
           },
           {
-            title: 'Download and use anywhere',
-            body: 'Single files, a ZIP of the whole batch, or straight into a folder — the JPGs open in every app and upload form.',
+            title: 'Use the JPGs anywhere',
+            body: 'Every app, editor, form and device on earth accepts JPG. Download singles or grab the batch as a ZIP.',
           },
         ],
       },
       {
         type: 'factTable',
-        h2: 'WebP vs JPG at a glance',
+        h2: 'Will it open? WebP vs JPG compatibility',
         columns: ['', 'WebP', 'JPG'],
         rows: [
-          ['File size', 'Typically 25–35% smaller', 'Larger at the same quality'],
-          ['Opens in', 'Browsers and modern apps', 'Everything, everywhere'],
-          ['Transparency', 'Supported', 'Not supported (flattened)'],
-          ['Best for', 'Serving images on websites', 'Editing, sharing and uploading'],
-        ],
-      },
-      {
-        type: 'prose',
-        h2: 'When you need JPG instead of WebP',
-        paragraphs: [
-          'Images saved from websites increasingly arrive as WebP — and then an older version of Photoshop, a photo frame, a printing service or a CMS upload form refuses the file. Converting to JPG gets you back to the one format every tool on earth accepts.',
-          'Scalir does the conversion locally: the WebP is decoded and re-encoded as JPEG on your device, never uploaded to a server. Note that JPG has no transparency — if your WebP has transparent areas and you need to keep them, convert to PNG instead.',
+          ['Browsers', 'All modern browsers', 'Everything, ever'],
+          ['Photo editors', 'Recent versions only', 'All of them, any age'],
+          ['Upload forms & CMSs', 'Often rejected', 'Universally accepted'],
+          ['Devices (frames, TVs, kiosks)', 'Hit and miss', 'Reliable'],
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/convert/webp-to-png', label: 'Convert WebP to PNG', blurb: 'Lossless, with transparency kept.' },
-          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Fit the converted files under a size limit.' },
-          { path: '/convert/jpg-to-webp', label: 'Convert JPG to WebP', blurb: 'Going the other way for your own site.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'The full feature rundown.' },
+          { path: '/convert/webp-to-png', label: 'WebP to PNG', blurb: 'Pick PNG when transparency must survive.' },
+          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Shrink the JPGs to a size target.' },
+          { path: '/convert/jpg-to-webp', label: 'JPG to WebP', blurb: 'The reverse trip, for your own website.' },
+          { path: '/', label: 'Bulk image compressor', blurb: 'The full tool, no preset.' },
         ],
       },
     ],
@@ -201,60 +210,62 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
   },
 
   'convert-webp-to-png': {
-    h1: 'Convert WebP to PNG — lossless, with transparency kept',
+    h1: 'Convert WebP to PNG — a pixel-perfect copy, transparency intact',
     lead:
-      'Need a WebP as a PNG for an editor, a slide deck or an upload form? Scalir converts WebP ' +
-      'to lossless PNG right in your browser, preserving transparency exactly. It is free and ' +
-      'private — files are decoded and re-encoded on your own device, never uploaded — and it ' +
-      'handles a single sticker or a whole folder of assets equally happily.',
+      'When an image is going back into an editing pipeline — Figma, Photoshop, a slide deck, ' +
+      'an app-store listing — you want lossless, and that means PNG. Scalir converts WebP to ' +
+      'PNG with every pixel and the full alpha channel preserved, entirely on your device. ' +
+      'Designers can drop in a folder of exported assets and get back PNGs that behave exactly ' +
+      'like the originals, minus the compatibility arguments.',
     toolPreset: { ...CONVERT_PRESET, outputFormat: 'png' },
     toolNote: 'Preconfigured for WebP → PNG at full size — tweak anything below.',
     sections: [
       {
-        type: 'steps',
-        h2: 'How to convert WebP to PNG',
-        steps: [
-          {
-            title: 'Drop in your WebP files',
-            body: 'Single images or a whole folder — transparent logos, stickers and UI assets all welcome.',
-          },
-          {
-            title: 'Hit Optimise',
-            body: 'Output is preset to PNG at full resolution. PNG is lossless, so every pixel — including the alpha channel — is preserved exactly.',
-          },
-          {
-            title: 'Download your PNGs',
-            body: 'Individually, as a ZIP, or saved straight to a folder, ready for any editor or form.',
-          },
+        type: 'factTable',
+        h2: 'Which format for which job?',
+        sub: 'PNG and WebP overlap — this is how to choose.',
+        columns: ['You are…', 'Use'],
+        rows: [
+          ['Editing the image again (layers, retouching)', 'PNG — lossless survives repeated saves'],
+          ['Submitting to an app store or marketplace', 'PNG — the required format almost everywhere'],
+          ['Placing it in a document or slide deck', 'PNG — renders identically in every office suite'],
+          ['Serving it on a web page', 'WebP — same transparency, far fewer bytes'],
+          ['Archiving a master copy', 'PNG — pixel-exact, universally readable in 20 years'],
         ],
       },
       {
-        type: 'factTable',
-        h2: 'WebP vs PNG at a glance',
-        columns: ['', 'WebP', 'PNG'],
-        rows: [
-          ['Compression', 'Lossy or lossless', 'Always lossless'],
-          ['Transparency', 'Full alpha supported', 'Full alpha supported'],
-          ['File size', 'Smaller', 'Larger — the price of universal support'],
-          ['Best for', 'Serving images on websites', 'Editing, archiving, maximum compatibility'],
+        type: 'steps',
+        h2: 'How the conversion works',
+        steps: [
+          {
+            title: 'Drop in WebP assets',
+            body: 'Logos, stickers, UI exports, screenshots — anything with or without transparency.',
+          },
+          {
+            title: 'Lossless re-encode',
+            body: 'PNG output is preset. The decode → encode round trip is exact: same pixels, same alpha, no quality dial involved.',
+          },
+          {
+            title: 'Collect the PNGs',
+            body: 'Individually, zipped, or written into a folder — drop them straight into your design tool.',
+          },
         ],
       },
       {
         type: 'prose',
-        h2: 'When PNG is the right choice',
+        h2: 'Expect the PNG to be bigger — that is the deal',
         paragraphs: [
-          'PNG is the safest lossless format there is: image editors, office documents, app-store listings and upload forms that reject WebP all take PNG without complaint. Converting WebP to PNG hands you a pixel-perfect copy with transparency intact.',
-          'Expect the PNG to be larger than the WebP you started with — that is normal, because PNG stores every pixel losslessly. If the result is headed back to the web and size matters, compress it or keep it as WebP in the first place.',
+          'PNG guarantees a perfect copy of every pixel, and that guarantee costs bytes: the PNG will usually be larger than the WebP it came from. For editing, archiving and submitting that is exactly the right trade. If the file is ultimately heading back to a website, keep the WebP for serving and use the PNG as your working copy.',
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/compress-png', label: 'Compress PNG', blurb: 'Rein the converted files back in.' },
-          { path: '/convert/webp-to-jpg', label: 'Convert WebP to JPG', blurb: 'When transparency does not matter.' },
-          { path: '/convert/png-to-webp', label: 'Convert PNG to WebP', blurb: 'Going the other way for a faster site.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'The full feature rundown.' },
+          { path: '/compress-png', label: 'Compress PNG', blurb: 'When the lossless copies get heavy.' },
+          { path: '/convert/png-to-webp', label: 'PNG to WebP', blurb: 'Send finished assets back to the web.' },
+          { path: '/convert/webp-to-jpg', label: 'WebP to JPG', blurb: 'No transparency? JPG is smaller.' },
+          { path: '/self-hosting', label: 'Self-host Scalir', blurb: 'Run the converter inside your studio.' },
         ],
       },
     ],
@@ -269,67 +280,72 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
       },
       {
         q: 'When should I convert WebP to PNG?',
-        a: 'Whenever a tool refuses WebP: image editors, document templates, app-store listings and many upload forms. PNG is the safest lossless format for compatibility.',
+        a: 'Whenever a tool refuses WebP or you need a lossless working copy: image editors, document templates, app-store listings and stricter upload forms. PNG is the safest lossless format for compatibility.',
+      },
+      {
+        q: 'Does converting WebP to PNG improve quality?',
+        a: 'No — conversion cannot invent detail that was already compressed away. What PNG gives you is a guarantee that nothing further is lost, no matter how many times the file is opened and saved.',
       },
     ],
   },
 
   'convert-png-to-webp': {
-    h1: 'Convert PNG to WebP — shrink images for a faster site',
+    h1: 'Convert PNG to WebP — the pagespeed audit fix',
     lead:
-      'PNG is wonderful for fidelity and terrible for page weight. Converting PNG to WebP ' +
-      'typically cuts file size by 60–90% while keeping transparency, which is why every ' +
-      'pagespeed audit recommends it. Scalir batch-converts your PNGs to WebP entirely in your ' +
-      'browser — free, private and with no uploads — so you can optimise a whole asset folder ' +
-      'in one pass.',
+      'When Lighthouse says "serve images in next-gen formats", this is the page it means. ' +
+      'PNGs are routinely the heaviest files on a site, and converting them to WebP cuts ' +
+      '60–90% of the weight while keeping full alpha transparency. Scalir batch-converts an ' +
+      'entire asset folder in your browser — no build plugin, no upload, no account — so the ' +
+      'fix takes about a minute.',
     toolPreset: { ...CONVERT_PRESET, outputFormat: 'webp' },
     toolNote: 'Preconfigured for PNG → WebP at full size — tweak anything below.',
     sections: [
       {
-        type: 'steps',
-        h2: 'How to convert PNG to WebP',
-        steps: [
-          {
-            title: 'Add your PNG files',
-            body: 'Screenshots, UI assets, logos with transparency — drop in files or a whole folder.',
-          },
-          {
-            title: 'Hit Optimise',
-            body: 'Output is preset to WebP at the original dimensions. The alpha channel is preserved automatically.',
-          },
-          {
-            title: 'Deploy the WebP files',
-            body: 'Download a ZIP or save to a folder, then swap them into your site for an instant pagespeed win.',
-          },
+        type: 'factTable',
+        h2: 'What PNG → WebP typically saves',
+        sub: 'Real-world ranges by image type, at visually identical quality.',
+        columns: ['Image type', 'Typical saving'],
+        rows: [
+          ['UI screenshots', '80–90%'],
+          ['Logos and icons with transparency', '60–80%'],
+          ['Illustrations and graphics', '70–85%'],
+          ['Photos accidentally saved as PNG', '90%+'],
         ],
       },
       {
-        type: 'factTable',
-        h2: 'PNG vs WebP at a glance',
-        columns: ['', 'PNG', 'WebP'],
-        rows: [
-          ['Compression', 'Always lossless', 'Lossy or lossless — you choose'],
-          ['Transparency', 'Full alpha supported', 'Full alpha supported'],
-          ['File size', 'Large', 'Typically 60–90% smaller'],
-          ['Browser support', 'Universal', 'All modern browsers (since 2020)'],
+        type: 'steps',
+        h2: 'Fix the audit in three steps',
+        steps: [
+          {
+            title: 'Drag in your image folder',
+            body: 'Point Scalir at the assets directory — every PNG in it queues up at once.',
+          },
+          {
+            title: 'Convert to WebP',
+            body: 'Output is preset to WebP at original dimensions; alpha channels convert automatically. All cores, all files, in parallel.',
+          },
+          {
+            title: 'Swap them into your site',
+            body: 'Save the batch to a folder, update the file extensions in your markup, and re-run the audit.',
+          },
         ],
       },
       {
         type: 'prose',
-        h2: 'Faster pages with WebP',
+        h2: 'Why this moves your Core Web Vitals',
         paragraphs: [
-          'Oversized PNGs are one of the most common findings in Lighthouse and PageSpeed audits — "serve images in next-gen formats" almost always means exactly this conversion. WebP keeps the transparency your UI assets need at a fraction of the bytes, which shows up directly in load time and Largest Contentful Paint.',
-          'Keep a lossless PNG master for editing if you like, and serve WebP on the site. Scalir converts in bulk on your own machine, so a full asset folder is one drag-and-drop away.',
+          'Image bytes dominate most page weights, and the Largest Contentful Paint element is usually an image. Cutting the heaviest format on the page by two-thirds or more shows up directly in LCP, in bandwidth bills, and in how the page feels on a phone connection.',
+          'WebP has shipped in every major browser since 2020, so there is no fallback dance left to do — you can simply serve it. Keep a lossless PNG master in your design files if you like; what the visitor downloads should be WebP.',
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/convert/jpg-to-webp', label: 'Convert JPG to WebP', blurb: 'The same win for your photos.' },
-          { path: '/compress-png', label: 'Compress PNG', blurb: 'When you have to stay PNG.' },
-          { path: '/convert/webp-to-png', label: 'Convert WebP to PNG', blurb: 'Back the other way when a tool demands it.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'The full feature rundown.' },
+          { path: '/convert/jpg-to-webp', label: 'JPG to WebP', blurb: 'Finish the job: photos too.' },
+          { path: '/compress-png', label: 'Compress PNG', blurb: 'For the PNGs that must stay PNG.' },
+          { path: '/features', label: 'All features', blurb: 'Resize modes, presets, target sizes.' },
+          { path: '/self-hosting', label: 'Self-host with Docker', blurb: 'An internal converter for your team.' },
         ],
       },
     ],
@@ -346,65 +362,70 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
         q: 'Do all browsers support WebP?',
         a: 'Every modern browser has supported WebP since 2020 — Chrome, Firefox, Safari, Edge and the mobile browsers. Only long-dead browsers like Internet Explorer do not.',
       },
+      {
+        q: 'Can I upload WebP to WordPress?',
+        a: 'Yes — WordPress has accepted WebP uploads since version 5.8, and most modern CMSs and site builders take it too. If a particular platform refuses, keep those few images as PNG and convert the rest.',
+      },
     ],
   },
 
   'convert-jpg-to-webp': {
-    h1: 'Convert JPG to WebP — same quality, smaller files',
+    h1: 'Convert JPG to WebP — a third off every photo',
     lead:
-      'WebP encodes the same photo noticeably smaller than JPEG at the same visual quality — ' +
-      'typically 25–35% — and that saving multiplies across a whole site or gallery. Scalir ' +
-      'converts JPG to WebP in bulk, right in your browser: no uploads, no accounts, no software ' +
-      'to install. Drop in your photos, keep the original dimensions, and download web-ready ' +
-      'WebP files in one go.',
+      'A photo gallery, a portfolio, a product catalogue — hundreds of JPGs, every one of them ' +
+      'carrying about a third more weight than it needs to. Re-encoding JPG as WebP keeps the ' +
+      'visual quality and drops 25–35% of the bytes, and Scalir does it for the whole library ' +
+      'at once: drag the folder in, let your own CPU do the work, download the WebP set. No ' +
+      'uploads, no queue, no per-file limits.',
     toolPreset: { ...CONVERT_PRESET, outputFormat: 'webp' },
     toolNote: 'Preconfigured for JPG → WebP at full size — tweak anything below.',
     sections: [
       {
-        type: 'steps',
-        h2: 'How to convert JPG to WebP',
-        steps: [
-          {
-            title: 'Add your JPG photos',
-            body: 'A hero image, a product gallery or a whole photo library — files or folders both work.',
-          },
-          {
-            title: 'Hit Optimise',
-            body: 'Output is preset to WebP at the original dimensions and top-of-ladder quality — visually identical, meaningfully smaller.',
-          },
-          {
-            title: 'Serve the WebP files',
-            body: 'Download as a ZIP or save to a folder and swap them into your pages.',
-          },
+        type: 'factTable',
+        h2: 'What a 30% cut means at scale',
+        sub: 'Typical JPG → WebP savings, multiplied by a real site.',
+        columns: ['Scenario', 'Before (JPG)', 'After (WebP)'],
+        rows: [
+          ['One 2 MB photo', '2 MB', '~1.4 MB'],
+          ['A 40-image gallery page', '~25 MB', '~17 MB'],
+          ['Portfolio of 300 photos', '~450 MB served', '~310 MB served'],
+          ['10,000 product views a month', '~20 GB bandwidth', '~14 GB bandwidth'],
         ],
       },
       {
-        type: 'factTable',
-        h2: 'JPG vs WebP at a glance',
-        columns: ['', 'JPG', 'WebP'],
-        rows: [
-          ['File size', 'Baseline', 'Typically 25–35% smaller'],
-          ['Quality', 'Good', 'Equal at the smaller size'],
-          ['Opens in', 'Everything, everywhere', 'Browsers and modern apps'],
-          ['Best for', 'Email, print, maximum compatibility', 'Serving images on websites'],
+        type: 'steps',
+        h2: 'Batch-convert a photo library',
+        steps: [
+          {
+            title: 'Add the JPGs',
+            body: 'Files or an entire folder — the queue takes hundreds at a time.',
+          },
+          {
+            title: 'One click, all cores',
+            body: 'WebP output is preset at original dimensions and top-of-ladder quality; the batch encodes in parallel on your machine.',
+          },
+          {
+            title: 'Ship the WebP set',
+            body: 'ZIP download or save-to-folder, with your choice of file naming — prefixes, suffixes, slugs, sequential numbers.',
+          },
         ],
       },
       {
         type: 'prose',
-        h2: 'Why serve WebP instead of JPEG?',
+        h2: 'When to keep JPG',
         paragraphs: [
-          'Image bytes dominate most page weights, and Largest Contentful Paint is usually an image. Cutting every photo by a quarter to a third — at identical visual quality — is the cheapest pagespeed win there is, and it is exactly what the "serve images in next-gen formats" audit is asking for.',
-          'Keep JPGs for email attachments, print workflows and anywhere that will not take WebP. For everything web-facing, convert once with Scalir — locally, in bulk, with nothing uploaded — and enjoy the faster loads.',
+          'Not everything should convert. Email attachments, print workflows, photo-lab submissions and anywhere you cannot control the receiving software are still JPG territory. The rule of thumb: if a browser displays it, serve WebP; if a human or a machine you do not control opens it, send JPG.',
+          'Scalir converts on your device either way — this page presets WebP output, and the reverse conversion is one click away when you need it.',
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/convert/png-to-webp', label: 'Convert PNG to WebP', blurb: 'The same win for graphics and screenshots.' },
-          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'When you need to stay JPEG.' },
-          { path: '/convert/webp-to-jpg', label: 'Convert WebP to JPG', blurb: 'Back the other way for compatibility.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'The full feature rundown.' },
+          { path: '/convert/png-to-webp', label: 'PNG to WebP', blurb: 'Graphics and screenshots next.' },
+          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Stay JPG, just smaller.' },
+          { path: '/convert/webp-to-jpg', label: 'WebP to JPG', blurb: 'The way back, when needed.' },
+          { path: '/download', label: 'Desktop app', blurb: 'Convert offline, no browser tab.' },
         ],
       },
     ],
@@ -421,65 +442,74 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
         q: 'Does converting JPG to WebP lose quality?',
         a: 'Both are lossy formats, but Scalir converts at the top of its quality ladder by default, keeping the result visually identical to the source. Use the before/after preview to inspect any image at any quality.',
       },
+      {
+        q: 'Can I convert WebP back to JPG later?',
+        a: 'Yes — the reverse converter is one click away, and it runs the same way: locally, in bulk, for free. Keep your original JPGs as masters if you want a lossless-history archive.',
+        href: '/convert/webp-to-jpg',
+        linkText: 'Convert WebP to JPG',
+      },
     ],
   },
 
   // ── Compress ────────────────────────────────────────────────────────────────────────────
   'compress-jpeg': {
-    h1: 'Compress JPEG images — hit an exact size without visible loss',
+    h1: 'Compress JPEG to an exact file size — without visible loss',
     lead:
-      'Scalir compresses JPEGs the smart way: instead of guessing with a fixed quality slider, ' +
-      'it searches the encoder for the highest quality that still fits under your size target — ' +
-      '1 MB by default. Everything runs in your browser across all CPU cores, so a whole folder ' +
-      'of photos compresses in seconds, privately, with nothing uploaded and no sign-up.',
+      'Every other JPEG compressor hands you a quality slider and wishes you luck. Scalir asks ' +
+      'a more useful question — how big is the file allowed to be? — and then binary-searches ' +
+      'the encoder for the highest quality that fits: 1 MB, 500KB, whatever you set. The search ' +
+      'runs on your own machine across all CPU cores, so a few hundred photos land under budget ' +
+      'in the time a cloud tool spends uploading the first one.',
     toolPreset: { outputFormat: 'jpeg' },
     toolNote: 'Preconfigured for JPEG output — set your own size target below.',
     sections: [
       {
-        type: 'steps',
-        h2: 'How to compress a JPEG',
-        steps: [
-          {
-            title: 'Drop in your JPEGs',
-            body: 'One photo or a few hundred — drag them in or pick a folder.',
-          },
-          {
-            title: 'Set your size target',
-            body: 'Keep the 1 MB default or type an exact budget. Scalir finds the best quality that fits under it, never dropping below your quality floor.',
-          },
-          {
-            title: 'Optimise and download',
-            body: 'Compare any file before/after if you want proof, then download singles, a ZIP, or save to a folder.',
-          },
-        ],
-      },
-      {
         type: 'factTable',
-        h2: 'What actually makes a JPEG heavy',
-        columns: ['Factor', 'Impact'],
+        h2: 'JPEG quality numbers, decoded',
+        sub: 'What the 1–100 scale actually looks like in practice.',
+        columns: ['Quality', 'What you get'],
         rows: [
-          ['Pixel dimensions', 'The biggest one — halving the width quarters the pixels. Scalir caps the longest side at 2000px by default.'],
-          ['Quality setting', 'Big, but non-linear: 95 → 80 saves a lot and looks the same; below ~60 artefacts creep in.'],
-          ['Fine detail and noise', 'Grainy, busy photos compress worse than clean ones at the same settings.'],
-          ['Metadata', 'EXIF (camera info, GPS location) adds weight — Scalir strips it automatically.'],
+          ['95', 'Archival — indistinguishable from the source, biggest files'],
+          ['85', 'The sweet spot — visually clean at a fraction of the size'],
+          ['75', 'Standard web quality — fine for photos in a page layout'],
+          ['60', "Scalir's default floor — compact, still respectable"],
+          ['Below 60', 'Blocking and smearing start to show; used only if you allow it'],
         ],
       },
       {
         type: 'prose',
-        h2: 'How the target-size search works',
+        h2: 'Two levers, and which one to pull',
         paragraphs: [
-          'Most compressors make you pick a quality number and hope. Scalir inverts that: you say what the file must weigh, and it runs a binary search over encoder quality — encode, measure, adjust — until it lands the best-looking JPEG that fits your budget.',
-          'A quality floor protects your photos: if a file cannot reach the target without dropping below the floor, Scalir stops there and flags it rather than ruining the image. The before/after preview lets you inspect any file at any quality before you commit.',
+          'File size responds to two things: pixel dimensions and encoder quality — and dimensions are by far the stronger lever. Halving the width quarters the pixel count before quality even enters the picture, which is why Scalir pairs your size target with a 2000px longest-side cap by default.',
+          'The quality search then does the fine-tuning: encode, measure, adjust, landing the best quality that fits your budget. If a file cannot fit above your quality floor, it is flagged instead of ruined — you decide whether to lower the cap and rerun.',
+        ],
+      },
+      {
+        type: 'steps',
+        h2: 'Compress JPEGs to a target size',
+        steps: [
+          {
+            title: 'Queue up the photos',
+            body: 'Drag in files or a folder; hundreds at a time is normal use.',
+          },
+          {
+            title: 'Name your budget',
+            body: 'Keep the 1 MB default or type an exact figure. The quality floor guards against over-compression.',
+          },
+          {
+            title: 'Verify and download',
+            body: 'Open any result in the before/after compare view, then grab the batch as a ZIP or save to a folder.',
+          },
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/compress-image-to-100kb', label: 'Compress to 100KB', blurb: 'For forms with hard upload limits.' },
-          { path: '/convert/jpg-to-webp', label: 'Convert JPG to WebP', blurb: 'Even smaller files for the web.' },
-          { path: '/compress-png', label: 'Compress PNG', blurb: 'The lossless cousin.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'The full feature rundown.' },
+          { path: '/compress-image-to-100kb', label: 'Compress to 100KB', blurb: 'The strict-limit version of this page.' },
+          { path: '/convert/jpg-to-webp', label: 'JPG to WebP', blurb: 'Smaller still, for web use.' },
+          { path: '/convert/heic-to-jpg', label: 'HEIC to JPG', blurb: 'iPhone photos in, JPGs out.' },
+          { path: '/', label: 'Bulk image compressor', blurb: 'The full tool with presets.' },
         ],
       },
     ],
@@ -504,37 +534,19 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
   },
 
   'compress-png': {
-    h1: 'Compress PNG images — lossless first, WebP when you want more',
+    h1: 'Compress PNG — smaller files, identical pixels',
     lead:
-      'PNG is a lossless format, so compressing it is a different game to JPEG: Scalir ' +
-      're-encodes your PNGs cleanly, resizes oversized ones to fit your dimension cap, and — ' +
-      'when you allow it — converts to WebP for far bigger savings with transparency intact. ' +
-      'All of it happens in your browser: free, private, no uploads, and a whole folder at a ' +
-      'time.',
+      'The heaviest files on most computers are screenshots — full-resolution PNGs that nobody ' +
+      'ever resized. Because PNG is lossless, squeezing it takes strategy rather than a quality ' +
+      'slider: re-encode cleanly, cut the dimensions down to what is actually displayed, or ' +
+      'switch web-bound copies to WebP with transparency intact. Scalir runs all three plays in ' +
+      'one pass, in your browser, on as many files as you can drop.',
     toolPreset: { outputFormat: 'png' },
     toolNote: 'Preconfigured for PNG output — switch to Auto or WebP below for bigger savings.',
     sections: [
       {
-        type: 'steps',
-        h2: 'How to compress a PNG',
-        steps: [
-          {
-            title: 'Add your PNG files',
-            body: 'Screenshots, graphics, transparent logos — files or a whole folder.',
-          },
-          {
-            title: 'Choose your trade-off',
-            body: 'Keep PNG output for pixel-perfect lossless results, or allow WebP conversion for much smaller files with transparency kept.',
-          },
-          {
-            title: 'Optimise and download',
-            body: 'Grab everything as a ZIP or save straight to a folder.',
-          },
-        ],
-      },
-      {
         type: 'factTable',
-        h2: 'Your options for a smaller PNG',
+        h2: 'Three ways to a smaller PNG',
         columns: ['Approach', 'What it does', 'Typical saving'],
         rows: [
           ['Re-encode as PNG', 'Lossless — every pixel identical', 'Modest'],
@@ -544,27 +556,45 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
       },
       {
         type: 'prose',
-        h2: 'Why PNGs stay big — and what to do about it',
+        h2: 'Screenshots: the classic oversized PNG',
         paragraphs: [
-          'PNG guarantees every pixel survives exactly, which puts a hard floor under how small the file can get. That is perfect for masters and assets you will edit again, but wasteful for anything a browser will display.',
-          'The pragmatic recipe: resize screenshots and photos down to the dimensions you actually display, and let web-bound images convert to WebP — same transparency, a fraction of the bytes. Scalir does both in one pass, locally.',
+          'A screenshot from a modern laptop is a 2800px-wide PNG weighing several megabytes — destined for a doc, a ticket or a chat where it displays at a quarter of that width. Nothing about the pixels needs to change qualitatively; there are simply four times too many of them.',
+          "Scalir's default 2000px cap fixes the worst of it automatically, losslessly per pixel. Set the cap to the width you actually display — say 1200px — and screenshot weight drops by 80% before any format decision is made.",
+        ],
+      },
+      {
+        type: 'steps',
+        h2: 'Shrink a batch of PNGs',
+        steps: [
+          {
+            title: 'Drop them in',
+            body: 'Screenshots, exported graphics, transparent logos — the queue takes a folder at a time.',
+          },
+          {
+            title: 'Pick your strategy',
+            body: 'Stay PNG for pixel-perfect output, or flip the format to Auto/WebP and let transparency-safe conversion do the heavy lifting.',
+          },
+          {
+            title: 'Collect the results',
+            body: 'Per-file downloads, one ZIP, or straight into a folder — with before/after sizes shown for every file.',
+          },
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/convert/png-to-webp', label: 'Convert PNG to WebP', blurb: 'The biggest saving for web assets.' },
-          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Target-size compression for photos.' },
-          { path: '/compress-image-to-100kb', label: 'Compress to 100KB', blurb: 'For hard upload limits.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'The full feature rundown.' },
+          { path: '/convert/png-to-webp', label: 'PNG to WebP', blurb: 'The 60–90% option, spelled out.' },
+          { path: '/compress-image-to-100kb', label: 'Compress to 100KB', blurb: 'Hard limits, any format.' },
+          { path: '/convert/webp-to-png', label: 'WebP to PNG', blurb: 'Back to lossless when editing.' },
+          { path: '/features', label: 'All features', blurb: 'Naming, presets, previews and more.' },
         ],
       },
     ],
     faq: [
       {
         q: 'Why is PNG compression lossless?',
-        a: "The PNG format guarantees every pixel is preserved exactly, so a PNG can only be squeezed so far. For big reductions you either shrink the dimensions or switch to a modern format like WebP.",
+        a: 'The PNG format guarantees every pixel is preserved exactly, so a PNG can only be squeezed so far. For big reductions you either shrink the dimensions or switch to a modern format like WebP.',
       },
       {
         q: 'How do I make a PNG smaller without losing transparency?',
@@ -576,38 +606,24 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
         href: '/convert/png-to-webp',
         linkText: 'Convert PNG to WebP',
       },
+      {
+        q: 'Why are my screenshots such big files?',
+        a: 'High-DPI displays capture at 2× or 3× resolution, so a "small" screenshot is often 2800px wide or more — far larger than it will ever be displayed. Capping the dimensions is the fix, and it is lossless in every way that matters.',
+      },
     ],
   },
 
   'compress-image-to-100kb': {
     h1: 'Compress an image to 100KB — or any exact limit',
     lead:
-      'Upload forms love hard limits: 100KB avatars, 200KB documents, 50KB thumbnails. Scalir ' +
-      'compresses any image to the exact size you need — set the target and it finds the ' +
-      'best-looking combination of dimensions and quality that fits under it. It is free, runs ' +
-      'entirely in your browser with no uploads, and handles a batch just as easily as a single ' +
-      'file.',
+      'Job portals, visa applications, forum avatars, email signatures: the internet is full of ' +
+      'forms that reject anything over 100KB, and photos straight off a phone weigh thirty ' +
+      'times that. Scalir closes the gap in one step — the target is preset to 100KB with a ' +
+      'sensible dimension cap, and the compressor finds the best-looking result that fits. ' +
+      'Change one number and the same page does 50KB, 200KB or any limit a form throws at you.',
     toolPreset: { maxMB: 0.1, maxDim: 1280, qualityFloor: 50 },
     toolNote: 'Preconfigured for a 100KB target — change it to 50KB, 200KB or anything else.',
     sections: [
-      {
-        type: 'steps',
-        h2: 'How to compress an image to 100KB',
-        steps: [
-          {
-            title: 'Drop in your image',
-            body: 'Any format — JPG, PNG, WebP, even HEIC straight off an iPhone. Batches welcome.',
-          },
-          {
-            title: 'Check the target',
-            body: 'The max size is already set to 0.1 MB (100KB) with a sensible dimension cap. Need 50KB or 200KB? Just change the number.',
-          },
-          {
-            title: 'Optimise and download',
-            body: 'Every file lands under the limit at the best quality that fits — preview before/after if you want to see it.',
-          },
-        ],
-      },
       {
         type: 'factTable',
         h2: 'Common upload limits in the wild',
@@ -621,21 +637,39 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
         ],
       },
       {
+        type: 'steps',
+        h2: 'Get under 100KB in three steps',
+        steps: [
+          {
+            title: 'Drop in the image',
+            body: 'Any format the form gave you trouble with — JPG, PNG, WebP, even HEIC straight off an iPhone.',
+          },
+          {
+            title: 'Confirm the limit',
+            body: '0.1 MB and a 1280px cap are preset. A 50KB avatar field? Type 0.05 and go.',
+          },
+          {
+            title: 'Optimise and upload',
+            body: 'The result lands under the limit at the best quality that fits — check it in the preview, download, submit.',
+          },
+        ],
+      },
+      {
         type: 'prose',
-        h2: 'How to fit under 100KB and still look good',
+        h2: 'The maths of fitting under 100KB',
         paragraphs: [
-          'Dimensions matter more than quality: a 4000px photo cannot reach 100KB gracefully, but at 1280px it fits with quality to spare — which is why this page presets a 1280px cap alongside the 0.1 MB target. Scalir then searches encoder quality for the best result that fits.',
-          'If a form insists on .jpg specifically, force JPEG in the output format setting. And if a file genuinely cannot reach the target above the quality floor, Scalir flags it instead of destroying it — lower the dimension cap and run again.',
+          'Dimensions decide whether 100KB is comfortable or impossible. A 4000px phone photo cannot get there gracefully — but at 1280px the same photo fits with quality to spare, which is why this page pairs the size target with a dimension cap instead of just crushing quality.',
+          'Two practical notes: if the form demands a .jpg extension specifically, force JPEG in the output format setting; and if an image genuinely cannot reach the target above the quality floor, Scalir flags it rather than destroying it — drop the cap to 1000px and rerun.',
         ],
       },
       {
         type: 'crossLinks',
-        h2: 'More free image tools',
+        h2: 'Related tools',
         links: [
-          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Target-size compression for photos.' },
-          { path: '/compress-png', label: 'Compress PNG', blurb: 'Lossless compression for graphics.' },
-          { path: '/convert/heic-to-jpg', label: 'Convert HEIC to JPG', blurb: 'iPhone photos, form-ready.' },
-          { path: '/features', label: 'Everything Scalir does', blurb: 'The full feature rundown.' },
+          { path: '/convert/heic-to-jpg', label: 'HEIC to JPG', blurb: 'When the form also hates HEIC.' },
+          { path: '/compress-jpeg', label: 'Compress JPEG', blurb: 'Roomier budgets, same search.' },
+          { path: '/compress-png', label: 'Compress PNG', blurb: 'Graphics and screenshots.' },
+          { path: '/', label: 'Bulk image compressor', blurb: 'The full tool with presets.' },
         ],
       },
     ],
@@ -655,6 +689,10 @@ export const LANDING_CONTENT: Record<string, LandingContent> = {
       {
         q: 'Can I compress images to 50KB or 200KB instead?',
         a: 'Yes — the target is just a number. Set 0.05 MB for 50KB or 0.2 MB for 200KB; everything else works exactly the same, including batches.',
+      },
+      {
+        q: 'Does compressing to 100KB remove EXIF data?',
+        a: 'Yes — re-encoding strips EXIF metadata, including GPS location, from the output. For photos going to portals and forms, that is usually a privacy bonus.',
       },
     ],
   },
